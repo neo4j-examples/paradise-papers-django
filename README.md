@@ -5,6 +5,8 @@ A simple Django web app for searching the Paradise Papers dataset backed by Neo4
 
 Python 2.7, 3.4+
 
+Django 1.11
+
 neo4j 3.0, 3.1, 3.2, 3.3
 
 neo4j-driver 1.2.1
