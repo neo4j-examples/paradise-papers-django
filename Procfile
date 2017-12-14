@@ -1,1 +1,1 @@
-web: gunicorn--bind 0.0.0.0:80  paradise-papers-django.paradise_papers_django.wsgi --log-file -
+web: gunicorn --chdir paradise_papers_django paradise_papers_django.wsgi:application
