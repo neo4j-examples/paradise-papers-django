@@ -25,7 +25,9 @@ SECRET_KEY = '_mh1o(m87t^h_s!n6^mdk*88nn_z6f(3bvgbcrbocoeui2!z59'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'paradise-papaers-django.herokuapp.com',
+]
 
 
 # Application definition
