@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="tab" >
+        <h2>Search by<br class="hidden-lg-up"> country</h2>
+        <p class="hidden-lg-down">People, companies and addresses connected to offshore&nbsp;entities</p>
+    </div>
+
+
+
+    <div class="search_content" >
+        <form action="/search/lookup" method="get">{% csrf_token %}
+            <label for="country">Search by country: </label>
+            <input id="wordsearch" type="text" name="wordsearch" value="{{ wordsearch }}">
+            <input type="hidden" name="node" value="entity">
+
+            <select name="country-selected">
+
+                <option name="countryselected" value="allcountry"> All Countries</option>
+
+                {% for country in countries  %}
+                    <option name="countryselected" value="{{ country.1 }}"> {{ country.1 }}</option>
+                {% endfor%}
+
+            </select>
+
+            <input type="submit" value="OK">
+        </form>
+    </div>
+{% endblock %}

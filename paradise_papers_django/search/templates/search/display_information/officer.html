@@ -1,0 +1,15 @@
+<h1 class="company-title"> {{ node_info.name }} </h1>
+<p>Linked countries: {{ node_info.countries }}</p>
+<p>Data From: {{node_info.sourceID}}</p>
+
+    {% if addressess %}
+    <div>
+        <span>  Connected to  <strong> {{ addressess|length }} Address</strong></span>
+    </div>
+    {% endif  %}
+
+    {% if entities %}
+    <div>
+        <span> Connected to  <strong> {{ entities|length }} entities</strong></span>
+    </div>
+    {% endif  %}
