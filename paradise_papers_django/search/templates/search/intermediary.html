@@ -1,0 +1,14 @@
+<div style="display: flex">
+            <div class="node-title"></div>
+            <div class="node-field"> 	jurisdiction </div>
+            <div> jurisdiction description </div>
+
+        </div>
+            {% for intermediary in intermediaries %}
+                <div style="display: flex; width: 100%;">
+                <div class="node-title"> <li><a href="/search/{{ intermediary.node_id }}"> {{intermediary.name}}   </a></li>  </div>
+                 <div class="node-field">{{intermediary.jurisdiction}} </div>
+                 <div class="node-field">{{intermediary.jurisdiction_description}} </div>
+
+                </div>
+                {% endfor %}

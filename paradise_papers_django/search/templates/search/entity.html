@@ -1,0 +1,18 @@
+        <div style="display: flex; margin-bottom: 15px">
+            <div class="node-title"></div>
+            <div  class="node-field"> Incorportation </div>
+            <div  class="node-field"> Jurisdiction </div>
+            <div  class="node-field"> Status </div>
+             <div class="node-field"> Data From </div>
+        </div>
+            {% for entity in entities %}
+                <div style="display: flex; margin-bottom: 15px">
+                            <div class="node-title"> <li><a href="/search/{{ entity.node_id }}"> {{entity.name}}   </a></li>  </div>
+                             <div class="node-field">{{entity.incorporation_date}} </div>
+                             <div class="node-field">{{entity.jurisdiction_description}} </div>
+                            <div class="node-field">{{entity.status}} </div>
+                            <div class="node-field">{{entity.sourceID}} </div>
+                </div>
+                {% endfor %}
+
+

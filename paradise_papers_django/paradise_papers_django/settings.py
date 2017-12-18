@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-
+from neomodel import config
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -27,10 +27,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+#Connect to Neo4j Database
+# NEOMODEL_NEO4J_BOLT_URL = os.environ.get('NEO4J_BOLT_URL', 'bolt://paradisepapers:paradisepapers@165.227.223.190:7687')
+config.DATABASE_URL = 'bolt://paradisepapers:paradisepapers@165.227.223.190:7687'  # default
+config.DATABASE_URL = 'bolt://paradisepapers:paradisepapers@165.227.223.190:7687'  # default
 # Application definition
 
 INSTALLED_APPS = [
+    'django_neomodel',
+    'search.apps.SearchConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,7 +59,7 @@ ROOT_URLCONF = 'paradise_papers_django.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'paradise_papers_django\\templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,3 +123,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{ node_info.name }} </title>
+
+</head>
+<body>
+
+<h1 class="company-title"> {{ node_info.name }} </h1>
+<h3>  Address: {{ node_info.address }}</h3>
+<p>Incorporated:<strong>{{ node_info.incorporation_date }} </strong> </p>
+<p>Registered in: {{ node_info.jurisdiction_description }}</p>
+<p>Source: {{ node_info.sourceID }}</p>
+<p>Status: <strong>{{ node_info.status }}</strong></p>
+<p>Linked countries: {{ node_info.countries }}</p>
+{{ node_info.id }}
+<hr>
+
+
+{% if officers %}
+<div> <span> Connected to  <strong> {{ officers|length }} officers</strong></span></div>
+{% endif  %}
+{% if intermediaries %}
+<div><span>  Connected to  <strong> {{ intermediaries|length }} intermediaries</strong></span></div>
+
+
+
+<h4>its Intermediary: </h4>
+
+	{% for intermediary in intermediaries %}
+            <h3>{{ intermediary.name }}</h3>
+        <p>Status: {{ intermediary.status }}</p>
+         <p>Countries: {{ intermediary.countries }}</p>
+{% endfor %}
+<hr>
+{% endif  %}
+{% if officers %}
+<h4> its Officer: </h4>
+
+	{% for off in officers %}
+	<ul>
+        <li>{{ off.name }}</li>
+            <ul>countries: {{ off.countries }}</ul>
+            <ul>source: {{ off.sourceID }}</ul>
+    </ul>
+		{% endfor%}
+{% endif  %}
+</body>
+
+<script type="text/javascript">
+
+</script>
+</html>
