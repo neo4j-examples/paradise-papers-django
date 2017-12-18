@@ -1,0 +1,27 @@
+<div id="intermediary" style="display: none" >
+    <div  style="display: flex ">
+
+            <div class="node-title"></div>
+            <div class="node-field">Country</div>
+            <div class="node-field"> status</div>
+
+    </div>
+            {% for intermediary in intermediaries %}
+                <div style="display: flex; width: 100%;">
+                    <div class="node-title">
+                        <li><a href="/search/{{ intermediary.node_id }}"> {{intermediary.name}}</a></li>
+                    </div>
+
+                     <div class="node-field">
+                         {{intermediary.countries}}
+                     </div>
+
+                     <div class="node-field">
+                         {{intermediary.status}}
+                     </div>
+
+                </div>
+            {% endfor %}
+
+    </div>
+    
