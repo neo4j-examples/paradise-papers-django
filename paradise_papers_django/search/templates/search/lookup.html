@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search results for "{{ word_searched }} "</title>
+
+</head>
+<body>
+<form action="?node={{node_type}}" method="get">
+    <input id="wordsearch" type="text" name="wordsearch" value="{{ wordsearch }}">
+    <input type="hidden" name="node" value={{ node_type }}>
+    {% csrf_token %}
+    <input type="submit" value="OK">
+    <input type="hidden" name="country-selected" value="{{country_selected}}">
+    <span class="applied_filter">
+          <span class="filter_name">Country</span>
+        {{ country_selected }}
+        </span>
+
+</form>
+
+    <h1>Search results for " {{ word_searched }} "</h1>
+        <span><a href="?node=entity&country-selected={{ country_selected }}&wordsearch={{ word_searched }}"> Offshore Entities </a> <span>( {{ entities|length }} )</span> </span>
+        <span><a href="?node=officer&country-selected={{ country_selected }}&wordsearch={{ word_searched }}">  Officers </a> <span>( {{ officers|length }} )</span> </span>
+    <hr>
+
+    <div style="display: flex;">
+
+        <div style="width: 50%">
+            {% with template_name=node_type|stringformat:"s"|add:".html" %}
+            {% include "search/"|add:template_name %}
+            {% endwith %}
+
+        </div>
+
+        <div style="width: 50%">
+            <h3>Filter By Country</h3>
+               <form action="?node={{node_type}}" method="get">
+                  <input type="hidden" name="wordsearch" value={{ word_searched }}>
+                   <input type="hidden" name="node" value={{ node_type }}>
+                  <select name="country-selected">
+                    <option name="countryselected" value="allcountry"> All Countries</option>
+                    {% for country in countries  %}
+                        <option name="countryselected" value="{{ country.1 }}"> {{ country.1 }}</option>
+                    {% endfor%}
+                </select>
+                <input type="submit" value="OK">
+            </form>
+
+        </div>
+
+    </div>
+</body>
+</html>

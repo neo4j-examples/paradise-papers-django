@@ -1,0 +1,17 @@
+ {% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{ company_info.name }} </title>
+    <link rel="stylesheet" href="{% static 'search/base.css' %}">
+</head>
+<body>
+<header>
+    <h1>
+        Django Project using Neomodel
+    </h1>
+</header>
+
+        {% block body_block %}This is body_block's default content.{% endblock %}
+    </body>
+</html>

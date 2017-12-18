@@ -1,0 +1,40 @@
+body {
+    font-size: 16px;
+    font-family: "Merriweather", Georgia, Times New Roman, Times, serif;
+    background: #FFF;
+    color: #333;
+}
+.search_box .search_content {
+    background: #F4EDEA;
+    padding: 2rem 1.5rem;
+     box-sizing: border-box;
+}
+
+.applied_filter {
+    min-width: 60px;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    background: #EDD8CC;
+    padding: .1em 1em .1em .5em;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #A5A5A5;
+    margin-right: .5em;
+}
+.applied_filter span {
+    cursor: pointer;
+    display: block;
+    font-size: .6em;
+    color: #852308;
+}
+.company-title {
+    font-family: "Lato", "Source Sans Pro", sans-serif, Arial;
+    text-transform: none;
+    font-weight: 700;
+    margin: 0 0 1em 0;
+    color: #9f9b9a;
+}
+
