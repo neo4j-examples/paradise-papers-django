@@ -2,14 +2,14 @@
 <p>Linked countries: {{ node_info.countries }}</p>
 <p>Data From: {{node_info.sourceID}}</p>
 
-    {% if addressess %}
+{% if addressess %}
     <div>
         <span>  Connected to  <strong> {{ addressess|length }} Address</strong></span>
     </div>
-    {% endif  %}
+{% endif  %}
 
-    {% if entities %}
+{% if entities %}
     <div>
         <span> Connected to  <strong> {{ entities|length }} entities</strong></span>
     </div>
-    {% endif  %}
+{% endif  %}

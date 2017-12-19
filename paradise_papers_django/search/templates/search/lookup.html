@@ -3,79 +3,50 @@
     {% include "search/searchbar.html" %}
 
         <h1>Search results for " {{ word_searched }} "</h1>
-            <span><a href="#" onclick="displayEntity(event)"> Offshore Entities </a> <span>( {{ entities|length }} )</span> </span>
-            <span><a href="#" onclick="displayOfficer(event)">  Officers </a> <span>( {{ officers|length }} )</span> </span>
-            <span><a href="#" onclick="displayIntermediaries(event)">  intermediaries </a> <span>( {{ intermediaries|length }} )</span> </span>
+        <nav class="nav-main">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <button type="button" class="nav-button active" onclick="handleListVisibility(event, '.entity-container')">
+                        <span>Offshore Entities</span>
+                    </button>
+                    <span>( {{ entities|length }} )</span>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-button" onclick="handleListVisibility(event, '.officer-container')">
+                        <span>Officers</span>
+                    </button>
+                    <span>( {{ officers|length }} )</span>
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="nav-button" onclick="handleListVisibility(event, '.intermediary-container')">
+                        <span>Intermediaries</span>
+                    </button>
+                    <span>( {{ intermediaries|length }} )</span>
+                </li>
+            </ul>
+        </nav>
         <hr>
 
-        <div style="display: flex;">
-
-            <div style="width: 70%">
+        <div class="page-continer">
+            <div class="list-continer">
                 {% include "search/nodes_templates/entity.html" %}
                 {% include "search/nodes_templates/officer.html" %}
                 {% include "search/nodes_templates/intermediary.html" %}
-
             </div>
-
-            <div style="width: 30%">
+            <div class="side-serch">
                 <h3>Filter By Country</h3>
-                   <form action="" method="get">
-                      <input type="hidden" name="wordsearch" value="{{ word_searched }}">
-                       <input type="hidden" name="node" value={{ node_type }}>
-                          <select name="country-selected">
-
-                            <option name="countryselected" value="allcountry"> All Countries</option>
-
-                            {% for country in countries  %}
-                                <option name="countryselected" value="{{ country.1 }}"> {{ country.1 }}</option>
-                            {% endfor%}
-
-                        </select>
-
+                <form action="" method="GET">
+                    <input type="hidden" name="wordsearch" value="{{ word_searched }}">
+                    <input type="hidden" name="node" value={{ node_type }}>
+                    <select name="country-selected">
+                        <option name="countryselected" value="allcountry">All Countries</option>
+                        {% for country in countries %}
+                            <option name="countryselected" value="{{ country.1 }}">{{ country.1 }}</option>
+                        {% endfor%}
+                    </select>
 
                     <input type="submit" value="OK">
                 </form>
-
             </div>
-
         </div>
-
-    <script>
-    function displayEntity(event){
-
-          event.preventDefault();
-          $('#entity').show();
-
-          $('#officer').hide();
-
-          $('#intermediary').hide();
-
-
-    }
-    function displayOfficer(event){
-          event.preventDefault();
-
-          $('#entity').hide();
-
-          $('#officer').show();
-
-          $('#intermediary').hide();
-    }
-    function displayIntermediaries(event){
-
-          event.preventDefault();
-
-          $('#entity').hide();
-
-          $('#officer').hide();
-
-          $('#intermediary').show();
-
-
-    }
-
-    </script>
-
-    {% endblock %}
-
-
+{% endblock %}

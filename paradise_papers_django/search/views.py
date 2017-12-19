@@ -8,9 +8,9 @@ class Index(TemplateView):
     template_name = 'search/index.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super(Index, self).get_context_data(*args, **kwargs)
+        context   = super(Index, self).get_context_data(*args, **kwargs)
         countries = get_all_countries()
-        context = {
+        context   = {
             'countries': countries[0]
         }
 

@@ -1,27 +1,22 @@
-<div id="intermediary" style="display: none" >
-    <div  style="display: flex ">
-
-            <div class="node-title"></div>
-            <div class="node-field">Country</div>
-            <div class="node-field"> status</div>
-
+<div id="intermediary" class="intermediary-container">
+    <div class="column-section">
+        <div class="node-title"></div>
+        <div class="node-field">Country</div>
+        <div class="node-field">Status</div>
     </div>
-            {% for intermediary in intermediaries %}
-                <div style="display: flex; width: 100%;">
-                    <div class="node-title">
-                        <li><a href="/search/{{ intermediary.node_id }}"> {{intermediary.name}}</a></li>
-                    </div>
 
-                     <div class="node-field">
-                         {{intermediary.countries}}
-                     </div>
+    {% for intermediary in intermediaries %}
+        <div class="column-content">
+            <div class="node-title">
+                <a href="/search/{{ intermediary.node_id }}"> {{intermediary.name}}</a>
+            </div>
+            <div class="node-field">
+                {{intermediary.countries}}
+            </div>
 
-                     <div class="node-field">
-                         {{intermediary.status}}
-                     </div>
-
-                </div>
-            {% endfor %}
-
-    </div>
-    
+            <div class="node-field">
+                {{intermediary.status}}
+            </div>
+        </div>
+    {% endfor %}
+</div>
