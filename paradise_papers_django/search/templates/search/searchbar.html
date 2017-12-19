@@ -1,21 +1,10 @@
-<form action="?node={{node_type}}" method="get">
-
+<form action="?node={{node_type}}" method="get">{% csrf_token %}
     <input id="wordsearch" type="text" name="wordsearch" value="{{ wordsearch }}">
-
     <input type="hidden" name="node" value="{{ node_type }}">
-
-    {% csrf_token %}
-
     <input type="submit" value="OK">
-
     <span class="applied_filter">
-
-          <span class="filter_name">Country</span>
-
+        <span class="filter_name">Country</span>
         {{ country_selected }}
-
-          <input type="hidden" name="country-selected" value="{{ country_selected }}">
-
-        </span>
-
+        <input type="hidden" name="country-selected" value="{{ country_selected }}">
+    </span>
 </form>

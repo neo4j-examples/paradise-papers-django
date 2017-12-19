@@ -1,4 +1,5 @@
-body {
+body,
+.nav-button span {
   background: #FFF;
   color: #333;
   font-family: "Merriweather", Georgia, Times New Roman, Times, serif;
@@ -55,6 +56,7 @@ body {
     margin-top: 15px;
     text-transform: uppercase;
 }
+
 .node-title {
     width: 35%;
 }
@@ -117,4 +119,66 @@ option {
     border-bottom: 2px solid #efefef;
     position: relative;
     z-index: 1;
+}
+
+.entity-container .column-section,
+.entity-container .column-content,
+.intermediary-container .column-section {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.intermediary-container .column-content,
+.officer-container .column-content {
+    display: flex;
+    width: 100%;
+}
+
+.nav-main,
+.page-continer,
+.officer-container .column-section {
+    display: flex;
+}
+
+.nav-list {
+    list-style-type: none;
+    margin: 0;
+}
+
+.nav-item {
+    display: inline-block;
+}
+
+.nav-button {
+    border: none;
+    background: none;
+    color: blue;
+    text-decoration: underline;
+}
+
+.nav-button span {
+    color: #0000ff
+}
+
+.active {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+}
+
+.active span {
+    color: #d3d3d3;
+}
+
+.intermediary-container,
+.officer-container {
+    display: none;
+}
+
+.list-continer {
+    width: 70%;
+}
+
+.side-serch {
+    width: 30%;
 }

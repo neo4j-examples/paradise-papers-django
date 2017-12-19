@@ -1,25 +1,23 @@
-   <div id="officer" style="display: none">
-      <div  style="display: flex ">
-            <div class="node-title"></div>
-            <div class="node-field"> 	Linked To </div>
-            <div class="node-field"> Data From </div>
+<div id="officer" class="officer-container">
+    <div class="column-section">
+        <div class="node-title"></div>
+        <div class="node-field">Linked To</div>
+        <div class="node-field">Data From</div>
+    </div>
 
-      </div>
-            {% for officer in officers %}
-                <div style="display: flex; width: 100%;">
-                    <div class="node-title" >
-                        <li><a href="/search/{{ officer.node_id }}"> {{officer.name}}   </a></li>
-                    </div>
+    {% for officer in officers %}
+        <div class="column-content">
+            <div class="node-title">
+                <a href="/search/{{ officer.node_id }}">{{officer.name}}</a>
+            </div>
 
-                     <div class="node-field" >
-                         {{officer.countries}}
-                     </div>
+            <div class="node-field">
+                {{officer.countries}}
+            </div>
 
-                     <div class="node-field">
-                         {{officer.sourceID}}
-                     </div>
-
-                </div>
-            {% endfor %}
-
-   </div>
+            <div class="node-field">
+                {{officer.sourceID}}
+            </div>
+        </div>
+    {% endfor %}
+</div>
