@@ -1,9 +1,3 @@
-body {
-    font-size: 16px;
-    font-family: "Merriweather", Georgia, Times New Roman, Times, serif;
-    background: #FFF;
-    color: #333;
-}
 .search_box .search_content {
     background: #F4EDEA;
     padding: 2rem 1.5rem;
@@ -37,4 +31,3 @@ body {
     margin: 0 0 1em 0;
     color: #9f9b9a;
 }
-
