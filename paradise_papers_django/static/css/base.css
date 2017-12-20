@@ -64,19 +64,42 @@ body {
     padding: 1px;
 }
 
-.tab {
-    background-color: #F4EDEA;
-    display: inline-block;
-    margin: 0 1em 0 0;
-    max-width: 250px;
-    height: 50px;
-    padding: 1rem 1.5rem;
-    float: left;
-    -webkit-border-radius: 5px 5px 0 0;
-    -moz-border-radius: 5px 5px 0 0;
-    -khtml-border-radius: 5px 5px 0 0;
-    border-radius: 5px 5px 0 0;
+/*.tab {*/
+    /*background-color: #F4EDEA;*/
+    /*display: inline-block;*/
+    /*margin: 0 1em 0 0;*/
+    /*max-width: 250px;*/
+    /*height: 50px;*/
+    /*padding: 1rem 1.5rem;*/
+    /*float: left;*/
+    /*-webkit-border-radius: 5px 5px 0 0;*/
+    /*-moz-border-radius: 5px 5px 0 0;*/
+    /*-khtml-border-radius: 5px 5px 0 0;*/
+    /*border-radius: 5px 5px 0 0;*/
+    /*-webkit-transition: all 0.15s ease-out 0s;*/
+    /*-moz-transition: all 0.15s ease-out 0s;*/
+    /*transition: all 0.15s ease-out 0s;*/
+/*}*/
+
+input[type=submit], .button {
     -webkit-transition: all 0.15s ease-out 0s;
     -moz-transition: all 0.15s ease-out 0s;
     transition: all 0.15s ease-out 0s;
+    border: 0;
+    background: #852308;
+    color: #FFF;
+    padding: 0 2em;
+    text-transform: uppercase;
+    font-style: 700;
+    cursor: pointer;
+}
+
+input[type=text], input[type=email], input[type=submit], .button, .option, select, option {
+    height: 54px;
+    vertical-align: middle;
+}
+
+.search_content input[type=text] {
+    max-width: 585px;
+    width: 100%;
 }
