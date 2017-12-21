@@ -55,4 +55,4 @@ def nodes(request, node_id):
         context = {
             'node_info': node_info,
         }
-    return render(request , 'search/basenode.html', context);
+    return render(request , 'search/nodeSearch.html', context);

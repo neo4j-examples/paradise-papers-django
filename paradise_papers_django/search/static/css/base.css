@@ -114,3 +114,10 @@ input[type=text], input[type=email], input[type=submit], .button, .option, selec
     max-width: 585px;
     width: 100%;
 }
+
+.header-border {
+        height: 95px;
+    position: relative;
+    z-index: 1;
+    border-bottom: 2px solid #efefef;
+}

@@ -93,6 +93,17 @@ input[type=submit], .button {
     font-style: 700;
     cursor: pointer;
 }
+textarea, input[type=text], input[type=email], input[type=submit], .button, .option, select {
+    box-sizing: border-box;
+    padding: 0 1em;
+    margin: 0 .5em 0 0;
+    display: inline-block;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #A5A5A5;
+}
 
 input[type=text], input[type=email], input[type=submit], .button, .option, select, option {
     height: 54px;
@@ -102,4 +113,11 @@ input[type=text], input[type=email], input[type=submit], .button, .option, selec
 .search_content input[type=text] {
     max-width: 585px;
     width: 100%;
+}
+
+.header-border {
+        height: 95px;
+    position: relative;
+    z-index: 1;
+    border-bottom: 2px solid #efefef;
 }

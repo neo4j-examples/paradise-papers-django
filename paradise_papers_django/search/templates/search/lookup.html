@@ -1,14 +1,5 @@
- {% load staticfiles %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Search results for "{{ word_searched }} "</title>
-
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
 <form action="?node={{node_type}}" method="get">
     <input id="wordsearch" type="text" name="wordsearch" value="{{ wordsearch }}">
     <input type="hidden" name="node" value={{ node_type }}>
@@ -32,7 +23,7 @@
 
         <div style="width: 70%">
             {% with template_name=node_type|stringformat:"s"|add:".html" %}
-            {% include "search/"|add:template_name %}
+            {% include "search/nodes_templates/"|add:template_name %}
             {% endwith %}
 
         </div>
@@ -59,5 +50,4 @@
         </div>
 
     </div>
-</body>
-</html>
+{% endblock %}
