@@ -1,0 +1,123 @@
+body {
+  font-size: 16px;
+  font-family: "Merriweather", Georgia, Times New Roman, Times, serif;
+  background: #FFF;
+  color: #333;
+}
+
+.search_content {
+    background: #F4EDEA;
+    padding: 2rem 1.5rem;
+     box-sizing: border-box;
+}
+
+.applied_filter {
+    min-width: 60px;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    background: #EDD8CC;
+    padding: .1em 1em .1em .5em;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #A5A5A5;
+    margin-right: .5em;
+}
+.applied_filter span {
+    cursor: pointer;
+    display: block;
+    font-size: .6em;
+    color: #852308;
+}
+.company-title {
+    font-family: "Lato", "Source Sans Pro", sans-serif, Arial;
+    text-transform: none;
+    font-weight: 700;
+    margin: 0 0 1em 0;
+    color: #9f9b9a;
+}
+
+.cont_project_title {
+    display: inline-block;
+    font-size: 1.3em;
+    font-weight: 700;
+    font-family: "Lato", "Source Sans Pro", sans-serif, Arial;
+    margin-left: 90px;
+}
+
+.project_title {
+    text-transform: uppercase;
+    color: #852308;
+    font-size: 18px;
+    margin-top: 15px;
+    font-weight: 900;
+}
+.node-title {
+    width: 35%;
+}
+
+.node-field {
+    width: 10%;
+    margin: 10px;
+    padding: 1px;
+}
+
+/*.tab {*/
+    /*background-color: #F4EDEA;*/
+    /*display: inline-block;*/
+    /*margin: 0 1em 0 0;*/
+    /*max-width: 250px;*/
+    /*height: 50px;*/
+    /*padding: 1rem 1.5rem;*/
+    /*float: left;*/
+    /*-webkit-border-radius: 5px 5px 0 0;*/
+    /*-moz-border-radius: 5px 5px 0 0;*/
+    /*-khtml-border-radius: 5px 5px 0 0;*/
+    /*border-radius: 5px 5px 0 0;*/
+    /*-webkit-transition: all 0.15s ease-out 0s;*/
+    /*-moz-transition: all 0.15s ease-out 0s;*/
+    /*transition: all 0.15s ease-out 0s;*/
+/*}*/
+
+input[type=submit], .button {
+    -webkit-transition: all 0.15s ease-out 0s;
+    -moz-transition: all 0.15s ease-out 0s;
+    transition: all 0.15s ease-out 0s;
+    border: 0;
+    background: #852308;
+    color: #FFF;
+    padding: 0 2em;
+    text-transform: uppercase;
+    font-style: 700;
+    cursor: pointer;
+}
+textarea, input[type=text], input[type=email], input[type=submit], .button, .option, select {
+    box-sizing: border-box;
+    padding: 0 1em;
+    margin: 0 .5em 0 0;
+    display: inline-block;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #A5A5A5;
+}
+
+input[type=text], input[type=email], input[type=submit], .button, .option, select, option {
+    height: 54px;
+    vertical-align: middle;
+}
+
+.search_content input[type=text] {
+    max-width: 585px;
+    width: 100%;
+}
+
+.header-border {
+        height: 95px;
+    position: relative;
+    z-index: 1;
+    border-bottom: 2px solid #efefef;
+}

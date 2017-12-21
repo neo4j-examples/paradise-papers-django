@@ -26,13 +26,13 @@ SECRET_KEY = '_mh1o(m87t^h_s!n6^mdk*88nn_z6f(3bvgbcrbocoeui2!z59'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'paradise-papaers-django.herokuapp.com',
+    'paradise-papers-django.herokuapp.com',
 ]
 
 #Connect to Neo4j Database
 # NEOMODEL_NEO4J_BOLT_URL = os.environ.get('NEO4J_BOLT_URL', 'bolt://paradisepapers:paradisepapers@165.227.223.190:7687')
-config.DATABASE_URL = 'bolt://paradisepapers:paradisepapers@165.227.223.190:7687'  # default
-config.DATABASE_URL = 'bolt://paradisepapers:paradisepapers@165.227.223.190:7687'  # default
+config.DATABASE_URL = 'bolt://paradisepapers:paradisepapers@174.138.63.95:7687'  # default
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -61,7 +62,7 @@ ROOT_URLCONF = 'paradise_papers_django.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'paradise_papers_django\\templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'paradise_papers_django', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,4 +127,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
+STATIC_ROOT = os.path.join(BASE_DIR, "live-static-files", "static-root")
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'

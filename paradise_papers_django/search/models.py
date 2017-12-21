@@ -33,12 +33,13 @@ class Other(DjangoNode):
     node_id = IntegerProperty()
 
 class Intermediary(DjangoNode):
+    sourceID = StringProperty()
+    valid_until = StringProperty()
     name = StringProperty()
-    pagerank_g = StringProperty()
-    jurisdiction_description = StringProperty()
-    jurisdiction = StringProperty()
+    country_codes = StringProperty()
+    countries = StringProperty()
     node_id = StringProperty()
-
+    status = StringProperty()
 class Officer(DjangoNode):
     sourceID = StringProperty()
     name = StringProperty()

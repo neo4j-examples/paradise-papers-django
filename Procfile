@@ -1,1 +1,1 @@
-web: gunicorn --chdir paradise_papers_django paradise_papers_django.wsgi:application
+web: python app/paradise_papers_dejango/manage.py collectstatic --noinput; gunicorn --chdir paradise_papers_django paradise_papers_django.wsgi:application
