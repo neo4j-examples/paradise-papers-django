@@ -12,13 +12,16 @@
 {{ node_info.id }}
 <hr>
 
+{% if addressess %}
+<div><span>  Connected to  <strong> {{ addressess|length }} Address</strong></span></div>
+{% endif  %}
 
 {% if officers %}
 <div> <span> Connected to  <strong> {{ officers|length }} officers</strong></span></div>
 {% endif  %}
+
 {% if intermediaries %}
 <div><span>  Connected to  <strong> {{ intermediaries|length }} intermediaries</strong></span></div>
-
 
 
 <h4>its Intermediary: </h4>
@@ -41,5 +44,12 @@
     </ul>
 		{% endfor%}
 {% endif  %}
+
+
+{% if addressess %}
+<h4>Address connected: </h4>
+{{ addressess }}
+{% endif  %}
+
 
 {% endblock %}

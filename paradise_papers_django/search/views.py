@@ -43,12 +43,14 @@ def lookup(request):
 def nodes(request, node_id):
     try:
         node_info = Entity.nodes.get(node_id=node_id)
-        intermediaries = node_info.Intermediary_of()
-        officers = node_info.Officer_of()
+        intermediaries = node_info.Intermediaries.all()
+        officers = node_info.Officers.all()
+        addressess = node_info.Addressess.all()
         context = {
             'node_info': node_info,
             'intermediaries': intermediaries,
             'officers' : officers,
+            'addressess' : addressess,
         }
     except Entity.DoesNotExist:
         node_info = Officer.nodes.get(node_id=node_id)

@@ -22,14 +22,10 @@ class Entity(DjangoNode):
     incorporation_date=StringProperty()
     node_id = StringProperty()
     status = StringProperty()
+    Officers = RelationshipFrom('Officer', 'OFFICER_OF')
+    Intermediaries = RelationshipFrom('Intermediary', 'INTERMEDIARY_OF')
+    Addressess = RelationshipTo('Address', 'REGISTERED_ADDRESS')
 
-    def Intermediary_of(self):
-        results = self.cypher("START p=node({self}) MATCH n=(x)-[r:INTERMEDIARY_OF]->(p) RETURN x LIMIT 25")
-        return [self.inflate(row[0]) for row in results[0]]
-
-    def Officer_of(self):
-        results =  self.cypher("START p=node({self}) MATCH n=(x)-[r:OFFICER_OF]->(p) RETURN x LIMIT 25")
-        return [self.inflate(row[0]) for row in results[0]]
 class Other(DjangoNode):
     sourceID = StringProperty()
     name = StringProperty()
@@ -51,7 +47,7 @@ class Officer(DjangoNode):
     countries = StringProperty()
     node_id = StringProperty()
 
-class Adress(DjangoNode):
+class Address(DjangoNode):
     sourceID = StringProperty()
     country_codes = StringProperty()
     valid_unti = StringProperty()
@@ -70,4 +66,4 @@ install_labels(Entity)
 install_labels(Other)
 install_labels(Intermediary)
 install_labels(Officer)
-install_labels(Adress)
+install_labels(Address)
