@@ -1,0 +1,14 @@
+      <div style="display: flex">
+            <div class="node-title"></div>
+            <div class="node-field"> 	Linked To </div>
+            <div class="node-field"> Data From </div>
+
+        </div>
+            {% for officer in officers %}
+                <div style="display: flex; width: 100%;">
+                <div class="node-title" > <li><a href="/search/{{ officer.node_id }}"> {{officer.name}}   </a></li>  </div>
+                 <div class="node-field" >{{officer.incorporation_date}} </div>
+                 <div class="node-field">{{officer.jurisdiction_description}} </div>
+
+                </div>
+                {% endfor %}
