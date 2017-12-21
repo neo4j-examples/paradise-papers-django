@@ -25,7 +25,7 @@ def lookup(request):
     if (country_selected != 'allcountry'):
         entity_nodes = entity_nodes.filter(countries__icontains=country_selected)
         officer_nodes = officer_nodes.filter(countries__icontains=country_selected)
-        intermediary_nodes = Intermediary.nodes.filter(jurisdiction_description__icontains=country_selected)
+        intermediary_nodes = Intermediary.nodes.filter(countries__icontains=country_selected)
 
     context = {
         'countries': countries[0],

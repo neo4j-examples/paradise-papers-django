@@ -28,9 +28,13 @@ class Entity(DjangoNode):
 
 class Other(DjangoNode):
     sourceID = StringProperty()
+    note = StringProperty()
+    valid_until = StringProperty()
     name = StringProperty()
-    valid_unti = StringProperty()
-    node_id = IntegerProperty()
+    country_codes = StringProperty()
+    node_id = StringProperty()
+    countries = StringProperty()
+    node_id = StringProperty()
 
 class Intermediary(DjangoNode):
     sourceID = StringProperty()
@@ -44,14 +48,14 @@ class Officer(DjangoNode):
     sourceID = StringProperty()
     name = StringProperty()
     country_codes = StringProperty()
-    valid_unti = StringProperty()
+    valid_until = StringProperty()
     countries = StringProperty()
     node_id = StringProperty()
 
 class Address(DjangoNode):
     sourceID = StringProperty()
     country_codes = StringProperty()
-    valid_unti = StringProperty()
+    valid_until = StringProperty()
     address = StringProperty()
     countries = StringProperty()
     node_id = IntegerProperty()
