@@ -3,10 +3,6 @@ from neomodel import *
 from neomodel import db
 from django_neomodel import DjangoNode
 
-# config.DATABASE_URL = 'bolt://paradisepapers:paradisepapers@165.227.223.190:7687'
-# Create your models here.
-
-
 #Class for Neo4j databaser nodes
 class Entity(DjangoNode):
     sourceID = StringProperty()
@@ -15,22 +11,29 @@ class Entity(DjangoNode):
     service_provider = StringProperty()
     countries = StringProperty()
     jurisdiction_description =  StringProperty()
-    valid_unti = StringProperty()
+    valid_until = StringProperty()
     ibcRUC = StringProperty()
     name = StringProperty()
     country_codes = StringProperty()
     incorporation_date=StringProperty()
     node_id = StringProperty()
     status = StringProperty()
-    Officers = RelationshipFrom('Officer', 'OFFICER_OF')
-    Intermediaries = RelationshipFrom('Intermediary', 'INTERMEDIARY_OF')
-    Addressess = RelationshipTo('Address', 'REGISTERED_ADDRESS')
-    Others = RelationshipTo('Other' , 'CONNECTED_TO')
+    officers = RelationshipFrom('Officer', 'OFFICER_OF')
+    intermediaries = RelationshipFrom('Intermediary', 'INTERMEDIARY_OF')
+    addressess = RelationshipTo('Address', 'REGISTERED_ADDRESS')
+    others = RelationshipFrom('Other', 'CONNECTED_TO')
+    def Entities_relationship(self):
+        results = self.cypher("START p=node({self}) MATCH n=(p)<-[r]->(x:Entity) RETURN r, x.node_id as Node_id");
+        list =[];
+        for row in results[0]:
+            list.append((row[0].type, Entity.nodes.get(node_id=row[1])))
+        return list
+
 
 class Other(DjangoNode):
     sourceID = StringProperty()
     name = StringProperty()
-    valid_unti = StringProperty()
+    valid_until = StringProperty()
     node_id = StringProperty()
 
 class Intermediary(DjangoNode):
@@ -49,15 +52,15 @@ class Officer(DjangoNode):
     valid_until = StringProperty()
     countries = StringProperty()
     node_id = StringProperty()
-    Addressess = RelationshipTo('Address', 'REGISTERED_ADDRESS')
-    Entities = RelationshipTo('Entity', 'OFFICER_OF')
+    addresses = RelationshipTo('Address', 'REGISTERED_ADDRESS')
+    entities = RelationshipTo('Entity', 'OFFICER_OF')
 
 
 
 class Address(DjangoNode):
     sourceID = StringProperty()
     country_codes = StringProperty()
-    valid_unti = StringProperty()
+    valid_until = StringProperty()
     address = StringProperty()
     countries = StringProperty()
     node_id = StringProperty()
@@ -65,9 +68,8 @@ class Address(DjangoNode):
 # Queries Functions
 def get_all_countries():
     query = "MATCH (n) WHERE NOT n.countries CONTAINS ';' RETURN DISTINCT 'node' as entity, n.countries AS countries UNION ALL MATCH ()-[r]-() WHERE EXISTS(r.countries) RETURN DISTINCT 'relationship' AS entity, r.countries AS countries"
-    results =  db.cypher_query(query)
+    results = db.cypher_query(query)
     return results
-
 
 install_labels(Entity)
 install_labels(Other)

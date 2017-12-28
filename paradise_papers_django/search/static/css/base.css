@@ -115,12 +115,11 @@ option {
 }
 
 .header-border {
-    height: 95px;
     border-bottom: 2px solid #efefef;
+    height: 95px;
     position: relative;
     z-index: 1;
 }
-
 .entity-container .column-section,
 .entity-container .column-content,
 .intermediary-container .column-section {
@@ -150,8 +149,8 @@ option {
 }
 
 .nav-button {
-    border: none;
     background: none;
+    border: none;
     color: blue;
     text-decoration: underline;
 }
@@ -161,8 +160,8 @@ option {
 }
 
 .active {
-    pointer-events: none;
     cursor: default;
+    pointer-events: none;
     text-decoration: none;
 }
 
@@ -181,4 +180,217 @@ option {
 
 .side-serch {
     width: 30%;
+}
+
+.node header {
+    margin: 2em 0;
+    position: relative;
+}
+.node header h3.node-title {
+    color: #999;
+    font-size: .75em;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+ul.relationships  {
+    font-size: 1.25em;
+    margin: 0 0 1em 0;
+}
+
+ul.relationships  li {
+    margin: 0 0 .5em 0;
+
+}
+
+ul.node-information li  {
+    list-style-type: none;
+    margin: 0 0 .5em 0;
+    padding: 0 2em 0 0;
+}
+ul.node-information li span{
+    display: inline-block;
+}
+
+.node a.node-link {
+    -moz-transition: all 0.15s ease-out 0s;
+    -webkit-transition: all 0.15s ease-out 0s;
+    color: #F8B700;
+    margin: 0 0 .5em 0;
+    outline: none;
+    transition: all 0.15s ease-out 0s;
+}
+
+.left-side{
+    width: 50%;
+}
+.right-side {
+    border-left: 1px solid #efefef;
+    box-sizing: border-box;
+    padding: 0 0 0 2em;
+    width: 50%;
+}
+
+.main-info {
+    -ms-align-content: flex-start;
+    -ms-flex-flow: row wrap;
+    -webkit-align-content: flex-start;
+    -webkit-flex-flow: row wrap;
+    align-content: flex-start;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    font-family: "Lato", "Source Sans Pro", sans-serif, Arial;
+    font-size: .85em;
+    text-rendering: optimizespeed;
+}
+
+.search_content {
+    font-family: "Lato", "Source Sans Pro", sans-serif, Arial;
+}
+.search_results_cont.connections h2 {
+    color: #852308;
+    font-size: 1em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.search_results_cont.connections h3 {
+    color: #852308;
+    font-size: 1.8em;
+    font-weight: 200;
+    margin: 0.5em 0;
+}
+
+table.display-relationship {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+}
+
+table.body-table-style th {
+    background: #EDD8CC;
+    padding: 4px 12px;
+}
+
+table.body-table-style th,
+table.body-table-style td {
+    color: #777;
+    font-size: .85em;
+    padding: 9px 12px;
+    text-align: center;
+}
+
+table.body-table-style tr:nth-child(odd) td {
+    background: #F3F3F3;
+}
+
+table.body-table-style td.source,
+table.body-table-style th.source{
+    text-align: right ;
+}
+
+table.body-table-style td.description {
+    text-align: left;
+}
+
+@media only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+    table.body-table-style,
+    table.body-table-stylee thead,
+    table.body-table-style tbody,
+    table.body-table-style th,
+    table.body-table-style td,
+    table.body-table-style tr {
+        display: block;
+    }
+
+    thead tr {
+        left: -9999px;
+        position: absolute;
+        top: -9999px;
+    }
+
+    tr {
+        border: 1px solid #ccc;
+    }
+
+    td {
+        border-bottom: 1px solid #eee;
+        border: none;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    td:before {
+        left: 0px;
+        padding-right: 15px;
+        position: absolute;
+        top: 6px;
+        white-space: nowrap;
+        width: 20%;
+    }
+
+    table.body-table-style td.source a,
+    table.body-table-style th.source a,
+    table.body-table-style td.description a,
+    table.body-table-style td span{
+        margin-left: 70px;
+        margin-right: 0px;
+        right: 0px;
+        text-align: right;
+}
+
+    .entity-table td:nth-of-type(1):before {
+        content: " ";
+    }
+    .entity-table td:nth-of-type(2):before {
+        content: "Role";
+    }
+    .entity-table td:nth-of-type(3):before {
+        content: "Incorporation";
+    }
+    .entity-table td:nth-of-type(4):before {
+        content: "Jurisdiction";
+    }
+    .entity-table td:nth-of-type(5):before {
+        content: "Status";
+    }
+    .entity-table td:nth-of-type(6):before {
+        content: "Data From";
+    }
+
+    .officer-table td:nth-of-type(1):before {
+        content: " ";
+    }
+    .officer-table td:nth-of-type(2):before {
+        content: "Country";
+    }
+    .officer-table td:nth-of-type(3):before {
+        content: "Data From";
+    }
+
+    .intermediary-table td:nth-of-type(1):before {
+        content: " ";
+    }
+    .intermediary-table td:nth-of-type(2):before {
+        content: "Status";
+    }
+    .intermediary-table td:nth-of-type(3):before {
+        content: "Data From";
+    }
+
+    .address-table td:nth-of-type(1):before {
+        content: " ";
+    }
+    .address-table td:nth-of-type(2):before {
+        content: "Data From";
+    }
+
+    .others-table td:nth-of-type(1):before {
+        content: " ";
+    }
+    .others-table td:nth-of-type(2):before {
+        content: "Data From";
+    }
 }

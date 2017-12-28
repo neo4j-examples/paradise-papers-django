@@ -1,60 +1,166 @@
-<h1 class="company-title"> {{ node_info.name }} </h1>
-<h3>  Address: {{ node_info.address }}</h3>
-<p>Incorporated:<strong>{{ node_info.incorporation_date }}</strong></p>
-<p>Registered in: {{ node_info.jurisdiction_description }}</p>
-<p>jurisdiction: {{ node_info.jurisdiction }}</p>
-<p>Service Provider: <strong>{{ node_info.service_provider }}</strong></p>
-<p>Linked countries: {{ node_info.countries }}</p>
-<hr>
-
-{% if others %}
-    <div>
-        <span>Connected to <strong>{{ others|length }} Others</strong></span>
-    </div>
-{% endif  %}
-
-{% if addressess %}
-    <div>
-        <span>Connected to  <strong>{{ addressess|length }} Address</strong></span>
-    </div>
-{% endif  %}
-
-{% if officers %}
-    <div>
-        <span>Connected to  <strong>{{ officers|length }} officers</strong></span>
-    </div>
-{% endif  %}
-
-{% if intermediaries %}
-    <div>
-        <span>Connected to  <strong> {{ intermediaries|length }} intermediaries</strong></span>
-    </div>
-
-    <h4>its Intermediary:</h4>
-    {% for intermediary in intermediaries %}
-        <h3>{{ intermediary.name }}</h3>
-        <p>Status: {{ intermediary.status }}</p>
-        <p>Countries: {{ intermediary.countries }}</p>
-    {% endfor %}
-    <hr>
-{% endif  %}
-
-{% if officers %}
-    <h4> its Officer:</h4>
-    {% for off in officers %}
-        <ul>
-            <li>{{ off.name }}</li>
+{% load nodes_extra %}
+<div class="node">
+   <header>
+      <h3 class="node-title">Entity</h3>
+      <h1 class="company-title">{{ node_info.name }}</h1>
+   </header>
+   <div class="main-info">
+      <div class="left-side">
+         <ul class="relationships">
+            {% if entity_connections %}
             <li>
-                <ul>countries: {{ off.countries }}</ul>
+               <span> Connected to <strong>{{ entity_connections|length }}{% if entity_connections|length > 1 %} Entities {% else %} Entity {% endif %}</strong></span>
+            </li>
+            {% endif %}
+            {% if others %}
+            <li>
+               <span> Connected to <strong>{{ others|length }}{% if others|length > 1 %} Others {% else %} Other {% endif %}</strong></span>
+            </li>
+            {% endif %}
+            {% if addressess %}
+            <li>
+               <span> Connected to <strong>{{ addressess|length }}{% if addressess|length > 1 %} Addresses {% else %} Address {% endif %}</strong></span>
+            </li>
+            {% endif %}
+            {% if officers %}
+            <li>
+               <span>Connected to <strong>{{ officers|length }}{% if officers|length > 1 %} Officers {% else %} officer {% endif %}</strong></span>
+            </li>
+            {% endif %}
+            {% if intermediaries %}
+            <li>
+               <span> Connected to <strong>{{ intermediaries|length }}{% if intermediaries|length > 1 %} Intermediaries {% else %} Intermediary {% endif %}</strong></span>
+            </li>
+            {% endif %}
+         </ul>
+         <ul class="node-information">
+            <li>
+               <span>Incorporated:</span> <strong>{{ node_info.incorporation_date }}</strong>
             </li>
             <li>
-                <ul>source: {{ off.sourceID }}</ul>
+               <span>Status:</span> <strong>{{ node_info.status }}</strong>
             </li>
-        </ul>
-    {% endfor%}
-{% endif  %}
+            <li>
+               <span>Registered in:</span> <a class="node-link" href="#">{{ node_info.jurisdiction_description }}</a>
+            </li>
+            <li>
+               <span>Linked countries:</span> <a class="node-link" href="#">{{ node_info.countries }}</a>
+            </li>
+         </ul>
+      </div>
+      <div class="right-side">
+         <ul>
+            <li>
+               <span>Data from:</span> <a class="node-link" href="#">{{ node_info.sourceID }}</a>
+            </li>
+            <li>
+               <span>Agent:</span> <strong>{{ node_info.service_provider }}</strong>
+            </li>
+            <li>
+               <span>{{ node_info.valid_until }} </span>
+            </li>
+         </ul>
+      </div>
+   </div>
+   <div class="search_results_cont connections">
+      <h2>Connections</h2>
+      {% if entity_connections %}
 
-{% if addressess %}
-    <h4>Address connected:</h4>
-    {{ addressess }}
-{% endif  %}
+      <h3>Entity</h3>
+      <table class="display-relationship body-table-style entity-table">
+         <tbody>
+            <thead>
+               <th></th>
+               <th class="Role">Role</th>
+               <th class="Incorporation">Incorporation</th>
+               <th class="Jurisdiction">Jurisdiction</th>
+               <th class="Status">Status</th>
+               <th class="source">Data From</th>
+            </thead>
+            {% for entity in entity_connections %}
+            <tr>
+                <td class="description"><a class="node-link" title="{{ entity.1.name }}" href="/search/{{ entity.1.node_id }}">{{ entity.1.name }}</a></td>
+                <td class="Role">{{ entity.0 | changeUnderline  }}</td>
+                <td class="Incorporation"><span>{{entity.1.incorporation_date}}</span></td>
+                <td class="Jurisdiction"><span>{{entity.1.jurisdiction}}</span></td>
+                <td class="status"><span>{{entity.1.status}}</span></td>
+                <td class="source"><a class="node-link" href="https://panamapapers.icij.org">{{entity.1.sourceID}}</a></td>
+            </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+      {% endif %}
+      {% if officers %}
+      <h3>Officer</h3>
+      <table class="display-relationship body-table-style officer-table">
+         <tbody>
+            <thead>
+               <th></th>
+               <th class="country">Country</th>
+               <th class="source">Data From</th>
+            </thead>
+            {% for off in officers %}
+            <tr>
+               <td class="description"><a class="node-link" title="{{ off.name }}" href="/search/{{ off.node_id }}">{{ off.name }}</a></td>
+               <td class="country"><span>{{off.countries}}</span></td>
+               <td class="source"><a class="node-link" href="https://panamapapers.icij.org">{{off.sourceID}}</a></td>
+            </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+      {% endif %}
+      {% if intermediaries %}
+      <h3>Intermediary</h3>
+      <table class="display-relationship body-table-style intermediary-table">
+         <tbody>
+            <thead>
+               <th></th>
+               <th class="Status">Status</th>
+               <th class="source">Data From</th>
+            </thead>
+            {% for intermediary in intermediaries %}
+            <tr>
+               <td class="description"><a class="node-link" title="{{ intermediary.name }}" href="/search/{{ intermediary.node_id }}">{{ intermediary.name }}N</a></td>
+               <td class="status"><span>{{intermediary.status}}</span></td>
+               <td class="source"><a class="node-link" href="https://panamapapers.icij.org">{{intermediary.sourceID}}</a></td>
+            </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+      {% endif %}
+      {% if addressess %}
+      <h3>Address</h3>
+      <table class="display-relationship body-table-style address-table">
+         <tbody>
+            <thead>
+               <th></th>
+               <th class="source">Data From</th>
+            </thead>
+            {% for add in addressess %}
+            <tr>
+               <td class="description"><a class="node-link" href="/search/{{ add.node_id }}">{{ add.address }}</a></td>
+               <td class="source"><a class="node-link" href="https://panamapapers.icij.org">{{add.sourceID}}</a></td>
+            </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+      {% endif %}
+      {% if others %}
+      <h3>Other</h3>
+      <table class="display-relationship body-table-style others-table">
+         <tbody>
+            <thead>
+               <th></th>
+               <th class="source">Data From</th>
+            </thead>
+            {% for other in others %}
+            <tr>
+               <td class="description"><a class="node-link" title="{{ off.name }}" href="/search/{{ other.node_id }}">{{ other.name }}</a></td>
+               <td class="source"><a class="node-link" href="https://panamapapers.icij.org">{{other.sourceID}}</a></td>
+            </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+      {% endif %}
+   </div>
+</div>
