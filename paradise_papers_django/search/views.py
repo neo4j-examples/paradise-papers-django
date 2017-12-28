@@ -52,29 +52,31 @@ class ResultPage(TemplateView):
 def nodes(request, node_id):
     try:
         node_info = Entity.nodes.get(node_id=node_id)
-        intermediaries = node_info.Intermediaries.all()
-        officers = node_info.Officers.all()
-        addressess = node_info.Addressess.all()
-        others = node_info.Others.all()
+        intermediaries = node_info.intermediaries.all()
+        officers = node_info.officers.all()
+        addresses = node_info.addressess.all()
+        others = node_info.others.all()
+        entity = node_info.Entities_relationship();
         context = {
             'node_info': node_info,
             'intermediaries': intermediaries,
-            'officers' : officers,
-            'addressess' : addressess,
-            'nodeType' : 'entity',
-            'others' : 'others',
+            'officers': officers,
+            'addresses': addresses,
+            'node_type': 'entity',
+            'others': others,
+            'entity_connections': entity,
         }
     except Entity.DoesNotExist:
             pass
     try:
         node_info = Officer.nodes.get(node_id=node_id)
-        entities = node_info.Entities.all()
-        addressess = node_info.Addressess.all()
+        entities = node_info.entities.all()
+        addresses = node_info.addresses.all()
         context = {
             'node_info': node_info,
-            'entities' :entities,
-            'addressess': addressess,
-            'nodeType': 'officer',
+            'entities': entities,
+            'addresses': addresses,
+            'node_type': 'officer',
         }
     except Officer.DoesNotExist:
             pass
@@ -83,7 +85,7 @@ def nodes(request, node_id):
         node_info = Intermediary.nodes.get(node_id=node_id)
         context = {
             'node_info': node_info,
-            'nodeType': 'intermediary',
+            'node_type': 'intermediary',
         }
     except Intermediary.DoesNotExist:
         pass
