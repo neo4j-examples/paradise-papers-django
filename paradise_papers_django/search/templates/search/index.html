@@ -1,25 +1,36 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="tab">
-        <h2>Search by<br class="hidden-lg-up"> country</h2>
-        <p class="hidden-lg-down">People, companies and addresses connected to offshore&nbsp;entities</p>
-    </div>
+    <div class="search_box big">
+        <div class="clearfix">
+            <div class="tab search-by-country" onclick="changeTabs('search-by-country', '.search-by-jurisdiction')">
+                <h2>Search by<br class="hidden-lg-up">Country</h2>
+                <p class="hidden-lg-down">People, companies and addresses connected to offshore&nbsp;entities</p>
+            </div>
 
-    <div class="search_content" >
-        <form action="/search/lookup" method="get">{% csrf_token %}
-            <label for="country">Search by country: </label>
-            <input id="wordsearch" type="text" name="wordsearch" value="{{ wordsearch }}">
-            <input type="hidden" name="node" value="entity">
+            <div class="tab search-by-jurisdiction not-active" onclick="changeTabs('search-by-jurisdiction', '.search-by-country')">
+                <h2>Search by<br class="hidden-lg-up">Juristiction </h2>
+                <p class="hidden-lg-down">Offshore companies and trusts</p>
+            </div>
+        </div>
+        <div class="search_content country">
+            <form action="/search/lookup" method="get">{% csrf_token %}
+                <input id="wordsearch" type="text" name="wordsearch" placeholder="Enter a name here or filter by country to see a full list of names" value="{{ wordsearch }}">
+                <input type="hidden" name="node" value="entity">
 
-            <select name="country-selected">
-                <option name="countryselected" value="allcountry"> All Countries</option>
-                {% for country in countries  %}
-                    <option name="countryselected" value="{{ country.1 }}"> {{ country.1 }}</option>
-                {% endfor%}
-            </select>
+                <select name="country-selected" class="country-selected">
+                    <option name="countryselected" value="allcountry">All Countries</option>
+                    {% for country in countries %}
+                        <option name="countryselected" value="{{ country.1 }}"> {{ country.1 }}</option>
+                    {% endfor %}
+                </select>
 
-            <input type="submit" value="OK">
-        </form>
+                <select name="jurisdiction-selected" class="jurisdiction-selected dropdown-no-display">
+                    <option name="juristiction-selected" value="alljuristiction">All Jurisdiction</option>
+                </select>
+
+                <input type="submit" value="OK">
+            </form>
+        </div>
     </div>
 {% endblock %}
