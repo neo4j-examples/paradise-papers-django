@@ -20,7 +20,7 @@ class Entity(DjangoNode):
     status = StringProperty()
     officers = RelationshipFrom('Officer', 'OFFICER_OF')
     intermediaries = RelationshipFrom('Intermediary', 'INTERMEDIARY_OF')
-    addressess = RelationshipTo('Address', 'REGISTERED_ADDRESS')
+    addresses = RelationshipTo('Address', 'REGISTERED_ADDRESS')
     others = RelationshipFrom('Other', 'CONNECTED_TO')
     def Entities_relationship(self):
         results = self.cypher("START p=node({self}) MATCH n=(p)<-[r]->(x:Entity) RETURN r, x.node_id as Node_id");
@@ -54,6 +54,15 @@ class Officer(DjangoNode):
     node_id = StringProperty()
     addresses = RelationshipTo('Address', 'REGISTERED_ADDRESS')
     entities = RelationshipTo('Entity', 'OFFICER_OF')
+    intermediaries = RelationshipTo('Intermediary', 'OFFICER_OF')
+    others = RelationshipTo('Other', 'OFFICER_OF')
+
+    def officers_relationship(self):
+        results = self.cypher("START p=node({self}) MATCH n=(p)<-[r]->(x:Officer) RETURN r, x.node_id as Node_id");
+        list =[];
+        for row in results[0]:
+            list.append((row[0].type, Officer.nodes.get(node_id=row[1])))
+        return list
 
 
 
