@@ -1,0 +1,1 @@
+web: gunicorn --chdir paradise_papers_django paradise_papers_django.wsgi:application
