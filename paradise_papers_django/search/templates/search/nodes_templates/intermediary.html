@@ -8,14 +8,14 @@
     {% for intermediary in intermediaries %}
         <div class="column-content">
             <div class="node-title">
-                <a href="/search/{{ intermediary.node_id }}"> {{intermediary.name}}</a>
+                <a href="/search/intermediary/{{ intermediary.node_id }}"> {{ intermediary.name }}</a>
             </div>
             <div class="node-field">
-                {{intermediary.countries}}
+                {{ intermediary.countries }}
             </div>
 
             <div class="node-field">
-                {{intermediary.status}}
+                {{ intermediary.status }}
             </div>
         </div>
     {% endfor %}

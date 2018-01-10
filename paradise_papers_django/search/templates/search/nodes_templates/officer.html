@@ -8,15 +8,15 @@
     {% for officer in officers %}
         <div class="column-content">
             <div class="node-title">
-                <a href="/search/{{ officer.node_id }}">{{officer.name}}</a>
+                <a href="/search/officer/{{ officer.node_id }}">{{ officer.name }}</a>
             </div>
 
             <div class="node-field">
-                {{officer.countries}}
+                {{ officer.countries }}
             </div>
 
             <div class="node-field">
-                {{officer.sourceID}}
+                {{ officer.sourceID }}
             </div>
         </div>
     {% endfor %}
