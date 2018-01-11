@@ -60,14 +60,6 @@
                     <input type="hidden" name="node" value={{ node_type }}>
             {% load cache %}
             {% cache 500 form %}
-                    <select name="country-selected">
-                        <option name="countryselected" value="allcountry">All Countries</option>
-                        {% for country in countries %}
-                            <option name="countryselected" value="{{ country.0 }}">{{ country.0 }}</option>
-                        {% endfor%}
-                    </select>
-                     <input type="hidden" name="page" value="1">
-                    <input type="submit" value="OK">
             {% endcache %}
                 </form>
             </div>
