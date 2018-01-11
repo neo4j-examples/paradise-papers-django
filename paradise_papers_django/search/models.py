@@ -2,19 +2,17 @@ from django.db import models
 from neomodel import *
 from neomodel import db
 from django_neomodel import DjangoNode
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 #Class for Neo4j databaser nodes
 class Entity(DjangoNode):
     sourceID = StringProperty()
-    address = StringProperty()
     jurisdiction = StringProperty()
     service_provider = StringProperty()
     countries = StringProperty()
     jurisdiction_description =  StringProperty()
     valid_until = StringProperty()
-    ibcRUC = StringProperty()
     name = StringProperty()
-    country_codes = StringProperty()
     incorporation_date=StringProperty()
     node_id = StringProperty()
     status = StringProperty()
@@ -67,12 +65,17 @@ class Address(DjangoNode):
 
 # Queries Functions
 def get_all_countries():
-    query = "MATCH (n) WHERE NOT n.countries CONTAINS ';' RETURN DISTINCT 'node' as entity, n.countries AS countries UNION ALL MATCH ()-[r]-() WHERE EXISTS(r.countries) RETURN DISTINCT 'relationship' AS entity, r.countries AS countries"
-    results = db.cypher_query(query)
-    return results
+    return db.cypher_query("MATCH (n) WHERE NOT n.countries CONTAINS ';' RETURN DISTINCT  n.countries AS countries")
 
 install_labels(Entity)
 install_labels(Other)
 install_labels(Intermediary)
 install_labels(Officer)
 install_labels(Address)
+
+def calculatePages(contacts, paginator):
+    max_index = len(paginator.page_range)
+    index = contacts.number - 1
+    start_index = index - 3 if index >= 3 else 0
+    end_index = index + 3 if index <= max_index - 3 else max_index
+    return list(paginator.page_range)[start_index:end_index]

@@ -28,7 +28,7 @@ ALLOWED_HOSTS = []
 
 
 #Connect to Neo4j Database
-config.DATABASE_URL = 'bolt://paradisepapers:paradisepapers@174.138.63.95:7687'  # default
+config.DATABASE_URL = 'bolt://neo4j:neo4j@localhost:7687'  # default
 
 # Application definition
 

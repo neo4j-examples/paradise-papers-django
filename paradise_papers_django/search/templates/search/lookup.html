@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load nodes_extra%}
     {% block content %}
     {% include "search/searchbar.html" %}
 
@@ -6,22 +7,19 @@
         <nav class="nav-main">
             <ul class="nav-list">
                 <li class="nav-item">
-                    <button type="button" class="nav-button active" onclick="handleListVisibility(event, '.entity-container')">
-                        <span>Offshore Entities</span>
-                    </button>
-                    <span>( {{ entities|length }} )</span>
+                    <a href="?{% url_replace request 'node' 'entity' %}"> <span>Offshore Entities</span> </a>
+                    <span>( {{e_count}} )</span>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-button" onclick="handleListVisibility(event, '.officer-container')">
-                        <span>Officers</span>
-                    </button>
-                    <span>( {{ officers|length }} )</span>
+                    
+                     <a href="?{% url_replace request 'node' 'officer' %}">    <span>Officers</span> </a>
+
+                    <span>( {{o_count}} )</span>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="nav-button" onclick="handleListVisibility(event, '.intermediary-container')">
-                        <span>Intermediaries</span>
-                    </button>
-                    <span>( {{ intermediaries|length }} )</span>
+
+                      <a href="?{% url_replace request 'node' 'intermediary' %}">   <span>Intermediaries</span> </a>
+                    <span>( {{i_count}} )</span>
                 </li>
             </ul>
         </nav>
@@ -29,9 +27,30 @@
 
         <div class="page-continer">
             <div class="list-continer">
-                {% include "search/nodes_templates/entity.html" %}
-                {% include "search/nodes_templates/officer.html" %}
-                {% include "search/nodes_templates/intermediary.html" %}
+                {% if contacts.has_other_pages %}
+                        <ul class="pagination">
+                                    {% if contacts.has_previous %}
+                                      <li><a href="?{% url_replace request 'page' contacts.previous_page_number%}">&laquo;</a></li>
+                                    {% else %}
+                                      <li class="disabled"><span>&laquo;</span></li>
+                                    {% endif %}
+                                    {% for i in page_range %}
+                                      {% if contacts.number == i %}
+                                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                                      {% else %}
+                                        <li><a href="?{% url_replace request 'page' i %}">{{ i }}</a></li>
+                                      {% endif %}
+                                    {% endfor %}
+                                    {% if contacts.has_next %}
+                                      <li><a href="?{% url_replace request 'page' contacts.next_page_number %}">&raquo;</a></li>
+                                    {% else %}
+                                      <li class="disabled"><span>&raquo;</span></li>
+                                    {% endif %}
+                        </ul>
+                {% endif %}
+                    {% with template_name=node_type|stringformat:"s"|add:".html" %}
+                        {% include "search/nodes_templates/"|add:template_name %}
+                    {% endwith %}
             </div>
             <div class="side-serch">
                 <h3>Filter By Country</h3>
@@ -41,7 +60,7 @@
                     <select name="country-selected">
                         <option name="countryselected" value="allcountry">All Countries</option>
                         {% for country in countries %}
-                            <option name="countryselected" value="{{ country.1 }}">{{ country.1 }}</option>
+                            <option name="countryselected" value="{{ country.0 }}">{{ country.0 }}</option>
                         {% endfor%}
                     </select>
 
