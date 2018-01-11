@@ -4,16 +4,19 @@
     <head>
         <title>{% block head_title %}Paradise papers{% endblock head_title %}</title>
         <link rel="stylesheet" href="{% static 'css/base.css' %}">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     </head>
 
     <body>
-        {% include "partials/header.html" %}
+        <div class="header-border">
+            <div class="cont clearfix column_lg">
+                <div class="cont_project_title">
+                    <div class="project_title"><a href="/search">Django Web app Using Neo4j Database</a></div>
+                </div>
+            </div>
+        </div>
         <div class="container">
             {% block content %}
             {% endblock content %}
         </div>
-
-        <script src="{% static 'js/search.js' %}"></script>
     </body>
 </html>

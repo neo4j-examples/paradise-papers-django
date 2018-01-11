@@ -54,7 +54,7 @@ class ResultPage(TemplateView):
             officer_nodes.limit = items_Per_Page
             officer_nodes.skip = ((int(page) - 1)  * items_Per_Page)
             off_nodes = officer_nodes.all() 
-            node_list = range(0,e_count)
+            node_list = range(0,o_count)
             en_nodes=0
             int_nodes=0
 
@@ -62,7 +62,7 @@ class ResultPage(TemplateView):
             intermediary_nodes.limit = items_Per_Page
             intermediary_nodes.skip = ((int(page) - 1)  * items_Per_Page)
             int_nodes = intermediary_nodes.all() 
-            node_list = range(0,e_count)
+            node_list = range(0,i_count)
             en_nodes=0
             off_nodes=0
 

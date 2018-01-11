@@ -52,20 +52,25 @@
                         {% include "search/nodes_templates/"|add:template_name %}
                     {% endwith %}
             </div>
+
             <div class="side-serch">
                 <h3>Filter By Country</h3>
                 <form action="" method="GET">
                     <input type="hidden" name="wordsearch" value="{{ word_searched }}">
                     <input type="hidden" name="node" value={{ node_type }}>
+            {% load cache %}
+            {% cache 500 form %}
                     <select name="country-selected">
                         <option name="countryselected" value="allcountry">All Countries</option>
                         {% for country in countries %}
                             <option name="countryselected" value="{{ country.0 }}">{{ country.0 }}</option>
                         {% endfor%}
                     </select>
-
+                     <input type="hidden" name="page" value="1">
                     <input type="submit" value="OK">
+            {% endcache %}
                 </form>
             </div>
         </div>
+
 {% endblock %}

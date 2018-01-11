@@ -11,6 +11,8 @@
             <label for="country">Search by country: </label>
             <input id="wordsearch" type="text" name="wordsearch" value="{{ wordsearch }}">
             <input type="hidden" name="node" value="entity">
+{% load cache %}
+{% cache 500 sidebar %}
             <select name="country-selected">
                 <option name="countryselected" value="allcountry"> All Countries</option>
                 {% for country in countries  %}
@@ -18,6 +20,7 @@
                 {% endfor%}
             </select>
             <input type="hidden" name="page" value="1">
+{% endcache %}
 
             <input type="submit" value="OK">
         </form>
