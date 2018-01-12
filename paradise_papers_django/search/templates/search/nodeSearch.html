@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-
-{% block content %}
-    {% include "search/searchbar.html" %}
-        {% with template_name=node_type|stringformat:"s"|add:".html" %}
-            {% include "search/display_information/"|add:template_name %}
-        {% endwith %}
-{% endblock %}
