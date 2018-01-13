@@ -1,0 +1,35 @@
+/***************************************************************************
+ * Home Search
+ ***************************************************************************/
+
+.search-home {
+  height: 100vh;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  text-transform: lowercase;
+  font-size: 3rem;
+}
+
+.search-label {
+
+}
+
+.search-filters {
+
+}
+
+#search-go {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+
+/***************************************************************************
+ * Results Search
+ ***************************************************************************/
