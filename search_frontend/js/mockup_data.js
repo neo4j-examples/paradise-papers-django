@@ -71,3 +71,47 @@ mockup_data.countries = [
   'Japon',
   'Bahamas'
 ]
+
+/*
+@TODO
+Node Detail API Mockup Data
+{
+  'status': '200',
+  'message': 'ok',
+  'data': {
+    'properties': {
+      "sourceID": "Panama Papers",
+      "address": "ORION HOUSE SERVICES (HK) LIMITED ROOM 1401; 14/F.; WORLD COMMERCE  CENTRE; HARBOUR CITY; 7-11 CANTON ROAD; TSIM SHA TSUI; KOWLOON; HONG KONG",
+      "jurisdiction": "SAM",
+      "service_provider": "Mossack Fonseca",
+      "countries": "Hong Kong",
+      "jurisdiction_description": "Samoa",
+      "valid_until": "The Panama Papers data is current through 2015",
+      "ibcRUC": "25221",
+      "name": "TIANSHENG INDUSTRY AND TRADING CO., LTD.",
+      "country_codes": "HKG",
+      "incorporation_date": "23-MAR-2006",
+      "node_id": "10000001",
+      "status": "Defaulted"
+    },
+    'conections': [
+      {
+        'node_type': 'entity',
+        'node_related': [
+          {<node_properties>},
+          {<node_properties>},
+          {<node_properties>}]
+        ]
+      },
+      {
+        'node_type': 'officer',
+        'node_related': [
+          {<node_properties>},
+          {<node_properties>},
+          {<node_properties>}]
+        ]
+      },
+    ]
+  }
+}
+*/
