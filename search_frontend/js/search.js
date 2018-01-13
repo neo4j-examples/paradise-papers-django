@@ -8,72 +8,116 @@
 (() => {
   'use strict';
 
-  // Type of nodes that can be searched
-  // {node_type: [{HeadingLabel: MapProperty},{HeadingLabel: MapProperty}, {HeadingLabel: MapProperty} ]
-  const node_types = [
-    'entity',
-    'address',
-    'intermediary',
-    'officer',
-    'other'
-  ];
+  /**
+  *  Node types mapping
+  *  {
+  *    '<node_type>': {
+  *        '<property_name>': '<Property Label>',
+  *        ...
+  *    },
+  *   ...
+  *  }
+  */
+  const node_types = {
+    'entity': {
+      'name': '',
+      'incorporation_date': 'Incorporation',
+      'jurisdiction': 'Jurisdiction',
+      'countries': 'Linked To',
+      'sourceID': 'Data From'
+    },
+    'officer': {
+      'name': '',
+      'countries': 'Linked To',
+      'sourceID': 'Data From'
+    },
+    'intermediary': {
+      'name': '',
+      'countries': 'Linked To',
+      'sourceID': 'Data From'
+    },
+    'address': {
+      'address': '',
+      'countries': 'Linked To',
+      'sourceID': 'Data From'
+    },
+    'other': {
+      'name': '',
+      'countries': 'Linked To',
+      'sourceID': 'Data From'
+    }
+  };
 
   /**
    * The purpose of this class is to fetch data.
    * Each instance of the class will search and filter a specific node type.
+   *
+   * @param node_type
+   * @param node_properties
    */
   class NodeSearch {
-    constructor(node_type) {
+    constructor(node_type, node_properties) {
+      /**
+       * Type of Nodes
+       */
       this._node_type = node_type;
+
+      /**
+       * List of node properties
+       *
+       * [
+       *  {
+       *    property_name: <propertyname>,
+       *    property_label: <Property Label>
+       *  },
+       *  ...
+       * ]
+       */
+      this._nodePropertyList = [];
+
+      /**
+       * Container of Nodes
+       * as an observableArray in order to dynamicly update the view
+       */
+      this._nodeSearchData = ko.observableArray();
+
+      /**
+       * Show related tab on the view.
+       */
+      this._activateTab = ko.observable(false);
+
+      /**
+       * Search an Filters related Stuff
+       * @todo
+       */
       this._search_api = '/search/';
       this._search_filters = {
-          'q':'',
-          'c':''
+        'q':'',
+        'c':''
       };
-
-      this._nodeSearchData = ko.observableArray();
-      this.structureData = ko.observableArray()
       this._page = ko.observable(0);
       this._total = ko.observable(0);
-      this._activateTab = ko.observable(false);
-    }
-        /* @todo find what type of node is the current tab*/
-    findStructure() {
-      var list = [] 
-        for (var key in mockup_data.filterData) {
-          if (key == this._node_type ) { 
-            for (var x in mockup_data.filterData[key]) 
-              list.push(x)   
-            }
-              this.structureData.push(list)  
-          }
-    } 
 
-    fillInformation(row) {
-      var list = [] 
-      var start = 0 
-      var end = this.structureData()[0].length - 1 
-       for( var key in row) {
-          if ( start <= end) {
-            var row1 = row[this.structureData()[0][start]]
-            list.push(row1)
-            start++;
-          }
-        }
-          this._nodeSearchData.push(list);
-          this.structureData.push(list)
-          start= 0;
-          list = []
-      }
-        /** @todo fetch from api */
-    fetch () {
-          this.findStructure(mockup_data.filterData); 
-          let data = mockup_data[this._node_type].data;
-          data.forEach(row => {
-            this.fillInformation(row);
+
+      // Construct _nodePropertyList defined above
+      for (var property_name in node_properties) {
+        if (node_properties.hasOwnProperty(property_name)) {
+          this._nodePropertyList.push({
+            property_name,
+            'property_label': node_properties[property_name]
           });
-          this._page(this._page()+1);
         }
+      }
+    }
+
+    /** @todo fetch from api the real data */
+    fetch () {
+      let data = mockup_data[this._node_type].data;
+      data.forEach(row => {
+        this._nodeSearchData.push(row);
+      });
+      this._page(this._page() + 1);
+    }
 
 
     /** @todo clear search filter and data */
@@ -90,22 +134,24 @@
   class SearchApp {
     constructor() {
       this._searchText = ko.observable('');
-      
+
+      // TODO
       this._countryList = ko.observableArray(mockup_data.countries);
       this._jurisdictionList = ko.observableArray(mockup_data.countries);
 
-      this._filters = {
-        'c': '',
-        '': '',
-        '': '',
-        '': '',
-      };
+      // TODO
+      this._filters = {};
 
       this._nodeSearchList = ko.observableArray([]);
 
-      node_types.forEach(node_type => {
-        this._nodeSearchList.push(new NodeSearch(node_type));
-      });
+      // Construct NodeSearch instances
+      for (var node_type in node_types) {
+        if (node_types.hasOwnProperty(node_type)) {
+          this._nodeSearchList.push(
+            new NodeSearch(node_type, node_types[node_type])
+          );
+        }
+      }
 
       this._currentNodeSearch = this._nodeSearchList()[0];
       window.searchApp = this; // TODO for testing, remove later

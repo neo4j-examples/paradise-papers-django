@@ -71,34 +71,3 @@ mockup_data.countries = [
   'Japon',
   'Bahamas'
 ]
-
-
-mockup_data.filterData = {
-  'entity': {
-    'name': '',
-    'incorporation_date': 'Incorporation',
-    'jurisdiction': 'jurisdiction',
-    'countries': 'Linked To',
-    'sourceID': 'Data From'
-  },
-    'officer': {
-    'name': '',
-    'countries': 'Linked To',
-    'sourceID': 'Data From'
-  },
-  'intermediary': {
-    'name': '',
-    'countries': 'Linked To',
-    'sourceID': 'Data From'
-  },
-  'address': {
-    'address': '',
-    'countries': 'Linked To',
-    'sourceID': 'Data From'
-  },
-    'other': {
-    'name': '',
-    'countries': 'Linked To',
-    'sourceID': 'Data From'
-  }
-}
