@@ -59,15 +59,13 @@
   class SearchApp {
     constructor() {
       this._searchText = ko.observable('');
-      
+
       this._countryList = ko.observableArray(mockup_data.countries);
       this._jurisdictionList = ko.observableArray(mockup_data.countries);
 
       this._filters = {
-        'c': '',
-        '': '',
-        '': '',
-        '': '',
+        'country': ko.observable(''),
+        'jurisdiction': ko.observable('')
       };
 
       this._nodeSearchList = ko.observableArray([]);
