@@ -101,11 +101,8 @@
                   </tr>
                 </thead>
                 <tbody data-bind="foreach: _nodeSearchData">
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
+                  <tr data-bind="foreach: $data">
+                    <td data-bind="text: $data" ></td>
                   </tr>
                 </tbody>
               </table>
