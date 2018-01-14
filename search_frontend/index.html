@@ -18,28 +18,37 @@
   </head>
   <body>
     <!-- Search home -->
-    <div class="container-fluid search-home bg-white">
+    <div id="search-home" class="container-fluid search-home bg-white">
       <div class="row h-100 justify-content-center align-items-center">
         <div class="col-10 text-center">
           <h1 class="display-3 mb-5">Paradise Papers Search</h1>
 
-          <form class="search-form">
+          <form class="search-form" data-bind="submit: initNodeSeach">
             <!-- @todo Filters  -->
             <div class="form-group row">
-              <select class="form-control col" id="inputGroupSelect01" data-bind="options: _countryList">
-              </select>
-              <select class="form-control col" id="inputGroupSelect01">
-                <option selected>All Countries</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-              </select>
-              <!-- <select class="form-control col" id="inputGroupSelect01">
-                <option selected>Choose...</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-              </select> -->
+
+              <div class="input-group mb-3 col-md-6">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="">By jurisdiction: </span>
+                </div>
+                <select class="form-control" id=""
+                  data-bind="options: _jurisdictionList,
+                             optionsCaption: 'All Jurisdictions...',
+                             value: _filters.jurisdiction">
+                </select>
+              </div>
+
+              <div class="input-group mb-3 col-md-6">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="">By Country: </span>
+                </div>
+                <select class="form-control" id=""
+                  data-bind="options: _countryList,
+                             optionsCaption: 'All countries...',
+                             value: _filters.country">
+                </select>
+              </div>
+
             </div> <!-- End Filters -->
 
             <div class="form-row">
@@ -73,11 +82,11 @@
 
 
     <!-- Sticky nav tabs -->
-    <nav class="navbar sticky-top navbar-light bg-white">
+    <nav id="search-tabs" class="navbar sticky-top navbar-light bg-white">
       <ul class="nav nav-tabs w-100" id="nodeTabs" role="tablist" data-bind="foreach: _nodeSearchList">
         <!-- For each node add a tab item -->
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="" href="" role="tab" aria-controls="" aria-selected="" data-bind="text: _node_type, attr: {id: _node_type+'-tab',href: '#'+_node_type, 'aria-controls': _node_type, 'aria-selected': _activateTab}, css:{active: _activateTab}, click: (x)=>$parent.toggleNodeSearch(x)"></a>
+          <a class="nav-link" data-toggle="tab" id="" href="#search-home" role="tab" aria-controls="" aria-selected="" data-bind="text: _node_type, attr: {id: _node_type+'-tab',href: '#'+_node_type, 'aria-controls': _node_type, 'aria-selected': _activateTab}, css:{active: _activateTab}, click: (x)=>$parent.toggleNodeSearch(x)"></a>
         </li>
       </ul>
     </nav> <!-- Sticky nav tabs -->
@@ -90,7 +99,7 @@
 
           <div class="tab-content" id="nodeTabsContent" data-bind="foreach: _nodeSearchList">
             <!-- For each node add a tab panel -->
-            <div class="tab-pane fade show" id="" role="tabpanel" aria-labelledby="" data-bind="attr: {id: _node_type, 'aria-labelledby': _node_type+'-tab'},  css:{active: _activateTab}">
+            <div class="tab-pane fade show pt-5" id="" role="tabpanel" aria-labelledby="" data-bind="attr: {id: _node_type, 'aria-labelledby': _node_type+'-tab'},  css:{active: _activateTab}">
               <table class="table table-striped table-hover">
                 <thead>
                   <tr>
@@ -115,22 +124,23 @@
       </div>
       <div class="row">
         <div class="col">
-          <button type="button" class="btn btn-outline-primary btn-lg btn-block mb-5" data-bind="click: continueNodeSearch">Load More</button>
+          <button type="button" class="btn btn-outline-primary btn-lg mb-5" data-bind="click: continueNodeSearch">Load More</button>
         </div>
       </div>
     </div> <!-- Search Results Container  -->
 
-
-    <div id="search-go" class="">
+    <!-- Fixed link to search  -->
+    <div id="search-go" class="fixed-bottom">
       <a href="#search-home"  class="btn btn-link m-5" data-bind="">
         <i class="fa fa-search fa-4x "></i>
       </a>
-    </div>
+    </div> <!-- Fixed link to search  -->
+
 
 
     <!-- JavaScript Loading -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS, then KnowckoutJS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
     <script src='http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.4.2.js'></script>
@@ -138,6 +148,34 @@
     <!-- Search App JavaScript -->
     <script src="js/mockup_data.js"></script>
     <script src="js/search.js"></script>
+
+    <!-- In document Javascript, @todo move -->
+    <script>
+      $(document).ready(() => {
+        // Add smooth scrolling to all links
+        $("a").on('click', function(event) {
+
+          // Make sure this.hash has a value before overriding default behavior
+          if (this.hash !== "") {
+            // Prevent default anchor click behavior
+            event.preventDefault();
+
+            // Store hash
+            var hash = this.hash;
+
+            // Using jQuery's animate() method to add smooth page scroll
+            // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+            $('html, body').animate({
+              scrollTop: $(hash).offset().top
+            }, 800, function(){
+              console.log($(hash).offset().top);
+              // Add hash (#) to URL when done scrolling (default click behavior)
+              window.location.hash = hash;
+            });
+          } // End if
+        });
+      });
+    </script>
 
   </body>
 </html>
