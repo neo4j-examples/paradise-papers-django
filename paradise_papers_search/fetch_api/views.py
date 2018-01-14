@@ -1,16 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from .models.helpers import fetch_nodes, count_all_nodes, fetch_node_details
+from .models.helpers import count_nodes, fetch_nodes, fetch_node_details
 
 class GetNodesCount(APIView):
     def get(self, request):
         count_info = {
             'name': request.GET.get('q', ''),
             'country': request.GET.get('c', ''),
-            'jurisdiction': bool(request.GET.get('j', False)),
+            'jurisdiction': request.GET.get('j', ''),
         }
-        count = count_all_nodes(count_info)
+        count = count_nodes(count_info)
         data = {
             'response': {
                 'status': '200',
@@ -26,7 +26,7 @@ class GetNodesData(APIView):
             'node_type': request.GET.get('t', 'entity'),
             'name': request.GET.get('q', ''),
             'country': request.GET.get('c', ''),
-            'jurisdiction': request.GET.get('j', False),
+            'jurisdiction': request.GET.get('j', ''),
             'limit': 10,
             'skip': int(request.GET.get('p', 1)),
         }
