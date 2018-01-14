@@ -1,35 +1,28 @@
 /***************************************************************************
- * Home Search
+ * Search App Styles
  ***************************************************************************/
 
-.search-home {
+#search-home {
   height: 100vh;
 }
 
 .search-input {
   background: transparent;
   border: none;
-  outline: none;
-  padding: 0;
-  text-transform: lowercase;
   font-size: 3rem;
-}
-
-.search-label {
-
-}
-
-.search-filters {
-
+  padding: 0;
+  outline: none;
+  text-transform: lowercase;
 }
 
 #search-go {
-  position: fixed;
-  bottom: 0;
-  right: 0;
+  left: auto;
 }
 
+#search-tabs {
+  margin-bottom: -50px;
+}
 
-/***************************************************************************
- * Results Search
- ***************************************************************************/
+#search-results {
+  max-width: 1280px;
+}
