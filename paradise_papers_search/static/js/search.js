@@ -86,6 +86,11 @@
       this._activateTab = ko.observable(false);
 
       /**
+       * Fetching Data?
+       */
+      this._fetchState = ko.observable(false);
+
+      /**
        * Search an Filters related Stuff
        */
       this._search_api = '/fetch/nodes';
@@ -110,18 +115,19 @@
     /* 
     * Set the filters
     * @param: newFilters - Object of filters to change
+    * @return: this._search_filters
     */
     setFilters(newFilters) {
-     return Object.assign(this._search_filters, newFilters )
+      return Object.assign(this._search_filters, newFilters)
     }
 
     /** @todo fetch from api the real data */
     fetch () {
+      this._fetchState(true);
       $.getJSON(
         this._search_api,
         this.setFilters( { 'p': this._page()+1 })
-        )
-
+      )
       .done(nodes => {
         nodes = JSON.parse(nodes);
         nodes.response.data.forEach(row => {
@@ -133,6 +139,7 @@
         console.log("Fetch error");
       })
       .always(() => {
+        this._fetchState(false);
         console.log("Fetch completed");
       });
     }
@@ -182,7 +189,6 @@
     /** @todo initial Search */
     initNodeSeach () {
       this._nodeSearchList().forEach(nodeSearch => {
-
         nodeSearch.clear();
         nodeSearch.setFilters({
           'q': this._searchText(),
