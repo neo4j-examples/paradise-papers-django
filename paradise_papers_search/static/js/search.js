@@ -61,7 +61,6 @@
        * Type of Nodes
        */
       this._node_type = node_type;
-
       /**
        * List of node properties
        *
@@ -108,17 +107,21 @@
         }
       }
     }
+    /* 
+    * Set the filters
+    * @param: newFilters - Object of filters to change
+    */
+    setFilters(newFilters) {
+     return Object.assign(this._search_filters, newFilters )
+    }
 
     /** @todo fetch from api the real data */
     fetch () {
       $.getJSON(
         this._search_api,
-        Object.assign(this._search_filters,
-          {
-            'p': this._page()+1
-          }
+        this.setFilters( { 'p': this._page()+1 })
         )
-      )
+
       .done(nodes => {
         nodes = JSON.parse(nodes);
         nodes.response.data.forEach(row => {
@@ -136,10 +139,15 @@
 
 
     /** @todo init search filter and data */
-    init (filters) {
+    clear () {
       this._nodeSearchData([]);
       this._page(0);
-      Object.assign(this._search_filters, filters);
+      this.setFilters({
+          'q': '',
+          'c' : '',
+          'j' : '',
+          'p' : 0,
+      });
     }
 
   }
@@ -174,8 +182,12 @@
     /** @todo initial Search */
     initNodeSeach () {
       this._nodeSearchList().forEach(nodeSearch => {
-        nodeSearch.init({
-          'q': this._searchText()
+
+        nodeSearch.clear();
+        nodeSearch.setFilters({
+          'q': this._searchText(),
+          'c' : this._filters['country'],
+          'j' : this._filters['jurisdiction'],
         });
       });
       this.toggleNodeSearch();
