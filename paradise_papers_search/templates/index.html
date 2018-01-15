@@ -105,15 +105,27 @@
                   </tr>
                 </tbody>
               </table>
+              <div class="row search-home">
+                  <div class="col text-center" data-bind="click: fetch">
+                    <div class="icon-div">
+                    <i data-bind="visible: !_fetchState()" class="fa fa-chevron-down fa-1x"></i>
+                    <i data-bind="visible: _fetchState" class="fa fa-circle-o-notch fa-spin fa-1x"></i>
+                  </div>
+                    <div >
+                    <!-- ko ifnot: _fetchState -->
+                      Load More
+                    <!-- /ko -->
+                    <!-- ko if: _fetchState -->
+                      Loading Nodes
+                    <!-- /ko -->
+                    </div>
+                  </div>
+            </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col">
-          <button type="button" class="btn btn-outline-primary btn-lg mb-5" data-bind="click: continueNodeSearch">Load More</button>
-        </div>
-      </div>
+
     </div> <!-- Search Results Container  -->
 
 

@@ -86,7 +86,7 @@
       this._activateTab = ko.observable(false);
 
       /**
-       * Fetching Data?
+       * State of the current fetch
        */
       this._fetchState = ko.observable(false);
 
@@ -121,12 +121,12 @@
       return Object.assign(this._search_filters, newFilters)
     }
 
-    /** @todo fetch from api the real data */
     fetch () {
       this._fetchState(true);
+
       $.getJSON(
         this._search_api,
-        this.setFilters( { 'p': this._page()+1 })
+        this.setFilters({ 'p': this._page()+1 })
       )
       .done(nodes => {
         nodes = JSON.parse(nodes);
@@ -136,11 +136,11 @@
         this._page(this._page() + 1);
       })
       .fail(() => {
+        /*TODO Handle errors */
         console.log("Fetch error");
       })
       .always(() => {
         this._fetchState(false);
-        console.log("Fetch completed");
       });
     }
 
@@ -150,7 +150,7 @@
       this._nodeSearchData([]);
       this._page(0);
       this.setFilters({
-          'q': '',
+          'q' : '',
           'c' : '',
           'j' : '',
           'p' : 0,
@@ -197,11 +197,6 @@
         });
       });
       this.toggleNodeSearch();
-    }
-
-    /** @todo fetch data from the _currentNodeSearch */
-    continueNodeSearch () {
-      this._currentNodeSearch.fetch();
     }
 
     /** @todo Toggle _currentNodeSearch and tab */
