@@ -88,13 +88,12 @@
 
       /**
        * Search an Filters related Stuff
-       * @todo
        */
-      this._search_api = '/search/';
+      this._search_api = '/fetch/nodes';
       this._search_filters = {
-        'q':'',
-        'c':''
+        't': this._node_type,
       };
+
       this._page = ko.observable(0);
       this._total = ko.observable(0);
 
@@ -112,17 +111,35 @@
 
     /** @todo fetch from api the real data */
     fetch () {
-      let data = mockup_data[this._node_type].data;
-      data.forEach(row => {
-        this._nodeSearchData.push(row);
+      $.getJSON(
+        this._search_api,
+        Object.assign(this._search_filters,
+          {
+            'p': this._page()+1
+          }
+        )
+      )
+      .done(nodes => {
+        nodes = JSON.parse(nodes);
+        nodes.response.data.forEach(row => {
+          this._nodeSearchData.push(row);
+        });
+        this._page(this._page() + 1);
+      })
+      .fail(() => {
+        console.log("Fetch error");
+      })
+      .always(() => {
+        console.log("Fetch completed");
       });
-      this._page(this._page() + 1);
     }
 
 
-    /** @todo clear search filter and data */
-    clear () {
+    /** @todo init search filter and data */
+    init (filters) {
       this._nodeSearchData([]);
+      this._page(0);
+      Object.assign(this._search_filters, filters);
     }
 
   }
@@ -138,10 +155,7 @@
       // TODO
       this._countryList = ko.observableArray(mockup_data.countries);
       this._jurisdictionList = ko.observableArray(mockup_data.countries);
-
-      // TODO
       this._filters = {};
-
       this._nodeSearchList = ko.observableArray([]);
 
       // Construct NodeSearch instances
@@ -159,6 +173,11 @@
 
     /** @todo initial Search */
     initNodeSeach () {
+      this._nodeSearchList().forEach(nodeSearch => {
+        nodeSearch.init({
+          'q': this._searchText()
+        });
+      });
       this.toggleNodeSearch();
     }
 

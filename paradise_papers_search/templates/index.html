@@ -8,7 +8,7 @@
         <div class="col-10 text-center">
           <h1 class="display-3 mb-5">Paradise Papers Search</h1>
           <!-- @todo Smooth scroll on enter on submit event -->
-          <form class="search-form" data-bind="submit: initNodeSeach">
+          <form class="search-form" data-bind="submit: () => $('#init-search').click()">
             <!-- @todo Filters  -->
             <div class="form-group row">
               <div class="input-group mb-3 col-md-6">
@@ -40,7 +40,7 @@
                     <input type="text" class="w-100 form-control-xs-lg search-input" id="search-input" name="q" placeholder="Search..." value="" data-bind="value: _searchText">
                   </div>
                   <div class="col-auto mt-auto">
-                    <a href="#search-results" class="btn btn-link" data-bind="click: initNodeSeach">
+                    <a id="init-search" href="#search-results" class="btn btn-link" data-bind="click: initNodeSeach">
                       <i class="fa fa-search fa-2x"></i>
                     </a>
                   </div>
