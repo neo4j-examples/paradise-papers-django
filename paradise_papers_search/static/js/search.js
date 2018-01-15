@@ -130,8 +130,8 @@
       )
       .done(nodes => {
         nodes = JSON.parse(nodes);
-        nodes.response.data.forEach(row => {
-          this._nodeSearchData.push(row);
+        nodes.response.data.forEach(node => {
+          this._nodeSearchData.push(node.node_properties);
         });
         this._page(this._page() + 1);
       })
