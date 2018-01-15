@@ -394,3 +394,55 @@ table.body-table-style td.description {
         content: "Data From";
     }
 }
+
+.tab {
+    -khtml-border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    -moz-transition: all 0.15s ease-out 0s;
+    -webkit-border-radius: 5px 5px 0 0;
+    -webkit-transition: all 0.15s ease-out 0s;
+    background: #F4EDEA;
+    border-radius: 5px 5px 0 0;
+    display: inline-block;
+    float: left;
+    height: 80px;
+    margin: 0 1em 0 0;
+    max-width: 250px;
+    padding: 1rem 1.5rem;
+    transition: all 0.15s ease-out 0s;
+}
+.tab h2 {
+    color: #852308;
+    font-family: "Lato", "Source Sans Pro", sans-serif, Arial;
+    font-size: 1.2em;
+    margin: 0 0 .1em;
+}
+
+.search_box .tab p {
+    color: #9f9b9a;
+    font-family: "Lato", "Source Sans Pro", sans-serif, Arial;
+    font-size: .80em;
+    margin: .25em 0 0 0;
+}
+
+
+.tab.not-active {
+    background: #E0C8BC;
+}
+
+.search_box.big>.clearfix {
+    position: relative;
+}
+
+.clearfix:after, .clearfix:before {
+    content: '';
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.dropdown-no-display {
+    display: none;
+}
