@@ -10,4 +10,17 @@ class Address(DjangoNode):
     countries     = StringProperty()
     node_id       = StringProperty()
 
+    @property
+    def serialize(self):
+        return {
+            'node_properties': {
+                'sourceID': self.sourceID,
+                'country_codes': self.country_codes,
+                'valid_until': self.valid_until,
+                'address': self.address,
+                'countries': self.countries,
+                'node_id': self.node_id,
+            },
+        }
+
 install_labels(Address)
