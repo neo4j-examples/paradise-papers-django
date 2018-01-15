@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "paradise_papers_django.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "paradise_papers_django.settings.local")
 
 application = get_wsgi_application()
