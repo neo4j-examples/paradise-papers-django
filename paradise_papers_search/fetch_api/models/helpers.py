@@ -30,12 +30,13 @@ def filter_nodes(node_type, name, country, jurisdiction):
 
 def count_nodes(count_info):
     count = {}
+    node_type               = count_info['node_type']
     search_word             = count_info['name']
     country                 = count_info['country']
     jurisdiction            = count_info['jurisdiction']
-    for node_type in list(MODEL_ENTITIES):
-        node_set            = filter_nodes(MODEL_ENTITIES[node_type], search_word, country, jurisdiction)
-        count[node_type]    = len(node_set)
+    node_set                = filter_nodes(MODEL_ENTITIES[node_type], search_word, country, jurisdiction)
+    count['count']          = len(node_set)
+
     return count
 
 def fetch_nodes(fetch_info):

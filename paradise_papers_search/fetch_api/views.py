@@ -6,6 +6,7 @@ from .models.helpers import count_nodes, fetch_nodes, fetch_node_details
 class GetNodesCount(APIView):
     def get(self, request):
         count_info = {
+            'node_type': request.GET.get('t', ''),
             'name': request.GET.get('q', ''),
             'country': request.GET.get('c', ''),
             'jurisdiction': request.GET.get('j', ''),
