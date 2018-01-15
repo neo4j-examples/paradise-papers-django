@@ -1,0 +1,2 @@
+-r base.txt
+whitenoise==3.3.1
