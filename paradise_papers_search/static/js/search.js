@@ -162,7 +162,7 @@
 
       // TODO
       this._countryList = ko.observableArray(mockup_data.countries);
-      this._jurisdictionList = ko.observableArray(mockup_data.countries);
+      this._jurisdictionList = ko.observableArray(mockup_data.jurisdictions);
       this._filters = {};
       this._nodeSearchList = ko.observableArray([]);
 

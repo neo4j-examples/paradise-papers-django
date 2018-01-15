@@ -69,7 +69,14 @@ mockup_data.countries = [
   'Aruba',
   'China',
   'Japon',
-  'Bahamas'
+  'Bahamas',
+  'Panama'
+]
+
+mockup_data.jurisdictions = [
+  'Aruba',
+  'Bahamas',
+  'Dubai'
 ]
 
 /*

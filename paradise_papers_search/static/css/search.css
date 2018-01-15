@@ -15,14 +15,11 @@
   text-transform: lowercase;
 }
 
-#search-go {
-  left: auto;
-}
-
 #search-tabs {
   margin-bottom: -50px;
 }
 
 #search-results {
   max-width: 1280px;
+  min-height: 100vh;
 }
