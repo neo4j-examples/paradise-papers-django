@@ -1,9 +1,13 @@
 from django.shortcuts import render
 from django.http import Http404
-from .models import Entity, Officer, Intermediary, get_all_countries
+from .models import Entity, Officer, Intermediary, get_all_countries, calculatePages
 from django.views.generic import TemplateView
+from datetime import datetime
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.template import RequestContext
 
 # Create your views here.
+items_Per_Page = 15
 class Index(TemplateView):
     template_name = 'search/index.html'
 
@@ -24,27 +28,62 @@ class ResultPage(TemplateView):
         node_type   = self.request.GET.get('node')
         country     = self.request.GET.get('country-selected')
         entity_name = self.request.GET.get('wordsearch')
+        page = self.request.GET.get('page' , 1 )
         countries   = get_all_countries()
-
         country_selected = (country, '')[country == 'allcountry']
 
-        #entities that cointains that name
+        #Filtering all nodes
         entity_nodes = Entity.nodes.filter(name__icontains=entity_name).filter(countries__icontains=country_selected)
-
-        #officers that contains that name
         officer_nodes = Officer.nodes.filter(name__icontains=entity_name).filter(countries__icontains=country_selected)
-
-        #Intermediary that contains that name
         intermediary_nodes = Intermediary.nodes.filter(name__icontains=entity_name).filter(countries__icontains=country_selected)
+        
+        #counting Nodes
+        e_count = len(entity_nodes)
+        o_count = len(officer_nodes)
+        i_count = len(intermediary_nodes)
 
+        if node_type == 'entity': 
+            entity_nodes.limit = items_Per_Page
+            entity_nodes.skip = ((int(page) - 1)  * items_Per_Page)
+            en_nodes = entity_nodes.all() 
+            node_list = range(0,e_count)
+            off_nodes=0
+            int_nodes=0   
+
+        if node_type == 'officer': 
+            officer_nodes.limit = items_Per_Page
+            officer_nodes.skip = ((int(page) - 1)  * items_Per_Page)
+            off_nodes = officer_nodes.all() 
+            node_list = range(0,o_count)
+            en_nodes=0
+            int_nodes=0
+
+        if node_type == 'intermediary': 
+            intermediary_nodes.limit = items_Per_Page
+            intermediary_nodes.skip = ((int(page) - 1)  * items_Per_Page)
+            int_nodes = intermediary_nodes.all() 
+            node_list = range(0,i_count)
+            en_nodes=0
+            off_nodes=0
+
+
+        paginator = Paginator(node_list, items_Per_Page)      
+        contacts = paginator.page(page)
+        page_range = calculatePages(contacts, paginator)
+  
         context = {
+            'contacts' : contacts,
+            'e_count' : e_count,
+            'o_count' : o_count,
+            'i_count' : i_count,
             'countries': countries[0],
             'word_searched': entity_name,
-            'entities': entity_nodes,
-            'officers': officer_nodes,
-            'intermediaries' : intermediary_nodes,
-            'country_selected': country_selected,
-            'node_type': node_type
+            'entities': en_nodes,
+            'officers': off_nodes,
+            'intermediaries' : int_nodes,
+            'country_selected': country,
+            'node_type': node_type,
+            'page_range' : page_range
         }
 
         return context

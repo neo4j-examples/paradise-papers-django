@@ -168,11 +168,11 @@ option {
 .active span {
     color: #d3d3d3;
 }
-
+/*
 .intermediary-container,
 .officer-container {
     display: none;
-}
+}*/
 
 .list-continer {
     width: 70%;
@@ -393,4 +393,28 @@ table.body-table-style td.description {
     .others-table td:nth-of-type(2):before {
         content: "Data From";
     }
+}
+
+ul.pagination {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333333;
+}
+
+ul.pagination li {
+    float: left;
+}
+
+ul.pagination li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 16px;
+    text-decoration: none;
+}
+
+ul.pagination li a:hover {
+    background-color: #111111;
 }
