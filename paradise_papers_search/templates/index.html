@@ -68,9 +68,16 @@
     <!-- Sticky nav tabs -->
     <nav id="search-tabs" class="navbar sticky-top navbar-light bg-white">
       <!-- For each node add a tab item -->
-      <ul class="nav nav-tabs w-100" id="nodeTabs" role="tablist" data-bind="foreach: _nodeSearchList">
+      <ul class="nav nav-tabs w-100" id="nodeTabs" role="tablist">
+        <!-- ko foreach: _nodeSearchList -->
         <li class="nav-item">
           <a class="nav-link" data-toggle="tab" id="" href="#search-home" role="tab" aria-controls="" aria-selected="" data-bind="text: _node_type, attr: {id: _node_type+'-tab',href: '#'+_node_type, 'aria-controls': _node_type, 'aria-selected': _activateTab}, css:{active: _activateTab}, click: (x)=>$parent.toggleNodeSearch(x)"></a>
+        </li>
+        <!-- /ko -->
+        <li class="ml-auto">
+          <a href="#search-home" class="btn btn-link" data-bind="">
+            <i class="fa fa-search fa-1x"></i>
+          </a>
         </li>
       </ul>
     </nav> <!-- Sticky nav tabs -->
@@ -110,10 +117,4 @@
     </div> <!-- Search Results Container  -->
 
 
-    <!-- Bottom fixed link to search @todo refactor design -->
-    <div id="search-go" class="fixed-bottom">
-      <a href="#search-home" class="btn btn-link m-5" data-bind="">
-        <i class="fa fa-search fa-4x"></i>
-      </a>
-    </div>
 {% endblock content %}
