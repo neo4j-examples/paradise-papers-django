@@ -24,7 +24,7 @@
             {% endif %}
             {% if officers %}
             <li>
-               <span>Connected to <strong>{{ officers|length }}{% if officers|length > 1 %} Officers {% else %} officer {% endif %}</strong></span>
+               <span>Connected to <strong>{{ officers|length }}{% if officers|length > 1 %} Officers {% else %} Officer {% endif %}</strong></span>
             </li>
             {% endif %}
             {% if intermediaries %}
@@ -44,12 +44,12 @@
                <span>Registered in:</span> <a class="node-link" href="#">{{ node_info.jurisdiction_description }}</a>
             </li>
             <li>
-               <span>Linked countries:</span> <a class="node-link" href="#">{{ node_info.countries }}</a>
+               <span>Linked countries:</span> <a class="node-link" href="#">{{ node_info.countries|changeSemicolumn }}</a>
             </li>
          </ul>
       </div>
       <div class="right-side">
-         <ul>
+         <ul class="node-information">
             <li>
                <span>Data from:</span> <a class="node-link" href="#">{{ node_info.sourceID }}</a>
             </li>
@@ -102,7 +102,7 @@
             {% for off in officers %}
             <tr>
                <td class="description"><a class="node-link" title="{{ off.name }}" href="/search/{{ off.node_id }}">{{ off.name }}</a></td>
-               <td class="country"><span>{{off.countries}}</span></td>
+               <td class="country"><span>{{off.countries|changeSemicolumn}}</span></td>
                <td class="source"><a class="node-link" href="https://panamapapers.icij.org">{{off.sourceID}}</a></td>
             </tr>
             {% endfor %}

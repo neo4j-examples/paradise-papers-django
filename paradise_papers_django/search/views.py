@@ -54,7 +54,7 @@ def nodes(request, node_id):
         node_info = Entity.nodes.get(node_id=node_id)
         intermediaries = node_info.intermediaries.all()
         officers = node_info.officers.all()
-        addresses = node_info.addressess.all()
+        addresses = node_info.addresses.all()
         others = node_info.others.all()
         entity = node_info.Entities_relationship();
         context = {
@@ -70,13 +70,19 @@ def nodes(request, node_id):
             pass
     try:
         node_info = Officer.nodes.get(node_id=node_id)
+        intermediaries = node_info.intermediaries.all()
         entities = node_info.entities.all()
+        others = node_info.others.all()
+        officers = node_info.officers_relationship();
         addresses = node_info.addresses.all()
         context = {
             'node_info': node_info,
             'entities': entities,
             'addresses': addresses,
             'node_type': 'officer',
+            'officer_connections': officers,
+            'others': others,
+            'intermediaries': intermediaries,
         }
     except Officer.DoesNotExist:
             pass
