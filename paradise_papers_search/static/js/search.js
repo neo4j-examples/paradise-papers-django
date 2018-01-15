@@ -112,7 +112,7 @@
         }
       }
     }
-    /* 
+    /*
     * Set the filters
     * @param: newFilters - Object of filters to change
     * @return: this._search_filters
@@ -150,10 +150,10 @@
       this._nodeSearchData([]);
       this._page(0);
       this.setFilters({
-          'q' : '',
-          'c' : '',
-          'j' : '',
-          'p' : 0,
+          'q': '',
+          'c': '',
+          'j': '',
+          'p': 0,
       });
     }
 
@@ -192,8 +192,8 @@
         nodeSearch.clear();
         nodeSearch.setFilters({
           'q': this._searchText(),
-          'c' : this._filters['country'],
-          'j' : this._filters['jurisdiction'],
+          'c': this._filters['country'],
+          'j': this._filters['jurisdiction'],
         });
       });
       this.toggleNodeSearch();
