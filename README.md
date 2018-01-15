@@ -26,5 +26,5 @@ cd paradise-papers-django
 cd paradise_papers_django
 
 # Run the app
-python manage.py runserver
+python manage.py runserver --settings=paradise_papers_search.settings.dev
 ```
