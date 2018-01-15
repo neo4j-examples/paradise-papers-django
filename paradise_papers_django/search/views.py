@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import Http404
-from .models import Entity, Officer, Intermediary, get_all_countries
+from .models import Entity, Officer, Intermediary, helpers
 from django.views.generic import TemplateView
 
 # Create your views here.
@@ -9,7 +9,7 @@ class Index(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context   = super(Index, self).get_context_data(*args, **kwargs)
-        countries = get_all_countries()
+        countries = helpers.get_all_countries()
         context   = {
             'countries': countries[0]
         }
@@ -24,70 +24,27 @@ class ResultPage(TemplateView):
         node_type   = self.request.GET.get('node')
         country     = self.request.GET.get('country-selected')
         entity_name = self.request.GET.get('wordsearch')
-        countries   = get_all_countries()
-
-        country_selected = (country, '')[country == 'allcountry']
-
-        #entities that cointains that name
-        entity_nodes = Entity.nodes.filter(name__icontains=entity_name).filter(countries__icontains=country_selected)
-
-        #officers that contains that name
-        officer_nodes = Officer.nodes.filter(name__icontains=entity_name).filter(countries__icontains=country_selected)
-
-        #Intermediary that contains that name
-        intermediary_nodes = Intermediary.nodes.filter(name__icontains=entity_name).filter(countries__icontains=country_selected)
+        countries   = helpers.get_all_countries()
 
         context = {
             'countries': countries[0],
             'word_searched': entity_name,
-            'entities': entity_nodes,
-            'officers': officer_nodes,
-            'intermediaries' : intermediary_nodes,
-            'country_selected': country_selected,
+            'entities': helpers.filter_by_name_and_contry("entity", entity_name, country),
+            'officers': helpers.filter_by_name_and_contry('officer', entity_name, country),
+            'intermediaries': helpers.filter_by_name_and_contry('intermediary', entity_name, country),
+            'country_selected': country,
             'node_type': node_type
         }
 
         return context
 
-def nodes(request, node_id):
-    try:
-        node_info = Entity.nodes.get(node_id=node_id)
-        intermediaries = node_info.intermediaries.all()
-        officers = node_info.officers.all()
-        addresses = node_info.addressess.all()
-        others = node_info.others.all()
-        entity = node_info.Entities_relationship();
-        context = {
-            'node_info': node_info,
-            'intermediaries': intermediaries,
-            'officers': officers,
-            'addresses': addresses,
-            'node_type': 'entity',
-            'others': others,
-            'entity_connections': entity,
-        }
-    except Entity.DoesNotExist:
-            pass
-    try:
-        node_info = Officer.nodes.get(node_id=node_id)
-        entities = node_info.entities.all()
-        addresses = node_info.addresses.all()
-        context = {
-            'node_info': node_info,
-            'entities': entities,
-            'addresses': addresses,
-            'node_type': 'officer',
-        }
-    except Officer.DoesNotExist:
-            pass
+class NodeDetail(TemplateView):
+    template_name = 'search/nodeSearch.html'
 
-    try:
-        node_info = Intermediary.nodes.get(node_id=node_id)
-        context = {
-            'node_info': node_info,
-            'node_type': 'intermediary',
-        }
-    except Intermediary.DoesNotExist:
-        pass
+    def get_context_data(self, *args, **kwargs):
+        context     = super(NodeDetail, self).get_context_data(*args, **kwargs)
+        entity_type = self.kwargs.get("slug")
+        node_id     = self.kwargs.get("node_id")
+        context     = helpers.node_detail(entity_type, node_id)
 
-    return render(request , 'search/nodeSearch.html', context);
+        return context

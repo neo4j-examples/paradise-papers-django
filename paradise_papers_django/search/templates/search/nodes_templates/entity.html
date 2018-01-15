@@ -6,27 +6,26 @@
         <div  class="node-field"> Status </div>
         <div class="node-field"> Data From </div>
     </div>
-
     {% for entity in entities %}
         <div class="column-content">
             <div class="node-title">
-                <a href="/search/{{ entity.node_id }}">{{entity.name}}</a>
+                <a href="/search/{{ node_type }}/{{ entity.node_id }}">{{ entity.name }}</a>
             </div>
 
             <div class="node-field">
-                {{entity.incorporation_date}}
+                {{ entity.incorporation_date }}
             </div>
 
             <div class="node-field">
-                {{entity.jurisdiction_description}}
+                {{ entity.jurisdiction_description }}
             </div>
 
             <div class="node-field">
-                {{entity.status}}
+                {{ entity.status }}
             </div>
 
             <div class="node-field">
-                {{entity.sourceID}}
+                {{ entity.sourceID }}
             </div>
         </div>
     {% endfor %}
