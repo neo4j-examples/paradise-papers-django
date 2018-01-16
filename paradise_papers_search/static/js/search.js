@@ -183,15 +183,15 @@
    *
    */
   class SearchApp {
-    constructor() {
-      this._searchText = ko.observable('');
-      this._initialSearchDone = ko.observable(false);
 
-      // TODO
-      this._countryList = ko.observableArray(mockup_data.countries);
-      this._jurisdictionList = ko.observableArray(mockup_data.jurisdictions);
+    constructor() {
+      this._initialSearchDone = ko.observable(false);
+      this._searchText = ko.observable('');
+      this._countryList = ko.observableArray();
+      this._jurisdictionList = ko.observableArray();
       this._filters = {};
       this._nodeSearchList = ko.observableArray([]);
+
       // Construct NodeSearch instances
       for (var node_type in node_types) {
         if (node_types.hasOwnProperty(node_type)) {
@@ -202,6 +202,8 @@
       }
 
       this._currentNodeSearch = this._nodeSearchList()[0];
+      this.fetchCountries();
+      this.fetchJurisdictions();
       window.searchApp = this; // TODO for testing, remove later
     }
 
@@ -236,6 +238,36 @@
       if (this._currentNodeSearch._page() === 0) {
         this._currentNodeSearch.fetch();
       }
+    }
+
+    fetchCountries() {
+      $.getJSON(
+        'fetch/countries'
+      )
+      .done(countries => {
+        countries.response.data.forEach(country => {
+          this._countryList.push(country);
+        });
+      })
+      .fail(() => {
+        /*TODO Handle errors */
+        console.log("Fetch error");
+      })
+    }
+
+    fetchJurisdictions() {
+      $.getJSON(
+        'fetch/jurisdictions'
+      )
+      .done(jurisdictions => {
+        jurisdictions.response.data.forEach(jurisdiction => {
+          this._jurisdictionList.push(jurisdiction);
+        });
+      })
+      .fail(() => {
+        /*TODO Handle errors */
+        console.log("Fetch error");
+      })
     }
   }
 
