@@ -132,7 +132,6 @@
         this.setFilters({ 'p': this._page() + 1 })
       )
       .done(nodes => {
-        nodes = JSON.parse(nodes);
         nodes.response.data.forEach(node => {
           this._nodeSearchData.push(node.node_properties);
         });
@@ -154,7 +153,6 @@
         this._search_filters
       )
       .done(nodes => {
-        nodes = JSON.parse(nodes);
         this._nodeSearchDataCount(nodes.response.data.count)
       })
       .fail(() => {

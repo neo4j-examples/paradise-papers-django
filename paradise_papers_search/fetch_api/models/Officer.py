@@ -32,11 +32,15 @@ class Officer(DjangoNode):
         return [
             {
                 'nodes_type': 'address',
-                'nodes_related': helpers.serialize_relationship(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
             },
             {
                 'nodes_type': 'entity',
-                'nodes_related': helpers.serialize_relationship(self.entities.all(), 'OFFICER_OF'),
+                'nodes_related': helpers.serialize_relationships(self.entities.all(), 'OFFICER_OF'),
+            },
+            {
+                'nodes_type': 'officer',
+                'nodes_related': helpers.serialized_realtionships_of_type(self, 'Officer'),
             },
         ]
 

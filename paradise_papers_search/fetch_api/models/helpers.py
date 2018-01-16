@@ -1,4 +1,5 @@
 from neomodel import db
+from paradise_papers_search.constants import COUNTRIES, JURISDICTIONS
 from . import (
     Entity,
     Address,
@@ -53,7 +54,6 @@ def fetch_nodes(fetch_info):
 
     return [node.serialize for node in fetched_nodes]
 
-
 def fetch_node_details(node_info):
     node_type       = node_info['node_type']
     node_id         = node_info['node_id']
@@ -64,7 +64,14 @@ def fetch_node_details(node_info):
 
     return node_details
 
-def serialize_relationship(nodes, relationship):
+def fetch_countries():
+    return COUNTRIES
+
+def fetch_jurisdictions():
+    return JURISDICTIONS
+
+# Helper function to serialize the nodes related to a given node and attatch the relationship type
+def serialize_relationships(nodes, relationship):
     serialized_nodes = []
     for node in nodes:
         serialized_node = node.serialize
@@ -72,3 +79,21 @@ def serialize_relationship(nodes, relationship):
         serialized_nodes.append(serialized_node)
 
     return serialized_nodes
+
+def serialized_realtionships_of_type(self, node_type):
+        results = self.cypher('''
+            START p=node({self})
+            MATCH n=(p)<-[r]->(x:%s)
+            RETURN r, x.node_id as Node_id
+            '''%(node_type)
+        )
+        nodes   = []
+
+        for row in results[0]:
+            node = self.nodes.get(node_id=row[1])
+            serialized_node = node.serialize
+            serialized_node['relationship'] = row[0].type
+            nodes.append(serialized_node)
+
+
+        return nodes
