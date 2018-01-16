@@ -1,0 +1,39 @@
+/***************************************************************************
+ * Search App Styles
+ ***************************************************************************/
+
+#search-home {
+  height: 100vh;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  font-size: 3rem;
+  outline: none;
+  padding: 0;
+  text-transform: lowercase;
+}
+
+#search-tabs {
+  margin-bottom: -50px;
+}
+
+#search-results {
+  max-width: 1280px;
+  min-height: 100vh;
+}
+
+.icon-div {
+    background: #fff;
+    border-radius: 0 0 80px 80px;
+    display: inline-block;
+    height: 40px;
+    padding: 4px;
+    width: 80px;
+}
+
+.search-home {
+  background: #dee2e6;
+  height: 70px;
+}

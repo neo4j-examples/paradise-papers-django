@@ -103,8 +103,7 @@ ENV/
 # for pycharm
 .idea/
 
-paradise_papers_django/static/*
-paradise_papers_django/staticfiles/*
+paradise_papers_search/staticfiles/*
 
 ### VirtualEnv ###
 # Virtualenv

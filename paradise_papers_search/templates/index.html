@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <!-- Search home -->
+    <div id="search-home" class="container-fluid search-home bg-white">
+      <div class="row h-100 justify-content-center align-items-center">
+        <div class="col-10 text-center">
+          <h1 class="display-3 mb-5">Paradise Papers Search</h1>
+          <!-- @todo Smooth scroll on enter on submit event -->
+          <form class="search-form" data-bind="submit: () => $('#init-search').click()">
+            <!-- @todo Filters  -->
+            <div class="form-group row">
+              <div class="input-group mb-3 col-md-6">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">By jurisdiction:</span>
+                </div>
+                <select class="form-control"
+                  data-bind="options: _jurisdictionList,
+                             optionsCaption: 'All Jurisdictions...',
+                             value: _filters.jurisdiction">
+                </select>
+              </div>
+              <div class="input-group mb-3 col-md-6">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="">By Country:</span>
+                </div>
+                <select class="form-control"
+                  data-bind="options: _countryList,
+                             optionsCaption: 'All countries...',
+                             value: _filters.country">
+                </select>
+              </div>
+            </div> <!-- End Filters -->
+
+            <div class="form-row">
+              <div class="form-group col-12">
+                <div class="row">
+                  <div class="col">
+                    <input type="text" class="w-100 form-control-xs-lg search-input" id="search-input" name="q" placeholder="Search..." value="" data-bind="value: _searchText">
+                  </div>
+                  <div class="col-auto mt-auto">
+                    <a id="init-search" href="#search-results" class="btn btn-link" data-bind="click: initNodeSeach">
+                      <i class="fa fa-search fa-2x"></i>
+                    </a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    <hr class="my-0">
+                  </div>
+                  <div class="col">
+                    <label for="search-input" class="search-label form-text text-muted text-left">Enter a name here or filter by country to see a full list of names</label>
+                  </div>
+                  <div class="col-auto mb-auto">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div> <!-- Search home -->
+
+
+
+
+    <!-- Sticky nav tabs -->
+    <nav data-bind="visible: _initialSearchDone" id="search-tabs" class="navbar sticky-top navbar-light bg-white">
+      <!-- For each node add a tab item -->
+      <ul class="nav nav-tabs w-100" id="nodeTabs" role="tablist">
+        <!-- ko foreach: _nodeSearchList -->
+        <li class="nav-item">
+           <a class="nav-link"
+             data-toggle="tab"
+             id="" href="#search-home"
+             role="tab"
+             aria-controls=""
+             aria-selected=""
+             data-bind="attr: {id: _node_type+'-tab',
+                               href: '#'+_node_type,
+                               'aria-controls': _node_type,
+                               'aria-selected': _activateTab},
+                        css: {active: _activateTab},
+                        click: (x)=>$parent.toggleNodeSearch(x)">
+            <!-- ko text: _node_type --><!-- /ko -->
+            <!-- ko if:   _nodeSearchDataCount() < 0 -->
+            <i class="fa fa-circle-o-notch fa-spin fa-1x"></i>
+            <!-- /ko -->
+            <!-- ko if:   _nodeSearchDataCount() >= 0  -->
+            <span data-bind="text: _nodeSearchDataCount()" class="badge badge-primary"></span>
+            <!-- /ko -->
+          </a>
+
+        </li>
+        <!-- /ko -->
+        <li class="ml-auto">
+          <a href="#search-home" class="btn btn-link">
+            <i class="fa fa-search fa-1x"></i>
+          </a>
+        </li>
+      </ul>
+    </nav> <!-- Sticky nav tabs -->
+
+
+    <!-- Search Results Container  -->
+    <div data-bind="visible: _initialSearchDone" id="search-results" class="container-fluid search-results">
+      <div class="row">
+        <div class="col">
+
+          <div class="tab-content" id="nodeTabsContent" data-bind="foreach: _nodeSearchList">
+            <!-- For each node add a tab panel -->
+            <div class="tab-pane fade show pt-5" id="" role="tabpanel" aria-labelledby="" data-bind="attr: {id: _node_type, 'aria-labelledby': _node_type+'-tab'},  css:{active: _activateTab}">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <!-- For each node property add a table header -->
+                  <tr data-bind="foreach: _nodePropertyList">
+                    <th scope="col" data-bind="text: $data.property_label"></th>
+                  </tr>
+                </thead>
+                <!-- For each row in _nodeSearchData add the node property related data-->
+                <tbody data-bind="foreach: _nodeSearchData">
+                  <tr data-bind="foreach: $parent._nodePropertyList">
+                    <td data-bind="text: $parent[$data.property_name]"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="row search-home">
+                  <div class="col text-center" data-bind="click: fetch">
+                    <div class="icon-div">
+                    <i data-bind="visible: !_fetchState()" class="fa fa-chevron-down fa-1x"></i>
+                    <i data-bind="visible: _fetchState" class="fa fa-circle-o-notch fa-spin fa-1x"></i>
+                  </div>
+                    <div >
+                    <!-- ko ifnot: _fetchState -->
+                      Load More
+                    <!-- /ko -->
+                    <!-- ko if: _fetchState -->
+                      Loading Nodes
+                    <!-- /ko -->
+                    </div>
+                  </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- Search Results Container  -->
+
+
+{% endblock content %}
