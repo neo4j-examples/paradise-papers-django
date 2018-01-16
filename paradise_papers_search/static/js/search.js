@@ -185,6 +185,7 @@
   class SearchApp {
     constructor() {
       this._searchText = ko.observable('');
+      this._initialSearchDone = ko.observable(false);
 
       // TODO
       this._countryList = ko.observableArray(mockup_data.countries);
@@ -207,6 +208,7 @@
     /** @todo initial Search */
     initNodeSeach () {
 
+      this._initialSearchDone(true)
       this._nodeSearchList().forEach(nodeSearch => {
 
         nodeSearch.clear();
