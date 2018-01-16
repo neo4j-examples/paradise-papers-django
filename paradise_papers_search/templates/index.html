@@ -66,7 +66,7 @@
 
 
     <!-- Sticky nav tabs -->
-    <nav id="search-tabs" class="navbar sticky-top navbar-light bg-white">
+    <nav data-bind="visible: _initialSearchDone" id="search-tabs" class="navbar sticky-top navbar-light bg-white">
       <!-- For each node add a tab item -->
       <ul class="nav nav-tabs w-100" id="nodeTabs" role="tablist">
         <!-- ko foreach: _nodeSearchList -->
@@ -104,7 +104,7 @@
 
 
     <!-- Search Results Container  -->
-    <div id="search-results" class="container-fluid search-results">
+    <div data-bind="visible: _initialSearchDone" id="search-results" class="container-fluid search-results">
       <div class="row">
         <div class="col">
 
