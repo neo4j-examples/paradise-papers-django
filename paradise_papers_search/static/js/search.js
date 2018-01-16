@@ -80,6 +80,8 @@
        */
       this._nodeSearchData = ko.observableArray();
 
+      /*count*/
+      this._nodeSearchDataCount = ko.observable(-1);
       /**
        * Show related tab on the view.
        */
@@ -93,7 +95,8 @@
       /**
        * Search an Filters related Stuff
        */
-      this._search_api = '/fetch/nodes';
+      this._search_api = '/fetch/';
+
       this._search_filters = {
         't': this._node_type,
       };
@@ -125,8 +128,8 @@
       this._fetchState(true);
 
       $.getJSON(
-        this._search_api,
-        this.setFilters({ 'p': this._page()+1 })
+        this._search_api + 'nodes',
+        this.setFilters({ 'p': this._page() + 1 })
       )
       .done(nodes => {
         nodes = JSON.parse(nodes);
@@ -145,10 +148,28 @@
     }
 
 
+    fetchCount() {
+      $.getJSON(
+        this._search_api + 'count',
+        this._search_filters
+      )
+      .done(nodes => {
+        nodes = JSON.parse(nodes);
+        this._nodeSearchDataCount(nodes.response.data.count)
+      })
+      .fail(() => {
+        /*TODO Handle errors */
+        console.log("Fetch error");
+      })
+    }
+
+
+
     /** @todo init search filter and data */
     clear () {
       this._nodeSearchData([]);
       this._page(0);
+      this._nodeSearchDataCount(-1);
       this.setFilters({
           'q': '',
           'c': '',
@@ -172,7 +193,6 @@
       this._jurisdictionList = ko.observableArray(mockup_data.jurisdictions);
       this._filters = {};
       this._nodeSearchList = ko.observableArray([]);
-
       // Construct NodeSearch instances
       for (var node_type in node_types) {
         if (node_types.hasOwnProperty(node_type)) {
@@ -188,19 +208,24 @@
 
     /** @todo initial Search */
     initNodeSeach () {
+
       this._nodeSearchList().forEach(nodeSearch => {
+
         nodeSearch.clear();
         nodeSearch.setFilters({
           'q': this._searchText(),
           'c': this._filters['country'],
           'j': this._filters['jurisdiction'],
         });
+
+        nodeSearch.fetchCount();
       });
       this.toggleNodeSearch();
     }
 
     /** @todo Toggle _currentNodeSearch and tab */
     toggleNodeSearch (nodeSearch) {
+
       if (nodeSearch) {
         this._currentNodeSearch._activateTab(false);
         this._currentNodeSearch = nodeSearch;
@@ -212,7 +237,6 @@
         this._currentNodeSearch.fetch();
       }
     }
-
   }
 
   // Create and bind our SearchApp

@@ -71,7 +71,27 @@
       <ul class="nav nav-tabs w-100" id="nodeTabs" role="tablist">
         <!-- ko foreach: _nodeSearchList -->
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" id="" href="#search-home" role="tab" aria-controls="" aria-selected="" data-bind="text: _node_type, attr: {id: _node_type+'-tab',href: '#'+_node_type, 'aria-controls': _node_type, 'aria-selected': _activateTab}, css:{active: _activateTab}, click: (x)=>$parent.toggleNodeSearch(x)"></a>
+           <a class="nav-link"
+             data-toggle="tab"
+             id="" href="#search-home"
+             role="tab"
+             aria-controls=""
+             aria-selected=""
+             data-bind="attr: {id: _node_type+'-tab',
+                               href: '#'+_node_type,
+                               'aria-controls': _node_type,
+                               'aria-selected': _activateTab},
+                        css: {active: _activateTab},
+                        click: (x)=>$parent.toggleNodeSearch(x)">
+            <!-- ko text: _node_type --><!-- /ko -->
+            <!-- ko if:   _nodeSearchDataCount() < 0 -->
+            <i class="fa fa-circle-o-notch fa-spin fa-1x"></i>
+            <!-- /ko -->
+            <!-- ko if:   _nodeSearchDataCount() >= 0  -->
+            <span data-bind="text: _nodeSearchDataCount()" class="badge badge-primary"></span>
+            <!-- /ko -->
+          </a>
+
         </li>
         <!-- /ko -->
         <li class="ml-auto">

@@ -23,14 +23,16 @@
   max-width: 1280px;
   min-height: 100vh;
 }
+
 .icon-div {
-    border-radius: 0 0 80px 80px;
     background: #fff;
-    height: 40px;
-    width: 80px;
+    border-radius: 0 0 80px 80px;
     display: inline-block;
+    height: 40px;
     padding: 4px;
+    width: 80px;
 }
+
 .search-home {
   background: #dee2e6;
   height: 70px;
