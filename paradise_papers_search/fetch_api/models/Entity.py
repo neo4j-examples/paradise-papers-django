@@ -49,37 +49,24 @@ class Entity(DjangoNode):
         return [
             {
                 'nodes_type': 'officer',
-                'nodes_related': helpers.serialize_relationship(self.officers.all(), 'OFFICER_OF'),
+                'nodes_related': helpers.serialize_relationships(self.officers.all(), 'OFFICER_OF'),
             },
             {
                 'nodes_type': 'intermediary',
-                'nodes_related': helpers.serialize_relationship(self.intermediaries.all(), 'INTERMEDIARY_OF'),
+                'nodes_related': helpers.serialize_relationships(self.intermediaries.all(), 'INTERMEDIARY_OF'),
             },
             {
                 'nodes_type': 'address',
-                'nodes_related': helpers.serialize_relationship(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
             },
             {
                 'nodes_type': 'other',
-                'nodes_related': helpers.serialize_relationship(self.others.all(), 'CONNECTED_TO'),
+                'nodes_related': helpers.serialize_relationships(self.others.all(), 'CONNECTED_TO'),
             },
             {
                 'nodes_type': 'entity',
-                'nodes_related': self._entity_relationships(),
+                'nodes_related': helpers.serialized_realtionships_of_type(self, 'Entity'),
             },
         ]
-
-    def _entity_relationships(self):
-        results     = self.cypher("START p=node({self}) MATCH n=(p)<-[r]->(x:Entity) RETURN r, x.node_id as Node_id")
-        entities    = []
-
-        for row in results[0]:
-            entity = self.nodes.get(node_id=row[1])
-            serialized_entity = entity.serialize
-            serialized_entity['relationship'] = row[0].type
-            entities.append(serialized_entity)
-
-
-        return entities
 
 install_labels(Entity)
