@@ -59,8 +59,10 @@ def fetch_node_details(node_info):
     node_id         = node_info['node_id']
     node            = MODEL_ENTITIES[node_type].nodes.get(node_id=node_id)
     node_details    = node.serialize
+    node_details['node_connections'] = []
+
     if (hasattr(node, 'serialize_connections')):
-        node_details['conections'] = node.serialize_connections
+        node_details['node_connections'] = node.serialize_connections
 
     return node_details
 

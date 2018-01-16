@@ -2,72 +2,128 @@
  * Paradise Paper Search App
  *
  * @author: Junior Báez
- * @version: 0.1.0
+ * @version: 0.2.0
  * @requires ko - global KnowckoutJS object
  */
 (() => {
   'use strict';
 
   /**
-  *  Node types mapping
+  *  Nodes Settings metadata
   *  {
   *    '<node_type>': {
-  *        '<property_name>': '<Property Label>',
+  *        '<property_name>': ['<Property Label>', <boolDisplayTable>],
   *        ...
   *    },
   *   ...
   *  }
   */
-  const node_types = {
+  const nodes_settings = {
     'entity': {
-      'name': '',
-      'incorporation_date': 'Incorporation',
-      'jurisdiction': 'Jurisdiction',
-      'countries': 'Linked To',
-      'sourceID': 'Data From'
+      'name': ['', true],
+      'incorporation_date': ['Incorporation', true],
+      'jurisdiction': ['Jurisdiction', true],
+      'countries': ['Linked To', true],
+      'sourceID': ['Data From', true]
     },
     'officer': {
-      'name': '',
-      'countries': 'Linked To',
-      'sourceID': 'Data From'
+      'name': ['', true],
+      'countries': ['Linked To', true],
+      'sourceID': ['Data From', true]
     },
     'intermediary': {
-      'name': '',
-      'countries': 'Linked To',
-      'sourceID': 'Data From'
+      'name': ['', true],
+      'countries': ['Linked To', true],
+      'sourceID': ['Data From', true]
     },
     'address': {
-      'address': '',
-      'countries': 'Linked To',
-      'sourceID': 'Data From'
+      'address': ['', true],
+      'countries': ['Linked To', true],
+      'sourceID': ['Data From', true]
     },
     'other': {
-      'name': '',
-      'countries': 'Linked To',
-      'sourceID': 'Data From'
+      'name': ['', true],
+      'countries': ['Linked To', true],
+      'sourceID': ['Data From', true]
     }
   };
+
+  /**
+   * Representation of a Node
+   *
+   * @param node_type
+   * @param node_properties
+   */
+  class Node {
+
+    constructor(node_type, node_id_or_properties) {
+      this._node_type = node_type;
+      this._node_properties = {};
+      this._node_connections = ko.observableArray();
+
+      if (typeof node_id_or_properties === 'number') {
+        this._node_id = node_id_or_properties;
+      } else {
+        this._node_id = node_id_or_properties.node_id;
+        this._node_properties = node_id_or_properties;
+      }
+    }
+
+    /**
+     * Fetch connected nodes.
+     */
+    fetchConnections () {
+      $.getJSON(
+        '/fetch/node',
+        {
+          'id': this._node_id,
+          't': this._node_type
+        }
+      )
+      .done(nodeFetch => {
+        this._node_properties = nodeFetch.response.data.node_properties;
+        nodeFetch.response.data.node_connections.forEach(conns => {
+          conns.nodes_count = conns.nodes_related.length;
+          // check if the current connections group really has nodes
+          if (conns.nodes_count > 0) {
+            // Convert nodes_related to instaces of the class Node
+            conns.nodes_related = conns.nodes_related.map((n) => {
+              return new Node(conns.nodes_type, n.node_properties);
+            });
+            this._node_connections.push(conns);
+          }
+        });
+      })
+      .fail(() => {
+        /*TODO Handle errors */
+        console.log("Fetch error");
+      });
+    }
+  }
 
   /**
    * The purpose of this class is to fetch data.
    * Each instance of the class will search and filter a specific node type.
    *
    * @param node_type
-   * @param node_properties
+   * @param node_settings
    */
   class NodeSearch {
-    constructor(node_type, node_properties) {
+
+    constructor(node_type, node_settings) {
       /**
-       * Type of Nodes
+       * Type of Nodes to fetch
        */
       this._node_type = node_type;
+
       /**
-       * List of node properties
+       * List of node properties metadata
        *
        * [
        *  {
        *    property_name: <propertyname>,
        *    property_label: <Property Label>
+       *    property_display_table: <bool>
        *  },
        *  ...
        * ]
@@ -80,8 +136,11 @@
        */
       this._nodeSearchData = ko.observableArray();
 
-      /*count*/
+      /**
+       * How many nodes have being fetched
+       */
       this._nodeSearchDataCount = ko.observable(-1);
+
       /**
        * Show related tab on the view.
        */
@@ -93,10 +152,13 @@
       this._fetchState = ko.observable(false);
 
       /**
-       * Search an Filters related Stuff
+       * API endpoint
        */
       this._search_api = '/fetch/';
 
+      /**
+       * Filter the Nodes that will be fetched
+       */
       this._search_filters = {
         't': this._node_type,
       };
@@ -106,22 +168,25 @@
 
 
       // Construct _nodePropertyList defined above
-      for (var property_name in node_properties) {
-        if (node_properties.hasOwnProperty(property_name)) {
+      for (let property_name in node_settings) {
+        if (node_settings.hasOwnProperty(property_name)) {
           this._nodePropertyList.push({
             property_name,
-            'property_label': node_properties[property_name]
+            'property_label': node_settings[property_name][0],
+            'property_display_table': node_settings[property_name][1]
           });
         }
       }
     }
-    /*
+
+   /**
     * Set the filters
+    *
     * @param: newFilters - Object of filters to change
     * @return: this._search_filters
     */
     setFilters(newFilters) {
-      return Object.assign(this._search_filters, newFilters)
+      return Object.assign(this._search_filters, newFilters);
     }
 
     fetch () {
@@ -133,7 +198,9 @@
       )
       .done(nodes => {
         nodes.response.data.forEach(node => {
-          this._nodeSearchData.push(node.node_properties);
+          this._nodeSearchData.push(
+            new Node(this._node_type, node.node_properties)
+          );
         });
         this._page(this._page() + 1);
       })
@@ -145,7 +212,6 @@
         this._fetchState(false);
       });
     }
-
 
     fetchCount() {
       $.getJSON(
@@ -161,9 +227,9 @@
       })
     }
 
-
-
-    /** @todo init search filter and data */
+    /**
+     * Clear and reset 
+     */
     clear () {
       this._nodeSearchData([]);
       this._page(0);
@@ -190,14 +256,19 @@
       this._countryList = ko.observableArray();
       this._jurisdictionList = ko.observableArray();
       this._filters = {};
-      this._nodeSearchList = ko.observableArray([]);
+
+      // Node details tracking
+      this._nodesCache = {};
+      this._currentNode = ko.observable();
 
       // Construct NodeSearch instances
-      for (var node_type in node_types) {
-        if (node_types.hasOwnProperty(node_type)) {
-          this._nodeSearchList.push(
-            new NodeSearch(node_type, node_types[node_type])
-          );
+      this._nodeSearch = {};
+      this._nodeSearchList = ko.observableArray([]);
+      for (let node_type in nodes_settings) {
+        if (nodes_settings.hasOwnProperty(node_type)) {
+          let nodeSearch = new NodeSearch(node_type, nodes_settings[node_type]);
+          this._nodeSearch[node_type] = nodeSearch;
+          this._nodeSearchList.push(nodeSearch);
         }
       }
 
@@ -207,10 +278,10 @@
       window.searchApp = this; // TODO for testing, remove later
     }
 
-    /** @todo initial Search */
+    /**
+     * Init Search
+     */
     initNodeSeach () {
-
-      this._initialSearchDone(true)
       this._nodeSearchList().forEach(nodeSearch => {
 
         nodeSearch.clear();
@@ -222,12 +293,15 @@
 
         nodeSearch.fetchCount();
       });
-      this.toggleNodeSearch();
+
+      this._initialSearchDone(true)
+      this.displayNodeSearch();
     }
 
-    /** @todo Toggle _currentNodeSearch and tab */
-    toggleNodeSearch (nodeSearch) {
-
+    /**
+     * Toggle _currentNodeSearch to show on the view
+     */
+    displayNodeSearch (nodeSearch) {
       if (nodeSearch) {
         this._currentNodeSearch._activateTab(false);
         this._currentNodeSearch = nodeSearch;
@@ -238,6 +312,26 @@
       if (this._currentNodeSearch._page() === 0) {
         this._currentNodeSearch.fetch();
       }
+    }
+
+    /**
+     * Toggle _currentNode to show on the view
+     */
+    displayNode (node) {
+      let node_id = node._node_id;
+
+      // Show node from cache if connections have being fetched
+      if (this._nodesCache.hasOwnProperty(node_id)) {
+        console.log("Node from cache", node);
+        this._currentNode(this._nodesCache[node_id]);
+        return;
+      }
+
+      // Fetch node connections once
+      console.log("Fetching node details", node);
+      node.fetchConnections();
+      this._currentNode(node);
+      this._nodesCache[node_id] = node;
     }
 
     fetchCountries() {
@@ -269,8 +363,9 @@
         console.log("Fetch error");
       })
     }
+
   }
 
   // Create and bind our SearchApp
   ko.applyBindings(new SearchApp());
-})()
+})();

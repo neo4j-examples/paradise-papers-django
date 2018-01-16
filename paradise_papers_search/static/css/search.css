@@ -27,13 +27,18 @@
 .icon-div {
     background: #fff;
     border-radius: 0 0 80px 80px;
+    cursor: pointer;
     display: inline-block;
     height: 40px;
     padding: 4px;
     width: 80px;
 }
 
-.search-home {
+.load-more {
   background: #dee2e6;
   height: 70px;
+}
+
+.clickable-rows tbody tr {
+  cursor: pointer;
 }
