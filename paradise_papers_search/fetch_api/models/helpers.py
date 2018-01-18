@@ -9,11 +9,11 @@ from . import (
 )
 
 MODEL_ENTITIES = {
-    'entity': Entity.Entity,
-    'address': Address.Address,
-    'intermediary': Intermediary.Intermediary,
-    'officer': Officer.Officer,
-    'other': Other.Other
+    'Entity': Entity.Entity,
+    'Address': Address.Address,
+    'Intermediary': Intermediary.Intermediary,
+    'Officer': Officer.Officer,
+    'Other': Other.Other
 }
 
 # Queries Functions
@@ -26,7 +26,7 @@ def filter_nodes(node_type, name, country, jurisdiction):
     if not node_type.__name__ == 'Other':
         node_set.filter(countries__icontains=country)
     if node_type.__name__ == 'Entity':
-        node_set.filter(jurisdiction__icontains=jurisdiction)
+        node_set.filter(jurisdiction_description__icontains=jurisdiction)
     return node_set
 
 def count_nodes(count_info):
@@ -75,7 +75,7 @@ def serialize_relationships(nodes, relationship):
     serialized_nodes = []
     for node in nodes:
         serialized_node = node.serialize
-        serialized_node['relationship'] = relationship
+        serialized_node['node_relationship'] = relationship
         serialized_nodes.append(serialized_node)
 
     return serialized_nodes
@@ -90,9 +90,9 @@ def serialized_realtionships_of_type(self, node_type):
         nodes   = []
 
         for row in results[0]:
-            node = self.nodes.get(node_id=row[1])
+            node = MODEL_ENTITIES[node_type].nodes.get(node_id=row[1])
             serialized_node = node.serialize
-            serialized_node['relationship'] = row[0].type
+            serialized_node['node_relationship'] = row[0].type
             nodes.append(serialized_node)
 
 

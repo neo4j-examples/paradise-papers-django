@@ -22,5 +22,3 @@ class Address(DjangoNode):
                 'node_id': self.node_id,
             },
         }
-
-install_labels(Address)

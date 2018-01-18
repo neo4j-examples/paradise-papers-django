@@ -19,29 +19,29 @@
   *  }
   */
   const node_types = {
-    'entity': {
+    'Entity': {
       'name': '',
       'incorporation_date': 'Incorporation',
-      'jurisdiction': 'Jurisdiction',
+      'jurisdiction_description': 'Jurisdiction',
       'countries': 'Linked To',
       'sourceID': 'Data From'
     },
-    'officer': {
+    'Officer': {
       'name': '',
       'countries': 'Linked To',
       'sourceID': 'Data From'
     },
-    'intermediary': {
+    'Intermediary': {
       'name': '',
       'countries': 'Linked To',
       'sourceID': 'Data From'
     },
-    'address': {
+    'Address': {
       'address': '',
       'countries': 'Linked To',
       'sourceID': 'Data From'
     },
-    'other': {
+    'Other': {
       'name': '',
       'countries': 'Linked To',
       'sourceID': 'Data From'

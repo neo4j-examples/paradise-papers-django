@@ -31,17 +31,15 @@ class Officer(DjangoNode):
     def serialize_connections(self):
         return [
             {
-                'nodes_type': 'address',
+                'nodes_type': 'Address',
                 'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
             },
             {
-                'nodes_type': 'entity',
+                'nodes_type': 'Entity',
                 'nodes_related': helpers.serialize_relationships(self.entities.all(), 'OFFICER_OF'),
             },
             {
-                'nodes_type': 'officer',
+                'nodes_type': 'Officer',
                 'nodes_related': helpers.serialized_realtionships_of_type(self, 'Officer'),
             },
         ]
-
-install_labels(Officer)

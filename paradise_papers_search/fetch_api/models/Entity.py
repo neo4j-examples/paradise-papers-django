@@ -48,25 +48,23 @@ class Entity(DjangoNode):
     def serialize_connections(self):
         return [
             {
-                'nodes_type': 'officer',
+                'nodes_type': 'Officer',
                 'nodes_related': helpers.serialize_relationships(self.officers.all(), 'OFFICER_OF'),
             },
             {
-                'nodes_type': 'intermediary',
+                'nodes_type': 'Intermediary',
                 'nodes_related': helpers.serialize_relationships(self.intermediaries.all(), 'INTERMEDIARY_OF'),
             },
             {
-                'nodes_type': 'address',
+                'nodes_type': 'Address',
                 'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
             },
             {
-                'nodes_type': 'other',
+                'nodes_type': 'Other',
                 'nodes_related': helpers.serialize_relationships(self.others.all(), 'CONNECTED_TO'),
             },
             {
-                'nodes_type': 'entity',
+                'nodes_type': 'Entity',
                 'nodes_related': helpers.serialized_realtionships_of_type(self, 'Entity'),
             },
         ]
-
-install_labels(Entity)
