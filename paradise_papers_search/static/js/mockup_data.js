@@ -80,7 +80,7 @@ mockup_data.jurisdictions = [
 ]
 
 /*
-@TODO
+@todo
 Node Detail API Mockup Data
 {
   'status': '200',
