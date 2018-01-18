@@ -11,7 +11,7 @@ from .models.helpers import (
 class GetNodesCount(APIView):
     def get(self, request):
         count_info = {
-            'node_type': request.GET.get('t', 'entity'),
+            'node_type': request.GET.get('t', 'Entity'),
             'name': request.GET.get('q', ''),
             'country': request.GET.get('c', ''),
             'jurisdiction': request.GET.get('j', ''),
@@ -28,7 +28,7 @@ class GetNodesCount(APIView):
 class GetNodesData(APIView):
     def get(self, request):
         fetch_info = {
-            'node_type': request.GET.get('t', 'entity'),
+            'node_type': request.GET.get('t', 'Entity'),
             'name': request.GET.get('q', ''),
             'country': request.GET.get('c', ''),
             'jurisdiction': request.GET.get('j', ''),
@@ -48,7 +48,7 @@ class GetNodesData(APIView):
 class GetNodeData(APIView):
     def get(self, request):
         node_info = {
-            'node_type': request.GET.get('t', 'entity'),
+            'node_type': request.GET.get('t', 'Entity'),
             'node_id': int(request.GET.get('id')),
         }
         node_details = fetch_node_details(node_info)
