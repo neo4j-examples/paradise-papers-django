@@ -1,6 +1,7 @@
 from neomodel import *
 from neomodel import db
 from django_neomodel import DjangoNode
+from . import helpers
 
 class Intermediary(DjangoNode):
     sourceID      = StringProperty()
@@ -10,6 +11,8 @@ class Intermediary(DjangoNode):
     countries     = StringProperty()
     node_id       = StringProperty()
     status        = StringProperty()
+    entities      = RelationshipTo('.Entity.Entity', 'INTERMEDIARY_OF')
+    addresses     = RelationshipTo('.Address.Address', 'REGISTERED_ADDRESS')
 
     @property
     def serialize(self):
@@ -25,4 +28,20 @@ class Intermediary(DjangoNode):
             },
         }
 
-install_labels(Intermediary)
+    @property
+    def serialize_connections(self):
+        return [
+            {
+                'nodes_type': 'Entity',
+                'nodes_related': helpers.serialize_relationships(self.entities.all(), 'INTERMEDIARY_OF'),
+            },
+            {
+                'nodes_type': 'Address',
+                'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
+            },
+            {
+                'nodes_type': 'Officer',
+                'nodes_related': helpers.serialized_realtionships_of_type(self, 'Officer'),
+            },
+
+        ]

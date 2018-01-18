@@ -25,30 +25,32 @@
   *
   * @todo Add missing properties
   */
+
+
   const nodes_settings = {
-    'entity': {
+    'Entity': {
       'name': ['', true],
       'incorporation_date': ['Incorporation', true],
       'jurisdiction': ['Jurisdiction', true],
       'countries': ['Linked To', true],
       'sourceID': ['Data From', true]
     },
-    'officer': {
+    'Officer': {
       'name': ['', true],
       'countries': ['Linked To', true],
       'sourceID': ['Data From', true]
     },
-    'intermediary': {
+    'Intermediary': {
       'name': ['', true],
       'countries': ['Linked To', true],
       'sourceID': ['Data From', true]
     },
-    'address': {
+    'Address': {
       'address': ['', true],
       'countries': ['Linked To', true],
       'sourceID': ['Data From', true]
     },
-    'other': {
+    'Other': {
       'name': ['', true],
       'countries': ['Linked To', true],
       'sourceID': ['Data From', true]
@@ -67,6 +69,7 @@
       this._node_type = node_type;
       this._node_properties = {};
       this._node_connections = ko.observableArray();
+      this._fetchStateNode = ko.observable(false);
 
       if (typeof node_id_or_properties === 'number') {
         this._node_id = node_id_or_properties;
@@ -80,6 +83,7 @@
      * Fetch connected nodes.
      */
     fetchConnections () {
+      this._fetchStateNode(true);
       $.getJSON(
         '/fetch/node',
         {
@@ -104,6 +108,9 @@
       .fail(() => {
         /** @todo Handle errors */
         console.log("Fetch error");
+      })
+      .always(() => {
+        this._fetchStateNode(false);
       });
     }
   }

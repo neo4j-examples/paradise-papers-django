@@ -11,7 +11,7 @@ countries = db.cypher_query(
 jurisdictions = db.cypher_query(
     '''
     MATCH (n)
-    RETURN DISTINCT n.jurisdiction AS jurisdiction
+    RETURN DISTINCT n.jurisdiction_description AS jurisdiction
     '''
 )[0]
 
