@@ -4,6 +4,11 @@
  * @author: Junior Báez
  * @version: 0.2.0
  * @requires ko - global KnowckoutJS object
+ *
+ * @todo Implement RequireJS and split app into modules
+ * @todo Implement page routing, possibly with Page.js
+ * @todo Write JSDocs
+ *
  */
 (() => {
   'use strict';
@@ -17,6 +22,8 @@
   *    },
   *   ...
   *  }
+  *
+  * @todo Add missing properties
   */
   const nodes_settings = {
     'entity': {
@@ -95,7 +102,7 @@
         });
       })
       .fail(() => {
-        /*TODO Handle errors */
+        /** @todo Handle errors */
         console.log("Fetch error");
       });
     }
@@ -163,9 +170,10 @@
         't': this._node_type,
       };
 
-      this._page = ko.observable(0);
-      this._total = ko.observable(0);
-
+      /**
+       * Last page fetched
+       */
+      this._last_page_fetched = ko.observable(0);
 
       // Construct _nodePropertyList defined above
       for (let property_name in node_settings) {
@@ -194,7 +202,7 @@
 
       $.getJSON(
         this._search_api + 'nodes',
-        this.setFilters({ 'p': this._page() + 1 })
+        this.setFilters({ 'p': this._last_page_fetched() + 1 })
       )
       .done(nodes => {
         nodes.response.data.forEach(node => {
@@ -202,10 +210,10 @@
             new Node(this._node_type, node.node_properties)
           );
         });
-        this._page(this._page() + 1);
+        this._last_page_fetched(this._last_page_fetched() + 1);
       })
       .fail(() => {
-        /*TODO Handle errors */
+        /** @todo Handle errors */
         console.log("Fetch error");
       })
       .always(() => {
@@ -222,7 +230,7 @@
         this._nodeSearchDataCount(nodes.response.data.count)
       })
       .fail(() => {
-        /*TODO Handle errors */
+        /** @todo Handle errors */
         console.log("Fetch error");
       })
     }
@@ -232,7 +240,7 @@
      */
     clear () {
       this._nodeSearchData([]);
-      this._page(0);
+      this._last_page_fetched(0);
       this._nodeSearchDataCount(-1);
       this.setFilters({
           'q': '',
@@ -266,7 +274,7 @@
       this._nodeSearchList = ko.observableArray([]);
       for (let node_type in nodes_settings) {
         if (nodes_settings.hasOwnProperty(node_type)) {
-          let nodeSearch = new NodeSearch(node_type, nodes_settings[node_type]);
+          const nodeSearch = new NodeSearch(node_type, nodes_settings[node_type]);
           this._nodeSearch[node_type] = nodeSearch;
           this._nodeSearchList.push(nodeSearch);
         }
@@ -275,7 +283,6 @@
       this._currentNodeSearch = this._nodeSearchList()[0];
       this.fetchCountries();
       this.fetchJurisdictions();
-      window.searchApp = this; // TODO for testing, remove later
     }
 
     /**
@@ -309,7 +316,7 @@
 
       this._currentNodeSearch._activateTab(true);
 
-      if (this._currentNodeSearch._page() === 0) {
+      if (this._currentNodeSearch._last_page_fetched() === 0) {
         this._currentNodeSearch.fetch();
       }
     }
@@ -318,17 +325,15 @@
      * Toggle _currentNode to show on the view
      */
     displayNode (node) {
-      let node_id = node._node_id;
+      const node_id = node._node_id;
 
       // Show node from cache if connections have being fetched
       if (this._nodesCache.hasOwnProperty(node_id)) {
-        console.log("Node from cache", node);
         this._currentNode(this._nodesCache[node_id]);
         return;
       }
 
       // Fetch node connections once
-      console.log("Fetching node details", node);
       node.fetchConnections();
       this._currentNode(node);
       this._nodesCache[node_id] = node;
@@ -344,7 +349,7 @@
         });
       })
       .fail(() => {
-        /*TODO Handle errors */
+        /** @todo Handle errors */
         console.log("Fetch error");
       })
     }
@@ -359,7 +364,7 @@
         });
       })
       .fail(() => {
-        /*TODO Handle errors */
+        /** @todo Handle errors */
         console.log("Fetch error");
       })
     }
