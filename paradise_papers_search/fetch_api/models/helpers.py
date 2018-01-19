@@ -24,7 +24,7 @@ def filter_nodes(node_type, name, country, jurisdiction):
     else:
         node_set.filter(name__icontains=name)
     if node_type.__name__ == 'Entity':
-        node_set.filter(jurisdiction_description__icontains=jurisdiction)
+        node_set.filter(jurisdiction__icontains=jurisdiction)
 
     node_set.filter(countries__icontains=country)
 
