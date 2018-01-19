@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 from neomodel import config
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
@@ -21,6 +21,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '7jvc876=)%+t5^k4p0qd^ysi@4317lo*r+ki^r3)e(*g-efh&^'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+ALLOWED_HOSTS = []
+
+#Connect to Neo4j Database
+config.DATABASE_URL = 'bolt://paradisepapers:paradisepapers@174.138.63.95:7687'  # default
 
 # Application definition
 
@@ -43,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'paradise_papers_search.urls'
@@ -108,6 +116,8 @@ STATICFILES_DIRS = (
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # Rest-Framework settings
 REST_FRAMEWORK = {
