@@ -205,6 +205,13 @@
     }
 
     fetch () {
+        // Test code
+        let mock = mockup_data[this._node_type].data;
+        mock.forEach(row => {
+            this._nodeSearchData.push(new Node(this._node_type, row.node_properties));
+        });
+        return;
+        // /Test code
       this._fetchState(true);
 
       $.getJSON(
@@ -229,6 +236,9 @@
     }
 
     fetchCount() {
+        // Mock Data
+        return this._nodeSearchDataCount(0);
+
       $.getJSON(
         this._search_api + 'count',
         this._search_filters
@@ -243,7 +253,7 @@
     }
 
     /**
-     * Clear and reset 
+     * Clear and reset
      */
     clear () {
       this._nodeSearchData([]);
@@ -350,6 +360,13 @@
     }
 
     fetchCountries() {
+        // Test code
+        mockup_data.countries.forEach(country => {
+            this._countryList.push(country);
+        });
+
+        return this._countryList;
+        // /Test code
       $.getJSON(
         'fetch/countries'
       )
@@ -365,6 +382,13 @@
     }
 
     fetchJurisdictions() {
+        // Test code
+        mockup_data.jurisdictions.forEach(jurisdiction => {
+            this._jurisdictionList.push(jurisdiction);
+        });
+        // /Test code
+        return this._jurisdictionList;
+
       $.getJSON(
         'fetch/jurisdictions'
       )
@@ -380,6 +404,13 @@
     }
 
     fetchDataSource() {
+        // mock data
+        mockup_data.dataSource.forEach(dataSource => {
+            this._dataSourceList.push(dataSource);
+        });
+
+        return this._dataSourceList;
+
       $.getJSON(
         'fetch/datasource'
       )
