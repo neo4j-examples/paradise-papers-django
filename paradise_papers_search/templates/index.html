@@ -9,7 +9,7 @@
           <h1 class="display-3 mb-5">Paradise Papers Search</h1>
           <form class="search-form" data-bind="submit: () => $('#init-search').click()">
             <div class="form-group row">
-              <div class="input-group mb-3 col-md-6">
+              <div class="input-group mb-3 col-md-4">
                 <div class="input-group-prepend">
                   <span class="input-group-text">By jurisdiction:</span>
                 </div>
@@ -19,14 +19,24 @@
                              value: _filters.jurisdiction">
                 </select>
               </div>
-              <div class="input-group mb-3 col-md-6">
+              <div class="input-group mb-3 col-md-4">
                 <div class="input-group-prepend">
-                  <span class="input-group-text" id="">By Country:</span>
+                  <span class="input-group-text">By Country:</span>
                 </div>
                 <select class="form-control"
                   data-bind="options: _countryList,
                              optionsCaption: 'All countries...',
                              value: _filters.country">
+                </select>
+              </div>
+              <div class="input-group mb-3 col-md-4">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">By Data Source:</span>
+                </div>
+                <select class="form-control"
+                  data-bind="options: _dataSourceList,
+                             optionsCaption: 'All Data Source...',
+                             value: _filters.dataSource">
                 </select>
               </div>
             </div> <!-- End Filters -->

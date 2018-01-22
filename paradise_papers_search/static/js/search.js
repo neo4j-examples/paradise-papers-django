@@ -270,6 +270,7 @@
       this._searchText = ko.observable('');
       this._countryList = ko.observableArray();
       this._jurisdictionList = ko.observableArray();
+      this._dataSourceList = ko.observableArray();
       this._filters = {};
 
       // Node details tracking
@@ -290,6 +291,7 @@
       this._currentNodeSearch = this._nodeSearchList()[0];
       this.fetchCountries();
       this.fetchJurisdictions();
+      this.fetchDataSource();
     }
 
     /**
@@ -303,6 +305,7 @@
           'q': this._searchText(),
           'c': this._filters['country'],
           'j': this._filters['jurisdiction'],
+          's': this._filters['dataSource'],
         });
 
         nodeSearch.fetchCount();
@@ -376,6 +379,20 @@
       })
     }
 
+    fetchDataSource() {
+      $.getJSON(
+        'fetch/datasource'
+      )
+      .done(dataSources => {
+        dataSources.response.data.forEach(dataSource => {
+          this._dataSourceList.push(dataSource);
+        });
+      })
+      .fail(() => {
+        /** @todo Handle errors */
+        console.log("Fetch error");
+      })
+    }
   }
 
   // Create and bind our SearchApp
