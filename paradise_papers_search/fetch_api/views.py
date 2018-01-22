@@ -5,7 +5,8 @@ from .models.helpers import (
     fetch_nodes,
     fetch_node_details,
     fetch_countries,
-    fetch_jurisdictions
+    fetch_jurisdictions,
+    fetch_data_source,
 )
 
 class GetNodesCount(APIView):
@@ -15,6 +16,7 @@ class GetNodesCount(APIView):
             'name': request.GET.get('q', ''),
             'country': request.GET.get('c', ''),
             'jurisdiction': request.GET.get('j', ''),
+            'sourceID': request.GET.get('s', ''),
         }
         count = count_nodes(count_info)
         data = {
@@ -32,6 +34,7 @@ class GetNodesData(APIView):
             'name': request.GET.get('q', ''),
             'country': request.GET.get('c', ''),
             'jurisdiction': request.GET.get('j', ''),
+            'sourceID': request.GET.get('s', ''),
             'limit': 10,
             'skip': int(request.GET.get('p', 1)),
         }
@@ -78,6 +81,17 @@ class GetJurisdictions(APIView):
             'response': {
                 'status': '200',
                 'data': jurisdictions,
+            },
+        }
+        return Response(data)
+
+class GetDataSource(APIView):
+    def get(self, request):
+        data_source = fetch_data_source()
+        data = {
+            'response': {
+                'status': '200',
+                'data': data_source,
             },
         }
         return Response(data)

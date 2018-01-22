@@ -1,5 +1,5 @@
 from neomodel import db
-from paradise_papers_search.constants import COUNTRIES, JURISDICTIONS
+from paradise_papers_search.constants import COUNTRIES, JURISDICTIONS, DATASOURCE
 from . import (
     Entity,
     Address,
@@ -17,7 +17,7 @@ MODEL_ENTITIES = {
 }
 
 # Queries Functions
-def filter_nodes(node_type, name, country, jurisdiction):
+def filter_nodes(node_type, name, country, jurisdiction, source_id):
     node_set = node_type.nodes
     if node_type.__name__ == 'Address':
         node_set.filter(address__icontains=name)
@@ -27,6 +27,7 @@ def filter_nodes(node_type, name, country, jurisdiction):
         node_set.filter(jurisdiction__icontains=jurisdiction)
 
     node_set.filter(countries__icontains=country)
+    node_set.filter(sourceID__icontains=source_id)
 
     return node_set
 
@@ -36,7 +37,8 @@ def count_nodes(count_info):
     search_word             = count_info['name']
     country                 = count_info['country']
     jurisdiction            = count_info['jurisdiction']
-    node_set                = filter_nodes(MODEL_ENTITIES[node_type], search_word, country, jurisdiction)
+    data_source             = count_info['sourceID']
+    node_set                = filter_nodes(MODEL_ENTITIES[node_type], search_word, country, jurisdiction, data_source)
     count['count']          = len(node_set)
 
     return count
@@ -48,7 +50,8 @@ def fetch_nodes(fetch_info):
     limit           = fetch_info['limit']
     skip            = ((fetch_info['skip'] - 1) * limit)
     jurisdiction    = fetch_info['jurisdiction']
-    node_set        = filter_nodes(MODEL_ENTITIES[node_type], search_word, country, jurisdiction)
+    data_source     = fetch_info['sourceID']
+    node_set        = filter_nodes(MODEL_ENTITIES[node_type], search_word, country, jurisdiction, data_source)
     node_set.limit  = limit
     node_set.skip   = skip
     fetched_nodes   = node_set.all()
@@ -73,6 +76,9 @@ def fetch_countries():
 
 def fetch_jurisdictions():
     return JURISDICTIONS
+
+def fetch_data_source():
+    return DATASOURCE
 
 # Helper function to serialize the nodes related to a given node and attatch the relationship type
 def serialize_relationships(nodes, relationship):

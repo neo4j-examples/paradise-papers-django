@@ -5,6 +5,7 @@ from .views import (
     GetNodeData,
     GetCountries,
     GetJurisdictions,
+    GetDataSource,
 )
 
 urlpatterns = [
@@ -13,4 +14,5 @@ urlpatterns = [
     url(r'^node[/]?$', GetNodeData.as_view(), name='get_node_data'),
     url(r'^countries[/]?$', GetCountries.as_view(), name='get_countries'),
     url(r'^jurisdictions[/]?$', GetJurisdictions.as_view(), name='get_jurisdictions'),
+    url(r'^datasource[/]?$', GetDataSource.as_view(), name='get_data_source'),
 ]
