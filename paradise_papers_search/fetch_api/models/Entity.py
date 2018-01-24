@@ -1,10 +1,12 @@
+from . import helpers
+from .relationships import RegisteredAddress, OfficerOf, IntermediaryOf, ConnectedTo
+
 from neomodel import *
 from neomodel import db
+from neomodel.match import Traversal
 from django_neomodel import DjangoNode
-from . import helpers
 
 
-#Class for Neo4j databaser nodes
 class Entity(DjangoNode):
     sourceID                 = StringProperty()
     address                  = StringProperty()
@@ -19,10 +21,20 @@ class Entity(DjangoNode):
     incorporation_date       = StringProperty()
     node_id                  = StringProperty()
     status                   = StringProperty()
-    officers                 = RelationshipFrom('.Officer.Officer', 'OFFICER_OF')
-    intermediaries           = RelationshipFrom('.Intermediary.Intermediary', 'INTERMEDIARY_OF')
-    addresses                = RelationshipTo('.Address.Address', 'REGISTERED_ADDRESS')
-    others                   = RelationshipFrom('.Other.Other', 'CONNECTED_TO')
+    officers                 = RelationshipFrom('.Officer.Officer', OfficerOf.getLabel(), model=OfficerOf)
+    intermediaries           = RelationshipFrom('.Intermediary.Intermediary', IntermediaryOf.getLabel(), model=IntermediaryOf)
+    addresses                = RelationshipTo('.Address.Address', RegisteredAddress.getLabel(), model=RegisteredAddress)
+    others                   = RelationshipFrom('.Other.Other', ConnectedTo.getLabel(), model=ConnectedTo)
+    entities                 = Relationship('.Entity.Entity', '*')
+
+
+    def connections(self, relmodel=None):
+        reltype = relmodel if relmodel is None else relmodel.getLabel()
+        rel = Relationship(helpers.MODEL_ENTITIES['Intermediary'], '*')
+        # rel._lookup_node_class()
+        # return Traversal(self, self.__label__, rel.definition)
+        return rel.build_manager(self, self.__label__)
+
 
     @property
     def serialize(self):
@@ -44,24 +56,25 @@ class Entity(DjangoNode):
             },
         }
 
+
     @property
     def serialize_connections(self):
         return [
             {
                 'nodes_type': 'Officer',
-                'nodes_related': helpers.serialize_relationships(self.officers.all(), 'OFFICER_OF'),
+                'nodes_related': helpers.serialize_relationships(self.officers.all(), OfficerOf.getLabel()),
             },
             {
                 'nodes_type': 'Intermediary',
-                'nodes_related': helpers.serialize_relationships(self.intermediaries.all(), 'INTERMEDIARY_OF'),
+                'nodes_related': helpers.serialize_relationships(self.intermediaries.all(), IntermediaryOf.getLabel()),
             },
             {
                 'nodes_type': 'Address',
-                'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': helpers.serialize_relationships(self.addresses.all(), RegisteredAddress.getLabel()),
             },
             {
                 'nodes_type': 'Other',
-                'nodes_related': helpers.serialize_relationships(self.others.all(), 'CONNECTED_TO'),
+                'nodes_related': helpers.serialize_relationships(self.others.all(), ConnectedTo.getLabel()),
             },
             {
                 'nodes_type': 'Entity',

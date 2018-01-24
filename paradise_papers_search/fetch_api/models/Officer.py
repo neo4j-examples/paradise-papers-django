@@ -1,8 +1,11 @@
+from . import helpers
+from .relationships import RegisteredAddress, OfficerOf
+
 from neomodel import *
 from neomodel import db
 from django_neomodel import DjangoNode
 from django_neomodel import DjangoNode
-from . import helpers
+
 
 class Officer(DjangoNode):
     sourceID      = StringProperty()
@@ -11,8 +14,9 @@ class Officer(DjangoNode):
     valid_until   = StringProperty()
     countries     = StringProperty()
     node_id       = StringProperty()
-    addresses     = RelationshipTo('.Address.Address', 'REGISTERED_ADDRESS')
-    entities      = RelationshipTo('.Entity.Entity', 'OFFICER_OF')
+    addresses     = RelationshipTo('.Address.Address', RegisteredAddress.getLabel(), model=RegisteredAddress)
+    entities      = RelationshipTo('.Entity.Entity', OfficerOf.getLabel(), model=OfficerOf)
+
 
     @property
     def serialize(self):
@@ -27,16 +31,17 @@ class Officer(DjangoNode):
             },
         }
 
+
     @property
     def serialize_connections(self):
         return [
             {
                 'nodes_type': 'Address',
-                'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': helpers.serialize_relationships(self.addresses.all(), RegisteredAddress.getLabel()),
             },
             {
                 'nodes_type': 'Entity',
-                'nodes_related': helpers.serialize_relationships(self.entities.all(), 'OFFICER_OF'),
+                'nodes_related': helpers.serialize_relationships(self.entities.all(), OfficerOf.getLabel()),
             },
             {
                 'nodes_type': 'Officer',

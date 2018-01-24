@@ -1,7 +1,10 @@
+from . import helpers
+from .relationships import RegisteredAddress
+
 from neomodel import *
 from neomodel import db
 from django_neomodel import DjangoNode
-from . import helpers
+
 
 class Other(DjangoNode):
     sourceID    = StringProperty()
@@ -9,7 +12,7 @@ class Other(DjangoNode):
     valid_until = StringProperty()
     node_id     = StringProperty()
     countries   = StringProperty()
-    addresses   = RelationshipTo('.Address.Address', 'REGISTERED_ADDRESS')
+    addresses   = RelationshipTo('.Address.Address', RegisteredAddress.getLabel(), model=RegisteredAddress)
 
     @property
     def serialize(self):
@@ -22,6 +25,7 @@ class Other(DjangoNode):
                 'node_id': self.node_id,
             },
         }
+
 
     @property
     def serialize_connections(self):
@@ -36,7 +40,7 @@ class Other(DjangoNode):
             },
             {
                 'nodes_type': 'Address',
-                'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': helpers.serialize_relationships(self.addresses.all(), RegisteredAddress.getLabel()),
             },
 
         ]

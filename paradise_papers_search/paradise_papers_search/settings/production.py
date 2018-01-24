@@ -11,4 +11,4 @@ MIDDLEWARE += ['whitenoise.middleware.WhiteNoiseMiddleware', ]
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-ALLOWED_HOSTS = ['paradise-papers-django.herokuapp.com', '10.0.0.72']
+ALLOWED_HOSTS = ['paradise-papers-django.herokuapp.com', '10.0.0.72', '127.0.0.1']
