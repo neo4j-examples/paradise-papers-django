@@ -1,11 +1,9 @@
 from neomodel import *
-from neomodel import db
-from django_neomodel import DjangoNode
 from . import helpers
 
 
 #Class for Neo4j databaser nodes
-class Entity(DjangoNode):
+class Entity(StructuredNode):
     sourceID                 = StringProperty()
     address                  = StringProperty()
     jurisdiction             = StringProperty()
