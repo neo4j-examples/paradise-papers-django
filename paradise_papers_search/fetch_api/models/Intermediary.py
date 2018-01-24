@@ -1,9 +1,7 @@
 from neomodel import *
-from neomodel import db
-from django_neomodel import DjangoNode
 from . import helpers
 
-class Intermediary(DjangoNode):
+class Intermediary(StructuredNode):
     sourceID      = StringProperty()
     valid_until   = StringProperty()
     name          = StringProperty()

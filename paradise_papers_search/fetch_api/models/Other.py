@@ -1,9 +1,7 @@
 from neomodel import *
-from neomodel import db
-from django_neomodel import DjangoNode
 from . import helpers
 
-class Other(DjangoNode):
+class Other(StructuredNode):
     sourceID    = StringProperty()
     name        = StringProperty()
     valid_until = StringProperty()

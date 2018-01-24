@@ -1,9 +1,7 @@
 from neomodel import *
-from neomodel import db
-from django_neomodel import DjangoNode
 from . import helpers
 
-class Address(DjangoNode):
+class Address(StructuredNode):
     sourceID      = StringProperty()
     country_codes = StringProperty()
     valid_until   = StringProperty()

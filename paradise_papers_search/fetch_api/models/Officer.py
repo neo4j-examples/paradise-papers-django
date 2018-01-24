@@ -1,10 +1,7 @@
 from neomodel import *
-from neomodel import db
-from django_neomodel import DjangoNode
-from django_neomodel import DjangoNode
 from . import helpers
 
-class Officer(DjangoNode):
+class Officer(StructuredNode):
     sourceID      = StringProperty()
     name          = StringProperty()
     country_codes = StringProperty()
