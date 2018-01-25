@@ -1,7 +1,7 @@
 from neomodel import *
-from . import helpers
+from .Extended_Node import ExtendedNode
 
-class Address(StructuredNode):
+class Address(StructuredNode, ExtendedNode):
     sourceID      = StringProperty()
     country_codes = StringProperty()
     valid_until   = StringProperty()
@@ -10,6 +10,7 @@ class Address(StructuredNode):
     node_id       = StringProperty()
     officers       = RelationshipFrom('.Officer.Officer', 'REGISTERED_ADDRESS')
     intermediaries = RelationshipFrom('.Intermediary.Intermediary', 'REGISTERED_ADDRESS')
+
     @property
     def serialize(self):
         return {
@@ -22,16 +23,17 @@ class Address(StructuredNode):
                 'node_id': self.node_id,
             },
         }
+
     @property
     def serialize_connections(self):
         return [
             {
                 'nodes_type': 'Officer',
-                'nodes_related': helpers.serialize_relationships(self.officers.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': self.serialize_relationships(self.officers.all(), 'REGISTERED_ADDRESS'),
             },
             {
                 'nodes_type': 'Intermediary',
-                'nodes_related': helpers.serialize_relationships(self.intermediaries.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': self.serialize_relationships(self.intermediaries.all(), 'REGISTERED_ADDRESS'),
             },
     ]
 

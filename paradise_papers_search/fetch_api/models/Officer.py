@@ -1,7 +1,7 @@
 from neomodel import *
-from . import helpers
+from .Extended_Node import ExtendedNode
 
-class Officer(StructuredNode):
+class Officer(StructuredNode, ExtendedNode):
     sourceID      = StringProperty()
     name          = StringProperty()
     country_codes = StringProperty()
@@ -29,14 +29,14 @@ class Officer(StructuredNode):
         return [
             {
                 'nodes_type': 'Address',
-                'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': self.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
             },
             {
                 'nodes_type': 'Entity',
-                'nodes_related': helpers.serialize_relationships(self.entities.all(), 'OFFICER_OF'),
+                'nodes_related': self.serialize_relationships(self.entities.all(), 'OFFICER_OF'),
             },
             {
                 'nodes_type': 'Officer',
-                'nodes_related': helpers.serialized_realtionships_of_type(self, 'Officer'),
+                'nodes_related': self.serialized_realtionships_of_type('Officer'),
             },
         ]
