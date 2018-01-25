@@ -1,9 +1,7 @@
 from neomodel import *
-from . import helpers
+from .Extended_Node import ExtendedNode
 
-
-#Class for Neo4j databaser nodes
-class Entity(StructuredNode):
+class Entity(StructuredNode, ExtendedNode):
     sourceID                 = StringProperty()
     address                  = StringProperty()
     jurisdiction             = StringProperty()
@@ -47,22 +45,22 @@ class Entity(StructuredNode):
         return [
             {
                 'nodes_type': 'Officer',
-                'nodes_related': helpers.serialize_relationships(self.officers.all(), 'OFFICER_OF'),
+                'nodes_related': self.serialize_relationships(self.officers.all(), 'OFFICER_OF'),
             },
             {
                 'nodes_type': 'Intermediary',
-                'nodes_related': helpers.serialize_relationships(self.intermediaries.all(), 'INTERMEDIARY_OF'),
+                'nodes_related': self.serialize_relationships(self.intermediaries.all(), 'INTERMEDIARY_OF'),
             },
             {
                 'nodes_type': 'Address',
-                'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': self.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
             },
             {
                 'nodes_type': 'Other',
-                'nodes_related': helpers.serialize_relationships(self.others.all(), 'CONNECTED_TO'),
+                'nodes_related': self.serialize_relationships(self.others.all(), 'CONNECTED_TO'),
             },
             {
                 'nodes_type': 'Entity',
-                'nodes_related': helpers.serialized_realtionships_of_type(self, 'Entity'),
+                'nodes_related': self.serialized_realtionships_of_type('Entity'),
             },
         ]

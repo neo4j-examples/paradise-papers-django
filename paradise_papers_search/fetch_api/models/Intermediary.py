@@ -1,7 +1,7 @@
 from neomodel import *
-from . import helpers
+from .Extended_Node import ExtendedNode
 
-class Intermediary(StructuredNode):
+class Intermediary(StructuredNode, ExtendedNode):
     sourceID      = StringProperty()
     valid_until   = StringProperty()
     name          = StringProperty()
@@ -31,15 +31,15 @@ class Intermediary(StructuredNode):
         return [
             {
                 'nodes_type': 'Entity',
-                'nodes_related': helpers.serialize_relationships(self.entities.all(), 'INTERMEDIARY_OF'),
+                'nodes_related': self.serialize_relationships(self.entities.all(), 'INTERMEDIARY_OF'),
             },
             {
                 'nodes_type': 'Address',
-                'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': self.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
             },
             {
                 'nodes_type': 'Officer',
-                'nodes_related': helpers.serialized_realtionships_of_type(self, 'Officer'),
+                'nodes_related': self.serialized_realtionships_of_type('Officer'),
             },
 
         ]

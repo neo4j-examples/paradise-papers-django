@@ -1,7 +1,7 @@
 from neomodel import *
-from . import helpers
+from .Extended_Node import ExtendedNode
 
-class Other(StructuredNode):
+class Other(StructuredNode, ExtendedNode):
     sourceID    = StringProperty()
     name        = StringProperty()
     valid_until = StringProperty()
@@ -26,15 +26,15 @@ class Other(StructuredNode):
         return [
             {
                 'nodes_type': 'Officer',
-                'nodes_related': helpers.serialized_realtionships_of_type(self, 'Officer'),
+                'nodes_related': self.serialized_realtionships_of_type('Officer'),
             },
             {
                 'nodes_type': 'Entity',
-                'nodes_related': helpers.serialized_realtionships_of_type(self, 'Entity'),
+                'nodes_related': self.serialized_realtionships_of_type('Entity'),
             },
             {
                 'nodes_type': 'Address',
-                'nodes_related': helpers.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': self.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
             },
 
         ]

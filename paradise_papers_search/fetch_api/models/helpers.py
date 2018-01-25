@@ -79,31 +79,3 @@ def fetch_jurisdictions():
 
 def fetch_data_source():
     return DATASOURCE
-
-# Helper function to serialize the nodes related to a given node and attatch the relationship type
-def serialize_relationships(nodes, relationship):
-    serialized_nodes = []
-    for node in nodes:
-        serialized_node = node.serialize
-        serialized_node['node_relationship'] = relationship
-        serialized_nodes.append(serialized_node)
-
-    return serialized_nodes
-
-def serialized_realtionships_of_type(self, node_type):
-        results = self.cypher('''
-            START p=node({self})
-            MATCH n=(p)<-[r]->(x:%s)
-            RETURN r, x.node_id as Node_id
-            '''%(node_type)
-        )
-        nodes   = []
-
-        for row in results[0]:
-            node = MODEL_ENTITIES[node_type].nodes.get(node_id=row[1])
-            serialized_node = node.serialize
-            serialized_node['node_relationship'] = row[0].type
-            nodes.append(serialized_node)
-
-
-        return nodes
