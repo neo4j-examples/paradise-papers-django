@@ -1,7 +1,8 @@
 from abc import ABCMeta
 from neomodel import db
 
-class ExtendedNode:
+
+class NodeUtils:
     __metaclass__ = ABCMeta
 
     @classmethod

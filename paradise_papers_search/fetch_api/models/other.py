@@ -1,13 +1,20 @@
-from neomodel import *
-from .Extended_Node import ExtendedNode
+from neomodel import (
+    StringProperty,
+    StructuredNode,
+    RelationshipTo,
+)
 
-class Other(StructuredNode, ExtendedNode):
+from .nodeutils import NodeUtils
+
+
+class Other(StructuredNode, NodeUtils):
     sourceID    = StringProperty()
     name        = StringProperty()
     valid_until = StringProperty()
     node_id     = StringProperty()
     countries   = StringProperty()
-    addresses   = RelationshipTo('.Address.Address', 'REGISTERED_ADDRESS')
+    addresses   = RelationshipTo('.address.Address', 'REGISTERED_ADDRESS')
+
 
     @property
     def serialize(self):
@@ -20,6 +27,7 @@ class Other(StructuredNode, ExtendedNode):
                 'node_id': self.node_id,
             },
         }
+
 
     @property
     def serialize_connections(self):

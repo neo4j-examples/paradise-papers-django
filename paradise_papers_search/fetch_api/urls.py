@@ -1,4 +1,5 @@
 from django.conf.urls import url
+
 from .views import (
     GetNodesCount,
     GetNodesData,
@@ -7,6 +8,7 @@ from .views import (
     GetJurisdictions,
     GetDataSource,
 )
+
 
 urlpatterns = [
     url(r'^count[/]?$', GetNodesCount.as_view(), name='get_nodes_count'),
