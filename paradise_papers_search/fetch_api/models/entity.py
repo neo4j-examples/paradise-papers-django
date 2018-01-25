@@ -1,7 +1,14 @@
-from neomodel import *
-from .Extended_Node import ExtendedNode
+from neomodel import (
+    StringProperty,
+    StructuredNode,
+    RelationshipTo,
+    RelationshipFrom
+)
 
-class Entity(StructuredNode, ExtendedNode):
+from .nodeutils import NodeUtils
+
+
+class Entity(StructuredNode, NodeUtils):
     sourceID                 = StringProperty()
     address                  = StringProperty()
     jurisdiction             = StringProperty()
@@ -15,10 +22,11 @@ class Entity(StructuredNode, ExtendedNode):
     incorporation_date       = StringProperty()
     node_id                  = StringProperty()
     status                   = StringProperty()
-    officers                 = RelationshipFrom('.Officer.Officer', 'OFFICER_OF')
-    intermediaries           = RelationshipFrom('.Intermediary.Intermediary', 'INTERMEDIARY_OF')
-    addresses                = RelationshipTo('.Address.Address', 'REGISTERED_ADDRESS')
-    others                   = RelationshipFrom('.Other.Other', 'CONNECTED_TO')
+    officers                 = RelationshipFrom('.officer.Officer', 'OFFICER_OF')
+    intermediaries           = RelationshipFrom('.intermediary.Intermediary', 'INTERMEDIARY_OF')
+    addresses                = RelationshipTo('.address.Address', 'REGISTERED_ADDRESS')
+    others                   = RelationshipFrom('.other.Other', 'CONNECTED_TO')
+
 
     @property
     def serialize(self):
@@ -39,6 +47,7 @@ class Entity(StructuredNode, ExtendedNode):
                 'status': self.status,
             },
         }
+
 
     @property
     def serialize_connections(self):

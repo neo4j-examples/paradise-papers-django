@@ -1,22 +1,12 @@
-from neomodel import db
 from paradise_papers_search.constants import COUNTRIES, JURISDICTIONS, DATASOURCE
-from . import (
-    Entity,
-    Address,
-    Intermediary,
-    Officer,
-    Other
-)
 
-MODEL_ENTITIES = {
-    'Entity': Entity.Entity,
-    'Address': Address.Address,
-    'Intermediary': Intermediary.Intermediary,
-    'Officer': Officer.Officer,
-    'Other': Other.Other
-}
+from .models import MODEL_ENTITIES
 
+
+###################################################################
 # Queries Functions
+###################################################################
+
 def filter_nodes(node_type, name, country, jurisdiction, source_id):
     node_set = node_type.nodes
     if node_type.__name__ == 'Address':
@@ -31,6 +21,7 @@ def filter_nodes(node_type, name, country, jurisdiction, source_id):
 
     return node_set
 
+
 def count_nodes(count_info):
     count = {}
     node_type               = count_info['node_type']
@@ -42,6 +33,7 @@ def count_nodes(count_info):
     count['count']          = len(node_set)
 
     return count
+
 
 def fetch_nodes(fetch_info):
     node_type       = fetch_info['node_type']
@@ -58,6 +50,7 @@ def fetch_nodes(fetch_info):
 
     return [node.serialize for node in fetched_nodes]
 
+
 def fetch_node_details(node_info):
     node_type       = node_info['node_type']
     node_id         = node_info['node_id']
@@ -71,11 +64,14 @@ def fetch_node_details(node_info):
 
     return node_details
 
+
 def fetch_countries():
     return COUNTRIES
 
+
 def fetch_jurisdictions():
     return JURISDICTIONS
+
 
 def fetch_data_source():
     return DATASOURCE
