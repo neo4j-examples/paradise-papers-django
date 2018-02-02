@@ -1,5 +1,5 @@
 const mockup_data = {
-  'entity': {
+  'Entity': {
     "sourceID": "Panama Papers",
     "address": "ORION HOUSE SERVICES (HK) LIMITED ROOM 1401; 14/F.; WORLD COMMERCE  CENTRE; HARBOUR CITY; 7-11 CANTON ROAD; TSIM SHA TSUI; KOWLOON; HONG KONG",
     "jurisdiction": "SAM",
@@ -14,7 +14,7 @@ const mockup_data = {
     "node_id": "10000001",
     "status": "Defaulted"
   },
-  'address': {
+  'Address': {
     "sourceID": "Bahamas Leaks",
     "country_codes": "BHS",
     "valid_until": "The Bahamas Leaks data is current through early 2016.",
@@ -22,7 +22,7 @@ const mockup_data = {
     "countries": "Bahamas",
     "node_id": "24000005"
   },
-  'intermediary': {
+  'Intermediary': {
     "sourceID": "Panama Papers",
     "valid_until": "The Panama Papers  data is current through 2015",
     "name": "DAVID, RONALD",
@@ -31,7 +31,7 @@ const mockup_data = {
     "node_id": "11000003",
     "status": "SUSPENDED"
   },
-  'officer': {
+  'Officer': {
     "sourceID": "Panama Papers",
     "name": "KIM SOO IN",
     "country_codes": "KOR",
@@ -39,7 +39,7 @@ const mockup_data = {
     "countries": "South Korea",
     "node_id": "12000001"
   },
-  'other': {
+  'Other': {
     "sourceID": "Paradise Papers - Aruba corporate registry",
     "note": "Closed date stands for Cancelled date.",
     "valid_until": "Aruba corporate registry data is current through 2016",
@@ -60,7 +60,9 @@ for (let node in mockup_data) {
       data: []
     };
     for (let i = 0; i < mockup_data[node].rows; i++) {
-      mockup_data[node].data.push(data);
+      mockup_data[node].data.push({
+          node_properties: data
+      });
     }
   }
 }
@@ -79,46 +81,8 @@ mockup_data.jurisdictions = [
   'Dubai'
 ]
 
-/*
-@todo
-Node Detail API Mockup Data
-{
-  'status': '200',
-  'message': 'ok',
-  'data': {
-    'properties': {
-      "sourceID": "Panama Papers",
-      "address": "ORION HOUSE SERVICES (HK) LIMITED ROOM 1401; 14/F.; WORLD COMMERCE  CENTRE; HARBOUR CITY; 7-11 CANTON ROAD; TSIM SHA TSUI; KOWLOON; HONG KONG",
-      "jurisdiction": "SAM",
-      "service_provider": "Mossack Fonseca",
-      "countries": "Hong Kong",
-      "jurisdiction_description": "Samoa",
-      "valid_until": "The Panama Papers data is current through 2015",
-      "ibcRUC": "25221",
-      "name": "TIANSHENG INDUSTRY AND TRADING CO., LTD.",
-      "country_codes": "HKG",
-      "incorporation_date": "23-MAR-2006",
-      "node_id": "10000001",
-      "status": "Defaulted"
-    },
-    'conections': [
-      {
-        'node_type': 'entity',
-        'node_related': [
-          {<node_properties>},
-          {<node_properties>},
-          {<node_properties>}]
-        ]
-      },
-      {
-        'node_type': 'officer',
-        'node_related': [
-          {<node_properties>},
-          {<node_properties>},
-          {<node_properties>}]
-        ]
-      },
-    ]
-  }
-}
-*/
+mockup_data.dataSource = [
+    'Bahamas Leaks',
+    'Offshore Leaks',
+    'Panama Papers'
+]

@@ -20,5 +20,4 @@ from django.views.generic import TemplateView
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
-    url(r'^fetch/', include('fetch_api.urls', namespace='fetch_api')),
 ]
