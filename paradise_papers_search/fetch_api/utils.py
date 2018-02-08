@@ -1,6 +1,20 @@
 from paradise_papers_search.constants import COUNTRIES, JURISDICTIONS, DATASOURCE
 
-from .models import MODEL_ENTITIES
+from .models import (
+    Entity,
+    Address,
+    Intermediary,
+    Officer,
+    Other
+)
+
+MODEL_ENTITIES = {
+    'Entity': Entity,
+    'Address': Address,
+    'Intermediary': Intermediary,
+    'Officer': Officer,
+    'Other': Other
+}
 
 
 ###################################################################

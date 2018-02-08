@@ -20,7 +20,7 @@ class Entity(StructuredNode, NodeUtils):
     name                     = StringProperty()
     country_codes            = StringProperty()
     incorporation_date       = StringProperty()
-    node_id                  = StringProperty()
+    node_id                  = StringProperty(index = True)
     status                   = StringProperty()
     officers                 = RelationshipFrom('.officer.Officer', 'OFFICER_OF')
     intermediaries           = RelationshipFrom('.intermediary.Intermediary', 'INTERMEDIARY_OF')
