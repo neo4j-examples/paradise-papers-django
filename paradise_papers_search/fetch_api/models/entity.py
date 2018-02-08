@@ -2,7 +2,8 @@ from neomodel import (
     StringProperty,
     StructuredNode,
     RelationshipTo,
-    RelationshipFrom
+    RelationshipFrom,
+    Relationship
 )
 
 from .nodeutils import NodeUtils
@@ -26,6 +27,7 @@ class Entity(StructuredNode, NodeUtils):
     intermediaries           = RelationshipFrom('.intermediary.Intermediary', 'INTERMEDIARY_OF')
     addresses                = RelationshipTo('.address.Address', 'REGISTERED_ADDRESS')
     others                   = RelationshipFrom('.other.Other', 'CONNECTED_TO')
+    entities                 = Relationship('.entity.Entity', None)
 
 
     @property
@@ -54,22 +56,22 @@ class Entity(StructuredNode, NodeUtils):
         return [
             {
                 'nodes_type': 'Officer',
-                'nodes_related': self.serialize_relationships(self.officers.all(), 'OFFICER_OF'),
+                'nodes_related': self.serialize_relationships(self.officers.all()),
             },
             {
                 'nodes_type': 'Intermediary',
-                'nodes_related': self.serialize_relationships(self.intermediaries.all(), 'INTERMEDIARY_OF'),
+                'nodes_related': self.serialize_relationships(self.intermediaries.all()),
             },
             {
                 'nodes_type': 'Address',
-                'nodes_related': self.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': self.serialize_relationships(self.addresses.all()),
             },
             {
                 'nodes_type': 'Other',
-                'nodes_related': self.serialize_relationships(self.others.all(), 'CONNECTED_TO'),
+                'nodes_related': self.serialize_relationships(self.others.all()),
             },
             {
                 'nodes_type': 'Entity',
-                'nodes_related': self.serialized_realtionships_of_type('Entity'),
+                'nodes_related': self.serialize_relationships(self.entities.all())
             },
         ]

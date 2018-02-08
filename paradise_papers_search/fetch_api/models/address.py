@@ -36,11 +36,10 @@ class Address(StructuredNode, NodeUtils):
         return [
             {
                 'nodes_type': 'Officer',
-                'nodes_related': self.serialize_relationships(self.officers.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': self.serialize_relationships(self.officers.all()),
             },
             {
                 'nodes_type': 'Intermediary',
-                'nodes_related': self.serialize_relationships(self.intermediaries.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': self.serialize_relationships(self.intermediaries.all()),
             },
     ]
-

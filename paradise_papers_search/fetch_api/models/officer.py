@@ -2,6 +2,7 @@ from neomodel import (
     StringProperty,
     StructuredNode,
     RelationshipTo,
+    Relationship
 )
 
 from .nodeutils import NodeUtils
@@ -16,6 +17,8 @@ class Officer(StructuredNode, NodeUtils):
     node_id       = StringProperty(index = True)
     addresses     = RelationshipTo('.address.Address', 'REGISTERED_ADDRESS')
     entities      = RelationshipTo('.entity.Entity', 'OFFICER_OF')
+    officers      = Relationship('.officer.Officer', None)
+
 
 
     @property
@@ -37,14 +40,14 @@ class Officer(StructuredNode, NodeUtils):
         return [
             {
                 'nodes_type': 'Address',
-                'nodes_related': self.serialize_relationships(self.addresses.all(), 'REGISTERED_ADDRESS'),
+                'nodes_related': self.serialize_relationships(self.addresses.all()),
             },
             {
                 'nodes_type': 'Entity',
-                'nodes_related': self.serialize_relationships(self.entities.all(), 'OFFICER_OF'),
+                'nodes_related': self.serialize_relationships(self.entities.all()),
             },
             {
                 'nodes_type': 'Officer',
-                'nodes_related': self.serialized_realtionships_of_type('Officer'),
+                'nodes_related': self.serialize_relationships(self.officers.all()),
             },
         ]
