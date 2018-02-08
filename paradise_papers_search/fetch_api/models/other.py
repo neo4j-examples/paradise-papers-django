@@ -11,7 +11,7 @@ class Other(StructuredNode, NodeUtils):
     sourceID    = StringProperty()
     name        = StringProperty()
     valid_until = StringProperty()
-    node_id     = StringProperty()
+    node_id     = StringProperty(index = True)
     countries   = StringProperty()
     addresses   = RelationshipTo('.address.Address', 'REGISTERED_ADDRESS')
 

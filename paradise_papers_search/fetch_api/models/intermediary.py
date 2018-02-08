@@ -13,7 +13,7 @@ class Intermediary(StructuredNode, NodeUtils):
     name          = StringProperty()
     country_codes = StringProperty()
     countries     = StringProperty()
-    node_id       = StringProperty()
+    node_id       = StringProperty(index = True)
     status        = StringProperty()
     entities      = RelationshipTo('.entity.Entity', 'INTERMEDIARY_OF')
     addresses     = RelationshipTo('.address.Address', 'REGISTERED_ADDRESS')

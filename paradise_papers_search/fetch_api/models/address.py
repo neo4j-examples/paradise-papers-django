@@ -6,14 +6,13 @@ from neomodel import (
 
 from .nodeutils import NodeUtils
 
-
 class Address(StructuredNode, NodeUtils):
     sourceID      = StringProperty()
     country_codes = StringProperty()
     valid_until   = StringProperty()
     address       = StringProperty()
     countries     = StringProperty()
-    node_id       = StringProperty()
+    node_id       = StringProperty(index = True)
     officers       = RelationshipFrom('.officer.Officer', 'REGISTERED_ADDRESS')
     intermediaries = RelationshipFrom('.intermediary.Intermediary', 'REGISTERED_ADDRESS')
 

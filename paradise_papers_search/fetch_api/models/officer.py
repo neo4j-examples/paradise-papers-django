@@ -13,7 +13,7 @@ class Officer(StructuredNode, NodeUtils):
     country_codes = StringProperty()
     valid_until   = StringProperty()
     countries     = StringProperty()
-    node_id       = StringProperty()
+    node_id       = StringProperty(index = True)
     addresses     = RelationshipTo('.address.Address', 'REGISTERED_ADDRESS')
     entities      = RelationshipTo('.entity.Entity', 'OFFICER_OF')
 
