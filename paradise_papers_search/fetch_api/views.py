@@ -39,7 +39,7 @@ class GetNodesData(APIView):
             'jurisdiction': request.GET.get('j', ''),
             'sourceID': request.GET.get('s', ''),
             'limit': 10,
-            'skip': int(request.GET.get('p', 1)),
+            'page': int(request.GET.get('p', 1)),
         }
         nodes = fetch_nodes(fetch_info)
         data = {
