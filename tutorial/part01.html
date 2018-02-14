@@ -1,0 +1,203 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>1. Set up the environment. &#8212; Paradise Paper Search 1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2. Set the NeoModel database" href="part02.html" />
+    <link rel="prev" title="Welcome to Paradise Paper Search App’s Django + Neomodel Tutorial!" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Welcome to Paradise Paper Search App’s Django + Neomodel Tutorial!</a></li>
+      <li>Next: <a href="part02.html" title="next chapter">2. Set the NeoModel database</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search 1</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Set up the environment.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#set-your-virtualenv">1.1. Set your virtualenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#add-project-dependencies">1.2. Add project dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="part02.html">2. Set the NeoModel database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part03.html">3. How to create the base models.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part04.html">4. How to query the Neo4j database with Neomodel.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part05.html">5. How to create the API.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part06.html">6. How to serialize the data.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part07.html">7. The Search App, consuming the Fetch API.</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="set-up-the-environment">
+<h1>1. Set up the environment.<a class="headerlink" href="#set-up-the-environment" title="Permalink to this headline">¶</a></h1>
+<p>The following section will have the steps we need to set our local
+environment, so we can begin to work on your Django-Neomodel implementation. If
+you want a point to start, we provide a base app to begin the tutorial.</p>
+<p>First clone the <a class="reference external" href="https://github.com/neo4j-examples/paradise-papers-django">paradise-papers-django</a> repo.</p>
+<blockquote>
+<div></div></blockquote>
+<p>After you download the repo go to the <code class="docutils literal"><span class="pre">start_app</span></code> branch, and you will get a
+working Django application that will serve as a starting point.</p>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[*]</td><td>Note:
+If we use the start branch, mentioned before, we only will get the front-end
+of the app.</td></tr>
+</tbody>
+</table>
+<div class="section" id="set-your-virtualenv">
+<h2>1.1. Set your virtualenv<a class="headerlink" href="#set-your-virtualenv" title="Permalink to this headline">¶</a></h2>
+<p>First, we will need Python 3.6 and pip installed on your local environment. Here
+is the official download page for <a class="reference external" href="https://www.python.org/downloads/">Python</a>.</p>
+<blockquote>
+<div></div></blockquote>
+<p>Here is a quick tutorial on how to install <a class="reference external" href="https://pip.pypa.io/en/stable/installing/#installing-with-get-pip-py">pip</a>.</p>
+<blockquote>
+<div></div></blockquote>
+<p>Now we have everything we need to create our virtualenv. On the next part we are
+going to introduce the basics to get your app running; if you want more
+information check this <a class="reference external" href="https://virtualenv.pypa.io/en/stable/">virtualenv</a> tutorial.</p>
+<blockquote>
+<div></div></blockquote>
+<p>First go to your app folder in the case of the <code class="docutils literal"><span class="pre">paradise-papers-django</span></code>
+project, we need to be on the main folder <code class="docutils literal"><span class="pre">localPath/</span> <span class="pre">paradise-papers-django</span></code>
+and run the following command to install virtualenv:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">virtualenv</span>
+</pre></div>
+</div>
+<p>You can use this pip command to check the dependencies installed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">freeze</span>
+</pre></div>
+</div>
+<p>After the virtualenv is installed; we need to create a virtual environment for
+the app. On the same folder that the virtualenv is installed we only need to run
+the following command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">virtualenv</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>The dot means that is going to install your virtual environment on the current
+folder, but you can specify the path that you need to create your virtual
+environment.</p>
+<p>After your virtual environment is ready your directory should look like this if
+you are using the example app:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>├── paradise-papers-django/
+|   ├── docs/
+│   ├── Include/
+│   ├── Lib/
+│   ├── paradise_papers_search/
+|   ├── LICENSE
+│   ├── pip-selfcheck.json
+│   ├── PULL_REQUEST_TEMPLATE.md
+|   ├── README.md
+</pre></div>
+</div>
+<p>Now we need to activate your brand new virtual environment with the following
+command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">.</span>\<span class="n">Scripts</span>\<span class="n">activate</span>
+</pre></div>
+</div>
+<p>On Linux and Mac:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+</pre></div>
+</div>
+<p>Now you are in your new virtual environment!!!</p>
+</div>
+<div class="section" id="add-project-dependencies">
+<h2>1.2. Add project dependencies<a class="headerlink" href="#add-project-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>The next step is to install the other dependencies that we need. For this, we
+can use our requirement file if you are using the example app otherwise, we
+need to install the following dependencies using the
+<code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&lt;name&gt;===&lt;version&gt;</span></code> command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Django</span><span class="o">==</span><span class="mf">1.11</span><span class="o">.</span><span class="mi">2</span>
+<span class="n">django</span><span class="o">-</span><span class="n">neomodel</span><span class="o">==</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">4</span>
+<span class="n">neo4j</span><span class="o">-</span><span class="n">driver</span><span class="o">==</span><span class="mf">1.2</span><span class="o">.</span><span class="mi">1</span>
+<span class="n">neomodel</span><span class="o">==</span><span class="mf">3.2</span><span class="o">.</span><span class="mi">5</span>
+</pre></div>
+</div>
+<p>If you’re using your own requirement file you can use this command to get all
+your dependencies:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>If you’re using our starting app; go to the paradise-papers-search folder and
+run this command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Now you have all dependencies that you need for this implementation!!!!</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Neo4j.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/tutorial/part01.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

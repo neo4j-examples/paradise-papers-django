@@ -1,0 +1,400 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>3. How to create the base models. &#8212; Paradise Paper Search 1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4. How to query the Neo4j database with Neomodel." href="part04.html" />
+    <link rel="prev" title="2. Set the NeoModel database" href="part02.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="part02.html" title="previous chapter">2. Set the NeoModel database</a></li>
+      <li>Next: <a href="part04.html" title="next chapter">4. How to query the Neo4j database with Neomodel.</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search 1</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="part01.html">1. Set up the environment.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part02.html">2. Set the NeoModel database</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. How to create the base models.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-a-new-app-for-the-api">3.1. Create a new app for the API:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-models-directory">3.2. Create The Models Directory:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#start-creating-the-models-files">3.3. Start creating The Models Files:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modify-the-init-py-file">3.4. Modify the __init__.py file:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-constraints-or-indexes">3.5. Create constraints or indexes:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="part04.html">4. How to query the Neo4j database with Neomodel.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part05.html">5. How to create the API.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part06.html">6. How to serialize the data.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part07.html">7. The Search App, consuming the Fetch API.</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-create-the-base-models">
+<h1>3. How to create the base models.<a class="headerlink" href="#how-to-create-the-base-models" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="create-a-new-app-for-the-api">
+<h2>3.1. Create a new app for the API:<a class="headerlink" href="#create-a-new-app-for-the-api" title="Permalink to this headline">¶</a></h2>
+<p>Right now, we need to create a Django app which is going to be used to create the search API and,
+with it, we will define our models classes.</p>
+<p>To create this new app, we must run this command:</p>
+<p><code class="docutils literal"><span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">startapp</span> <span class="pre">fetch_api</span></code></p>
+<p>Where <code class="docutils literal"><span class="pre">fetch_api</span></code> is the name of the application we are creating; however, you can use the name of your preference.  This will create a new folder inside the Django project directory, and the structure
+of it is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>├── fetch_api/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+|   ├── models.py
+│   ├── migrations/
+│   │   └── __init__.py
+</pre></div>
+</div>
+<p>Now we need to create a file called <cite>urls.py</cite> inside the application we just created. Right now we
+are only going to add the following code:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="k">import</span> <span class="n">url</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+<p>As we go on in this tutorial, we will start adding the endpoint urls, but for now we only need to
+have the empty urlpattern list.</p>
+<p>The next step is to register the fetch_api URLconf into the root project URLconf.  We need to open
+the file paradise_papers_search/urls.py. Afterwards, we have to add <code class="docutils literal"><span class="pre">url(r'^fetch/',</span>
+<span class="pre">include('fetch_api.urls',</span> <span class="pre">namespace='fetch_api')),</span></code>   inside the urlpatterns list. After completing
+these steps the file should look like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="k">import</span> <span class="n">url</span><span class="p">,</span> <span class="n">include</span> <span class="kn">from</span> <span class="nn">django.contrib</span> <span class="k">import</span> <span class="n">admin</span> <span class="kn">from</span>
+<span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span> <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span> <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^$&#39;</span><span class="p">,</span>
+<span class="n">TemplateView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="n">template_name</span><span class="o">=</span><span class="s1">&#39;index.html&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">),</span> <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^fetch/&#39;</span><span class="p">,</span>
+<span class="n">include</span><span class="p">(</span><span class="s1">&#39;fetch_api.urls&#39;</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s1">&#39;fetch_api&#39;</span><span class="p">)),</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-the-models-directory">
+<h2>3.2. Create The Models Directory:<a class="headerlink" href="#create-the-models-directory" title="Permalink to this headline">¶</a></h2>
+<p>On The <code class="docutils literal"><span class="pre">fetch_api</span></code> folder, first, we need to remove the <code class="docutils literal"><span class="pre">models.py</span></code> file. Then we need to create
+a new folder called <code class="docutils literal"><span class="pre">models</span></code>.  Inside the folder, we will need to add the files with the
+structure of the nodes. Each file will have the essential fields and methods of the data stored
+in Neo4j database.</p>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[*]</td><td>Note: Before we start creating our models we need to create a  <code class="docutils literal"><span class="pre">__init__.py</span></code> file inside the model’s folder so Python treat the directory as a package.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="start-creating-the-models-files">
+<h2>3.3. Start creating The Models Files:<a class="headerlink" href="#start-creating-the-models-files" title="Permalink to this headline">¶</a></h2>
+<p>To start we will create an <code class="docutils literal"><span class="pre">entity.py</span></code> file:</p>
+<ol class="arabic">
+<li><p class="first">The first step is to add the imports needed:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neomodel</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">StringProperty</span><span class="p">,</span>
+    <span class="n">StructuredNode</span><span class="p">,</span>
+    <span class="n">RelationshipTo</span><span class="p">,</span>
+    <span class="n">RelationshipFrom</span><span class="p">,</span>
+    <span class="n">Relationship</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>2. Create a class for the node called Entity. We are connecting to a Neo4j database instead of the
+regular Django database; therefore, we are going to use  <code class="docutils literal"><span class="pre">StructuredNode</span></code>. This is the equivalent
+of <code class="docutils literal"><span class="pre">models.Model</span></code> which is usually used when creating a Models class in Django. When using
+<code class="docutils literal"><span class="pre">StructuredNode</span></code> , neomodel automatically creates a label for each class using it with the
+corresponding indexes and constraints.</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[†]</td><td><p class="first">Note: If you need a model to work like <code class="docutils literal"><span class="pre">ModelForm</span></code>, you will need to change <code class="docutils literal"><span class="pre">StructuredNode</span></code> to <code class="docutils literal"><span class="pre">DjangoNode</span></code>. Also, you will need to add a ‘Meta’ class. For more reference see the documentation for <a class="reference external" href="https://github.com/neo4j-contrib/django-neomodel">django-neomodel</a></p>
+<p class="last"><code class="docutils literal"><span class="pre">class</span> <span class="pre">Entity(StructuredNode):</span></code></p>
+</td></tr>
+</tbody>
+</table>
+<p>3. The next step is to add the properties for the node. Each node property in the Neo4j database
+should be a property in the model class.</p>
+<p>The properties of the <code class="docutils literal"><span class="pre">Entity</span></code> node in the database have the following scheme:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;MEI SERVICES LIMITED ROOM E; 6TH FLOOR; EASTERN COMMERCIAL CENTRE; 395-399 HENNESSY ROAD HONG KONG&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;SAM&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;Hong Kong&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Samoa&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;25475&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;JIE LUN INVESTMENT LIMITED&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;HKG&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;10-APR-2006&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10000020&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Active,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Therefore, the structure of the <code class="docutils literal"><span class="pre">Entity</span></code> class should be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Entity</span><span class="p">(</span><span class="n">StructuredNode</span><span class="p">):</span>
+    <span class="n">sourceID</span>                           <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">address</span>                            <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">jurisdiction</span>                       <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">service_provider</span>                   <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">countries</span>                          <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">jurisdiction_description</span>           <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">valid_until</span>                        <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">ibcRUC</span>                             <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">name</span>                               <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">country_codes</span>                      <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">incorporation_date</span>                 <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">node_id</span>                            <span class="o">=</span> <span class="n">StringProperty</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">status</span>                             <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>On our case, the database we are using only have string values for the properties. However, there
+are several types of properties available; such as, IntegerProperty, ArrayProperty, DateProperty.
+In case you need to know more about this, go to this <a class="reference external" href="http://neomodel.readthedocs.io/en/latest/properties.html">link</a></p>
+<blockquote>
+<div></div></blockquote>
+<ol class="arabic" start="4">
+<li><p class="first">Add the relationships for the node:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">officers</span>                 <span class="o">=</span> <span class="n">RelationshipFrom</span><span class="p">(</span><span class="s1">&#39;.officer.Officer&#39;</span><span class="p">,</span> <span class="s1">&#39;OFFICER_OF&#39;</span><span class="p">)</span>
+<span class="n">intermediaries</span>           <span class="o">=</span> <span class="n">RelationshipFrom</span><span class="p">(</span><span class="s1">&#39;.intermediary.Intermediary&#39;</span><span class="p">,</span> <span class="s1">&#39;INTERMEDIARY_OF&#39;</span><span class="p">)</span>
+<span class="n">addresses</span>                <span class="o">=</span> <span class="n">RelationshipTo</span><span class="p">(</span><span class="s1">&#39;.address.Address&#39;</span><span class="p">,</span> <span class="s1">&#39;REGISTERED_ADDRESS&#39;</span><span class="p">)</span>
+<span class="n">others</span>                   <span class="o">=</span> <span class="n">RelationshipFrom</span><span class="p">(</span><span class="s1">&#39;.other.Other&#39;</span><span class="p">,</span> <span class="s1">&#39;CONNECTED_TO&#39;</span><span class="p">)</span>
+<span class="n">entities</span>                 <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="s1">&#39;.entity.Entity&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[‡]</td><td>You can find all the nodes relation by opening your local database, click <a class="reference external" href="http://localhost:7474/browser/">HERE</a> to access it. When you get inside, run the command <code class="docutils literal"><span class="pre">CALL</span> <span class="pre">db.schema()</span></code> on the search bar to display the relationships.  note: you need to have it up and running to work.</td></tr>
+</tbody>
+</table>
+<p>How <strong>RelationshipFrom</strong> , <strong>RelationshipTo</strong> and <strong>Relationship</strong> work:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>The first parameter is the type of node you want to connect. e.g <code class="docutils literal"><span class="pre">.officer.Officer</span></code></li>
+<li>The second parameter is the relationship type. e.g. <code class="docutils literal"><span class="pre">OFFICER_OF</span></code>. If you do not know the relationship type you need to connect, you can use <code class="docutils literal"><span class="pre">None</span></code>. Neomodel would be responsible for looking for any direct connection between the two nodes.</li>
+</ol>
+</div></blockquote>
+<ul class="simple">
+<li><strong>RelationshipFrom</strong> is an INCOMING relationship. ({node})&lt;-[relation_ident:relation_type]-({node_connected})</li>
+<li><strong>RelationshipTo</strong> is an OUTGOING relationship. ({node})-[relation_ident:relation_type]-&gt;({node_connected})</li>
+<li><strong>Relationship</strong> which can be either way. ({node})-[relation_ident:relation_type]-({node_connected})</li>
+</ul>
+<p>If <strong>RelationshipFrom</strong> be illustrated, the output would be something like:</p>
+<a class="reference internal image-reference" href="../_images/part03-img2.png"><img alt="alternate text" src="../_images/part03-img2.png" style="width: 100%;" /></a>
+<p>We have to repeat these steps for each node class we wish to create. On this program, those would be:
+<code class="docutils literal"><span class="pre">address.py</span></code>, <code class="docutils literal"><span class="pre">intermediary.py</span></code>, <code class="docutils literal"><span class="pre">officer.py</span></code>, and <code class="docutils literal"><span class="pre">other.py</span></code>. We must add the following
+code to each of the files:</p>
+<p>address.py</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neomodel</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">StringProperty</span><span class="p">,</span>
+    <span class="n">StructuredNode</span><span class="p">,</span>
+    <span class="n">RelationshipFrom</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Address</span><span class="p">(</span><span class="n">StructuredNode</span><span class="p">):</span>
+    <span class="n">sourceID</span>       <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">country_codes</span>  <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">valid_until</span>    <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">address</span>        <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">countries</span>      <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">node_id</span>        <span class="o">=</span> <span class="n">StringProperty</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">officers</span>       <span class="o">=</span> <span class="n">RelationshipFrom</span><span class="p">(</span><span class="s1">&#39;.officer.Officer&#39;</span><span class="p">,</span> <span class="s1">&#39;REGISTERED_ADDRESS&#39;</span><span class="p">)</span>
+    <span class="n">intermediaries</span> <span class="o">=</span> <span class="n">RelationshipFrom</span><span class="p">(</span><span class="s1">&#39;.intermediary.Intermediary&#39;</span><span class="p">,</span> <span class="s1">&#39;REGISTERED_ADDRESS&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>intermediary.py:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neomodel</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">StringProperty</span><span class="p">,</span>
+    <span class="n">StructuredNode</span><span class="p">,</span>
+    <span class="n">RelationshipTo</span><span class="p">,</span>
+    <span class="n">Relationship</span>
+<span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Intermediary</span><span class="p">(</span><span class="n">StructuredNode</span><span class="p">):</span>
+    <span class="n">sourceID</span>      <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">valid_until</span>   <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">name</span>          <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">country_codes</span> <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">countries</span>     <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">node_id</span>       <span class="o">=</span> <span class="n">StringProperty</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">status</span>        <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">entities</span>      <span class="o">=</span> <span class="n">RelationshipTo</span><span class="p">(</span><span class="s1">&#39;.entity.Entity&#39;</span><span class="p">,</span> <span class="s1">&#39;INTERMEDIARY_OF&#39;</span><span class="p">)</span>
+    <span class="n">addresses</span>     <span class="o">=</span> <span class="n">RelationshipTo</span><span class="p">(</span><span class="s1">&#39;.address.Address&#39;</span><span class="p">,</span> <span class="s1">&#39;REGISTERED_ADDRESS&#39;</span><span class="p">)</span>
+    <span class="n">officers</span>      <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="s1">&#39;.officer.Officer&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>officer.py:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neomodel</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">StringProperty</span><span class="p">,</span>
+    <span class="n">StructuredNode</span><span class="p">,</span>
+    <span class="n">RelationshipTo</span><span class="p">,</span>
+    <span class="n">Relationship</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Officer</span><span class="p">(</span><span class="n">StructuredNode</span><span class="p">):</span>
+    <span class="n">sourceID</span>      <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">name</span>          <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">country_codes</span> <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">valid_until</span>   <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">countries</span>     <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">node_id</span>       <span class="o">=</span> <span class="n">StringProperty</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">addresses</span>     <span class="o">=</span> <span class="n">RelationshipTo</span><span class="p">(</span><span class="s1">&#39;.address.Address&#39;</span><span class="p">,</span> <span class="s1">&#39;REGISTERED_ADDRESS&#39;</span><span class="p">)</span>
+    <span class="n">entities</span>      <span class="o">=</span> <span class="n">RelationshipTo</span><span class="p">(</span><span class="s1">&#39;.entity.Entity&#39;</span><span class="p">,</span> <span class="s1">&#39;OFFICER_OF&#39;</span><span class="p">)</span>
+    <span class="n">officers</span>      <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="s1">&#39;.officer.Officer&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>other.py:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neomodel</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">StringProperty</span><span class="p">,</span>
+    <span class="n">StructuredNode</span><span class="p">,</span>
+    <span class="n">RelationshipTo</span><span class="p">,</span>
+    <span class="n">Relationship</span><span class="p">,</span>
+    <span class="n">Relationship</span>
+<span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Other</span><span class="p">(</span><span class="n">StructuredNode</span><span class="p">):</span>
+    <span class="n">sourceID</span>    <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">name</span>        <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">valid_until</span> <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">node_id</span>     <span class="o">=</span> <span class="n">StringProperty</span><span class="p">(</span><span class="n">index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">countries</span>   <span class="o">=</span> <span class="n">StringProperty</span><span class="p">()</span>
+    <span class="n">addresses</span>   <span class="o">=</span> <span class="n">RelationshipTo</span><span class="p">(</span><span class="s1">&#39;.address.Address&#39;</span><span class="p">,</span> <span class="s1">&#39;REGISTERED_ADDRESS&#39;</span><span class="p">)</span>
+    <span class="n">officers</span>    <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="s1">&#39;.officer.Officer&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">entities</span>    <span class="o">=</span> <span class="n">Relationship</span><span class="p">(</span><span class="s1">&#39;.entity.Entity&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="modify-the-init-py-file">
+<h2>3.4. Modify the __init__.py file:<a class="headerlink" href="#modify-the-init-py-file" title="Permalink to this headline">¶</a></h2>
+<p>Now we are going to add code to the __init__.py.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.entity</span> <span class="k">import</span> <span class="n">Entity</span>
+<span class="kn">from</span> <span class="nn">.address</span> <span class="k">import</span> <span class="n">Address</span>
+<span class="kn">from</span> <span class="nn">.intermediary</span> <span class="k">import</span> <span class="n">Intermediary</span>
+<span class="kn">from</span> <span class="nn">.officer</span> <span class="k">import</span> <span class="n">Officer</span>
+<span class="kn">from</span> <span class="nn">.other</span> <span class="k">import</span> <span class="n">Other</span>
+</pre></div>
+</div>
+<p>This is done to simplify the imports. If you are familiar with Django and having only one model
+file, you might remember the imports are done like : from <cite>.models import *</cite> or any class you might
+need. Nevertheless, we have the classes inside a package call <cite>models</cite>, because of this if we need to
+import a class we have to say, for example <cite>from .models.officer import Officer</cite>. This is because
+we are one level down.</p>
+<p>However, since we took the approach of having the imports on the <cite>__init__.py</cite> file, now we can
+import them as <cite>from .models import Officer</cite></p>
+</div>
+<div class="section" id="create-constraints-or-indexes">
+<h2>3.5. Create constraints or indexes:<a class="headerlink" href="#create-constraints-or-indexes" title="Permalink to this headline">¶</a></h2>
+<p>Creating constraints and labels have to be done after adding/changing the node definitions.
+The command that we will need to use is:</p>
+<blockquote>
+<div><code class="docutils literal"><span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">install_labels</span></code></div></blockquote>
+<p>In this case, since we added <cite>index=True</cite> on the node_id property the output would create indexes
+on each of the property mentioned:</p>
+<a class="reference internal image-reference" href="../_images/part03-img1.png"><img alt="alternate text" src="../_images/part03-img1.png" style="width: 100%;" /></a>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[§]</td><td>Note: manage.py intall_labels works like manage.py migrate</td></tr>
+</tbody>
+</table>
+<p>If it were a completely new database, Neomodel would also have created the node labels, properties
+and relationships.</p>
+<p>After doing these steps, the structure folder of the project changed. Right now the structure of the
+fetch_api app should be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>├── fetch_api/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── urls.py
+│   ├── migrations/
+│   │   └── __init__.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── address.py
+│   │   ├── entity.py
+│   │   ├── intermediary.py
+│   │   ├── officer.py
+│   │   └── other.py
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Neo4j.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/tutorial/part03.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

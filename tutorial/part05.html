@@ -1,0 +1,217 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>5. How to create the API. &#8212; Paradise Paper Search 1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6. How to serialize the data." href="part06.html" />
+    <link rel="prev" title="4. How to query the Neo4j database with Neomodel." href="part04.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="part04.html" title="previous chapter">4. How to query the Neo4j database with Neomodel.</a></li>
+      <li>Next: <a href="part06.html" title="next chapter">6. How to serialize the data.</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search 1</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="part01.html">1. Set up the environment.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part02.html">2. Set the NeoModel database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part03.html">3. How to create the base models.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part04.html">4. How to query the Neo4j database with Neomodel.</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. How to create the API.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#why-the-api-structure">5.1. Why the API structure?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implementing-django-rest-framework-for-api">5.2. Implementing Django REST framework for API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-views-endpoints">5.3. Create the views / endpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="part06.html">6. How to serialize the data.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part07.html">7. The Search App, consuming the Fetch API.</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-create-the-api">
+<h1>5. How to create the API.<a class="headerlink" href="#how-to-create-the-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="why-the-api-structure">
+<h2>5.1. Why the API structure?<a class="headerlink" href="#why-the-api-structure" title="Permalink to this headline">¶</a></h2>
+<p>We decided to use APIs to fetch the data to make queries more effective, as sometimes queries get
+too big. We decided it was better to fetch the data in little chunks rather than one big request.
+The API structure allows us to do so and to have a single page application. We will be returning
+JSON to the calls since it is easily usable on the frotend side.</p>
+</div>
+<div class="section" id="implementing-django-rest-framework-for-api">
+<h2>5.2. Implementing Django REST framework for API<a class="headerlink" href="#implementing-django-rest-framework-for-api" title="Permalink to this headline">¶</a></h2>
+<p>In this project, we are using the <a class="reference external" href="http://www.django-rest-framework.org/">rest_framework</a> library because it has some simple non-limiting
+ways to implement an API structure. If you desire you can use any of your preference, but the
+examples presented ahead will be based on the behavior of this specific library.</p>
+<blockquote>
+<div></div></blockquote>
+<p>We should have the library already installed since it is in the requirements file that we provided
+for the project. If not just run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">djangorestframework</span>
+</pre></div>
+</div>
+<p>On our console and restart the Django server.</p>
+</div>
+<div class="section" id="create-the-views-endpoints">
+<h2>5.3. Create the views / endpoints<a class="headerlink" href="#create-the-views-endpoints" title="Permalink to this headline">¶</a></h2>
+<p>We are going to need a couple different endpoints to make our application work, but for now, we will
+focus on one to explain the process of making them, we are going to be building the
+<code class="docutils literal"><span class="pre">GetNodesData</span> <span class="pre">/</span> <span class="pre">nodes</span></code> that will serve us to fetch the search matches nodes data. We’ll be using a
+type of class-based view called <code class="docutils literal"><span class="pre">APIView</span></code> from the framework to make them, this will allow us to
+have an endpoint rather than a page view.</p>
+<p>Let’s clean our <code class="docutils literal"><span class="pre">fetch_api/views.py</span></code> file and add the following code:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="k">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="k">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="k">import</span> <span class="n">status</span>
+
+<span class="k">class</span> <span class="nc">GetNodesData</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s1">&#39;Temporary Data&#39;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we create this file <code class="docutils literal"><span class="pre">fetch_api/urls.py</span></code> and fill it with this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="k">import</span> <span class="n">url</span>
+<span class="kn">from</span> <span class="nn">.views</span> <span class="k">import</span> <span class="n">GetNodesData</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^nodes[/]?$&#39;</span><span class="p">,</span> <span class="n">GetNodesData</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;get_nodes_data&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Now we can hit the endpoint with a method of our preference, for this example, we are going to use
+curl, on our console:</p>
+<p><code class="docutils literal"><span class="pre">curl</span> <span class="pre">http://127.0.0.1:8000/fetch/nodes</span></code></p>
+<p>We should see:</p>
+<p><code class="docutils literal"><span class="pre">&quot;Temporary</span> <span class="pre">Data&quot;</span></code></p>
+<p>The other 5 endpoints with its classes/URLs respectively are:</p>
+<p>GetNodesCount / count, to fetch the count of matches</p>
+<p>GetNodeData / node, to fetch the info for a specific node</p>
+<p>GetCountries / countries, to fetch the list of countries</p>
+<p>GetJurisdictions / jurisdictions, to fetch the list of jurisdictions</p>
+<p>GetDataSource / datasource, to fetch the list of data sources</p>
+<p>When we finish our <code class="docutils literal"><span class="pre">fetch_api/views.py</span></code> file should look like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="k">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="k">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="k">import</span> <span class="n">status</span>
+
+<span class="k">class</span> <span class="nc">GetNodesCount</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s1">&#39;Temporary Data&#39;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">GetNodesData</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s1">&#39;Temporary Data&#39;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">GetNodeData</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s1">&#39;Temporary Data&#39;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">GetCountries</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s1">&#39;Temporary Data&#39;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">GetJurisdictions</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s1">&#39;Temporary Data&#39;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">GetDataSource</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s1">&#39;Temporary Data&#39;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And the <code class="docutils literal"><span class="pre">fetch_api/urls.py</span></code> should look like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="k">import</span> <span class="n">url</span>
+<span class="kn">from</span> <span class="nn">.views</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">GetNodesCount</span><span class="p">,</span>
+    <span class="n">GetNodesData</span><span class="p">,</span>
+    <span class="n">GetNodeData</span><span class="p">,</span>
+    <span class="n">GetCountries</span><span class="p">,</span>
+    <span class="n">GetJurisdictions</span><span class="p">,</span>
+    <span class="n">GetDataSource</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^count[/]?$&#39;</span><span class="p">,</span> <span class="n">GetNodesCount</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;get_nodes_count&#39;</span><span class="p">),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^nodes[/]?$&#39;</span><span class="p">,</span> <span class="n">GetNodesData</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;get_nodes_data&#39;</span><span class="p">),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^node[/]?$&#39;</span><span class="p">,</span> <span class="n">GetNodeData</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;get_node_data&#39;</span><span class="p">),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^countries[/]?$&#39;</span><span class="p">,</span> <span class="n">GetCountries</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;get_countries&#39;</span><span class="p">),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^jurisdictions[/]?$&#39;</span><span class="p">,</span> <span class="n">GetJurisdictions</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;get_jurisdictions&#39;</span><span class="p">),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^datasource[/]?$&#39;</span><span class="p">,</span> <span class="n">GetDataSource</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;get_data_source&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Neo4j.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/tutorial/part05.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

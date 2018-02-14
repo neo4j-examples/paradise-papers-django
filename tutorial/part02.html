@@ -1,0 +1,168 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>2. Set the NeoModel database &#8212; Paradise Paper Search 1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. How to create the base models." href="part03.html" />
+    <link rel="prev" title="1. Set up the environment." href="part01.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="part01.html" title="previous chapter">1. Set up the environment.</a></li>
+      <li>Next: <a href="part03.html" title="next chapter">3. How to create the base models.</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search 1</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="part01.html">1. Set up the environment.</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Set the NeoModel database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part03.html">3. How to create the base models.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part04.html">4. How to query the Neo4j database with Neomodel.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part05.html">5. How to create the API.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part06.html">6. How to serialize the data.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part07.html">7. The Search App, consuming the Fetch API.</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="set-the-neomodel-database">
+<h1>2. Set the NeoModel database<a class="headerlink" href="#set-the-neomodel-database" title="Permalink to this headline">¶</a></h1>
+<p>On this section, we are going to install Neo4j on our local machine and show how
+you are going to connect it with our app. First, we use the <cite>paradise-papers</cite>
+database for the example app. <a class="reference external" href="https://offshoreleaks.icij.org/pages/database">Here</a> is a quick set up for the Desktop app that
+will bring the database included</p>
+<blockquote>
+<div></div></blockquote>
+<p>Follow the steps of the wizard to install the app. If you want a more deep look
+of Neo4j; here is the official <a class="reference external" href="https://neo4j.com/developer/get-started/">guide</a> that you can follow to get Neo4j working
+on your local machine.</p>
+<blockquote>
+<div></div></blockquote>
+<p>On the app example, we are going to use the LEAKS DATABASE. This is the data
+from the  Panama Papers, the Offshore Leaks, the Bahamas Leaks provided by the
+ICIJ(International Consortium of Investigative Journalists) here are some
+information about the <a class="reference external" href="https://www.icij.org/about/">ICIJ</a> and the <a class="reference external" href="https://offshoreleaks.icij.org/">offshore</a> leaks.</p>
+<blockquote>
+<div></div></blockquote>
+<p>On this tutorial, we are going to concentrate on replicating the offshore leaks
+search app and it’s important that you know the entities that we are going to
+handle the app.</p>
+<p>Offshore Entity:
+A company, trust or fund created in a low-tax, offshore jurisdiction by an
+agent.</p>
+<p>Officer:
+A person or company who plays a role in an offshore entity.</p>
+<p>Intermediary:
+A go-between for someone seeking an offshore corporation and an offshore service
+provider – usually a law-firm or a middleman that asks an offshore service
+provider to create an offshore firm for a client.</p>
+<p>Address:
+Contact postal address as it appears in the original databases obtained by ICIJ.</p>
+<p>Definitions provided by
+<a class="reference external" href="https://offshoreleaks.icij.org/pages/about#terms_definition">https://offshoreleaks.icij.org/pages/about#terms_definition</a></p>
+<p>We use the paradise-papers database for the example app. <a class="reference external" href="https://offshoreleaks.icij.org/pages/database">Here</a> is a quick set up
+for the Desktop app that will bring the database included</p>
+<blockquote>
+<div></div></blockquote>
+<p>After you have Neo4j up and running we only need to create the connection
+between Django and the database to do this Neomodel will give us a hand.</p>
+<p>Go to the settings file on your project and import config from newmodel:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neomodel</span> <span class="k">import</span> <span class="n">config</span>
+</pre></div>
+</div>
+<p>Then you need to delete the default database setting:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Database</span>
+<span class="c1"># https://docs.djangoproject.com/en/1.11/ref/settings/#databases</span>
+
+<span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.sqlite3&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s1">&#39;db.sqlite3&#39;</span><span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>And now you only need to set the Neo4j database on the config in the settings
+like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#Connect to Neo4j Database</span>
+<span class="n">config</span><span class="o">.</span><span class="n">DATABASE_URL</span> <span class="o">=</span> <span class="s1">&#39;bolt://neo4j:neo4j@localhost:7687&#39;</span>
+</pre></div>
+</div>
+<p>Now you are all set just need to run your local server with the runserver
+command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">runserver</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Neo4j.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/tutorial/part02.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

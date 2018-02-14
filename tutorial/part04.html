@@ -1,0 +1,558 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>4. How to query the Neo4j database with Neomodel. &#8212; Paradise Paper Search 1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5. How to create the API." href="part05.html" />
+    <link rel="prev" title="3. How to create the base models." href="part03.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="part03.html" title="previous chapter">3. How to create the base models.</a></li>
+      <li>Next: <a href="part05.html" title="next chapter">5. How to create the API.</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search 1</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="part01.html">1. Set up the environment.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part02.html">2. Set the NeoModel database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part03.html">3. How to create the base models.</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. How to query the Neo4j database with Neomodel.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-your-models">4.1. Using your models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#neomodel-query-api">4.2. Neomodel Query API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-some-utils-to-search-the-ppgdb">4.3. Creating some utils to search the PPGDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-search-utils">4.4. Using the search utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="part05.html">5. How to create the API.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part06.html">6. How to serialize the data.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part07.html">7. The Search App, consuming the Fetch API.</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-query-the-neo4j-database-with-neomodel">
+<h1>4. How to query the Neo4j database with Neomodel.<a class="headerlink" href="#how-to-query-the-neo4j-database-with-neomodel" title="Permalink to this headline">¶</a></h1>
+<p>At this point of the tutorial, you should have already created and setup the paradise_paper_search
+Django project(<a class="reference internal" href="part01.html"><span class="doc">Part 1</span></a>). You learned how to integrate the Neomodel OGM into the
+Django project(<a class="reference internal" href="part02.html"><span class="doc">Part 2</span></a>). Also, at <a class="reference internal" href="part03.html"><span class="doc">Part 3</span></a> you created the fetch_api
+Django app and learned the way a Neo4j Graph Database is modeled using Neomodel. You ended up with a group of python class definitions that represent the nodes, properties and relationships in the
+Paradise Paper Graph Database(PPGDB).</p>
+<p>Current project structure:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>paradise_papers_search/
+├── paradise_papers_search/
+│   └── +
+├── fetch_api/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations/
+│   │   └── __init__.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── address.py
+│   │   ├── entity.py
+│   │   ├── intermediary.py
+│   │   ├── officer.py
+│   │   └── other.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+└── manage.py
+</pre></div>
+</div>
+<p>Now, how you actually query a graph database inside your Django project or apps?</p>
+<div class="section" id="using-your-models">
+<h2>4.1. Using your models<a class="headerlink" href="#using-your-models" title="Permalink to this headline">¶</a></h2>
+<p>Using your models is pretty standard. You usually just import the ones you need and use them, for
+example, in your Django views. Before we get to that, we need to learn the Neomodel Query API. This
+API will allow us to express queries to the database without having to write them in plain Cypher.</p>
+<p>We will learn to query using the Paradise Paper models we did before.
+To do that we will first use an instance of the python interpreter.</p>
+<div class="section" id="the-project-python-interpreter">
+<h3>4.1.1. The project python interpreter:<a class="headerlink" href="#the-project-python-interpreter" title="Permalink to this headline">¶</a></h3>
+<p>Let’s open the python interpreter through our Django project <code class="docutils literal"><span class="pre">manage.py</span></code> which will import our
+project settings(remember you set the DATABASE_URL in there, this is needed to connect to the db).
+Also, it will try to use ipython or bpython if available.</p>
+<p>First let’s start opening the console, if necessary.</p>
+<p>Then make sure you are at the <code class="docutils literal"><span class="pre">paradise_papers_search</span></code> root directory
+where you created the Django project(where the <code class="docutils literal"><span class="pre">manage.py</span></code> module is).</p>
+<p>Run the command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">shell</span>
+</pre></div>
+</div>
+<p>With the python interpreter in hand, we can import our models and start to use them as soon as we
+execute the following python import commands:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fetch_api.models</span> <span class="k">import</span> <span class="n">Entity</span>
+<span class="kn">from</span> <span class="nn">fetch_api.models</span> <span class="k">import</span> <span class="n">Intermediary</span>
+<span class="kn">from</span> <span class="nn">fetch_api.models</span> <span class="k">import</span> <span class="n">Officer</span>
+<span class="kn">from</span> <span class="nn">fetch_api.models</span> <span class="k">import</span> <span class="n">Address</span>
+<span class="kn">from</span> <span class="nn">fetch_api.models</span> <span class="k">import</span> <span class="n">Other</span>
+</pre></div>
+</div>
+<p>Each of the models we just imported maps to a specific structure of a node label, property keys and
+relationship types in the PPGDB. Now we are ready to start exploring the
+Paradise Paper Graph Database through the Neomodel Query API.</p>
+</div>
+</div>
+<div class="section" id="neomodel-query-api">
+<h2>4.2. Neomodel Query API<a class="headerlink" href="#neomodel-query-api" title="Permalink to this headline">¶</a></h2>
+<p>Each of your models has some properties and methods(inherited from StructureNode or DjangoNode)
+that help us to express queries to the Neo4j database.</p>
+<div class="section" id="nodeset-and-nodes-neomodel-objects">
+<h3>4.2.1. NodeSet and Nodes Neomodel objects<a class="headerlink" href="#nodeset-and-nodes-neomodel-objects" title="Permalink to this headline">¶</a></h3>
+<p>A <em>NodeSet</em> object represents a set of nodes matching common query parameters or filters.</p>
+<p>A <em>Node</em> object is an instance of one of our models. That means we can access all the properties
+and methods defined on the model class. Each instance represents a single node in the database.</p>
+<p>The <code class="docutils literal"><span class="pre">&lt;Model&gt;.nodes</span></code> class property of each model store a NodeSet object. Each time we access
+this <code class="docutils literal"><span class="pre">.nodes</span></code> property we get a brand new nodeset object, which means we get nodeset without any
+filters applied. Initially, before applying any filters, this noseset represents all the nodes
+mapped under a model(nodes labeled with the same class name). For instance, <code class="docutils literal"><span class="pre">Entity.nodes</span></code>
+contains all the nodes with the label Entity on the database.</p>
+<p>Later we will see how we can apply filters in order to match a specific subset of nodes.</p>
+</div>
+<div class="section" id="length-of-a-nodeset">
+<h3>4.2.2. Length of a NodeSet<a class="headerlink" href="#length-of-a-nodeset" title="Permalink to this headline">¶</a></h3>
+<p>If we wanted to count all the Entity nodes that are stored in the database, we just call
+the <code class="docutils literal"><span class="pre">len</span></code> python function over the <code class="docutils literal"><span class="pre">Entity.nodes</span></code> nodeset.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">Entity</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When we call <code class="docutils literal"><span class="pre">len(Entity.nodes)</span></code>, Neomodel will generate a cypher query that counts
+all the nodes with the label <code class="docutils literal"><span class="pre">Entity</span></code>. Then that query is executed in the Neo4j database and
+we get back the count. The cypher query string that is generated by Neomodel behind the scene is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MATCH</span> <span class="p">(</span><span class="n">n</span><span class="p">:</span><span class="n">Entity</span><span class="p">)</span> <span class="n">RETURN</span> <span class="n">COUNT</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We are not retrieving all the nodes from the database and then count them. The actual counting
+is done by the Neo4j database engine which is faster.</p>
+</div>
+<p>Another example, to get a count of all the nodes that exist in the PPGDB database:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">Entity</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> \
+<span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">Officer</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> \
+<span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">Intermediary</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> \
+<span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">Address</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> \
+<span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">Other</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If nodeset is filtered, only nodes that fulfill the filters will be counted.</p>
+</div>
+<div class="section" id="fetching-nodes">
+<h3>4.2.3. Fetching nodes<a class="headerlink" href="#fetching-nodes" title="Permalink to this headline">¶</a></h3>
+<p>In order to retrieve the nodes, read their properties and relationships, an actual cypher query needs
+to be executed by Neomodel. This is handled completely by Neomodel and we just need to use its
+query API.</p>
+<p>A call to the NodeSet method <code class="docutils literal"><span class="pre">.all()</span></code>, would return all the nodes of a nodeset; nevertheless
+this would result in an expensive query. The reason is that Neomodel will actually try to
+retrieve all the nodes at once. It is recommended to use <code class="docutils literal"><span class="pre">.all()</span></code> when the nodeset is small.
+We can reduce the size by filtering the nodeset as will see in the later.</p>
+<p>It is better to fetch the nodes in batches from a nodeset. The NodeSet objects support the same
+operators for indexing and slicing just like the normal python lists.</p>
+<p>To get the first element of the <code class="docutils literal"><span class="pre">Entity.nodes</span></code> nodeset, we can reference its index:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Entity</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>To get a subset of nodes, we can use the python slice syntax. This is convenient for writing code
+that retrieves the nodes in batches. For example to get the first 10 nodes in a list:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Entity</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Neomodel will generate and execute cypher query only to retrieve the nodes we are asking for.
+So we are not actually retrieving all the nodes at once from the database. An example of a
+cypher query string generated by new model would be
+<code class="docutils literal"><span class="pre">MATCH</span> <span class="pre">(n:Entity)</span> <span class="pre">RETURN</span> <span class="pre">n</span> <span class="pre">SKIP</span> <span class="pre">10</span> <span class="pre">LIMIT</span> <span class="pre">10</span></code></p>
+</div>
+</div>
+<div class="section" id="finding-nodes">
+<h3>4.2.4. Finding nodes<a class="headerlink" href="#finding-nodes" title="Permalink to this headline">¶</a></h3>
+<p>If we know exactly what node we are looking for, for instance we have the node_id or the exact name
+property value, we can use the <code class="docutils literal"><span class="pre">.get()</span></code> or <code class="docutils literal"><span class="pre">.get_or_none()</span></code> nodeset methods. The difference is
+that if no match, the first one will raise a DoesNotExist exception and the second will return
+<cite>None</cite>.</p>
+<p>To get the node which node_id is <code class="docutils literal"><span class="pre">160380</span></code> in a given nodeset:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Entity</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">get_or_none</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="mi">160380</span><span class="p">)</span>
+<span class="n">Entity</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="mi">160380</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">These methods will raise MultipleNodesReturned exception if the property value
+used to get the node is not unique.</p>
+</div>
+</div>
+<div class="section" id="filtering-nodes">
+<h3>4.2.5. Filtering nodes<a class="headerlink" href="#filtering-nodes" title="Permalink to this headline">¶</a></h3>
+<p>It is very probable that we want to get a subset of nodes that fulfill a specified condition.
+For example, getting all the Entity nodes which name property contains a specific word.</p>
+<p>In order to filter nodes in a nodeset, we use the NodeSet method <code class="docutils literal"><span class="pre">.filter`</span></code>.
+The filter method borrows the same django filter format with double underscore prefixed operators.</p>
+<p>To get Entity nodes which name property has the word “financial”, we use the operator <cite>contains</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Entity</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__contains</span><span class="o">=</span><span class="s1">&#39;financial&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above statement will return a filtered nodeset, in order to actually retrieve the data see
+the Fetching Nodes section. For more prefixed operators refer to this page:
+<a class="reference external" href="http://neomodel.readthedocs.io/en/latest/queries.html#node-sets-and-filtering">http://neomodel.readthedocs.io/en/latest/queries.html#node-sets-and-filtering</a></p>
+</div>
+</div>
+<div class="section" id="creating-some-utils-to-search-the-ppgdb">
+<h2>4.3. Creating some utils to search the PPGDB<a class="headerlink" href="#creating-some-utils-to-search-the-ppgdb" title="Permalink to this headline">¶</a></h2>
+<p>The purpose of this tutorial is to show you how we can use Neomodel with Django. In order to do
+that we will build an app that will search the Paradise Paper Graph Database.
+With what we have learned so far is enough for our purpose.</p>
+<p>We will create some function utils that will help us search the PPGDB. Later, we will find ourselves
+importing and using these helper functions to fetch data from the DB in our Django views.</p>
+<p>To start coding, first let’s create a new python module under our <code class="docutils literal"><span class="pre">fetch_api/</span></code> directory.
+Name the file as <code class="docutils literal"><span class="pre">utils.py</span></code></p>
+<p>Now, as we will want to query the Neo4j database, we will import our models.
+Put the below import statements at the start of the <cite>utils.py`</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Entity</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Intermediary</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Officer</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Address</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Other</span>
+</pre></div>
+</div>
+<p>In order to easily access each of the model classes programmatically, let’s create a key-value map.
+The key will be the model class name and the value will be the model class itself:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MODEL_ENTITIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Entity&#39;</span><span class="p">:</span> <span class="n">Entity</span><span class="p">,</span>
+    <span class="s1">&#39;Address&#39;</span><span class="p">:</span> <span class="n">Address</span><span class="p">,</span>
+    <span class="s1">&#39;Intermediary&#39;</span><span class="p">:</span> <span class="n">Intermediary</span><span class="p">,</span>
+    <span class="s1">&#39;Officer&#39;</span><span class="p">:</span> <span class="n">Officer</span><span class="p">,</span>
+    <span class="s1">&#39;Other&#39;</span><span class="p">:</span> <span class="n">Other</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="filter-nodes-helper">
+<h3>4.3.1. Filter Nodes Helper<a class="headerlink" href="#filter-nodes-helper" title="Permalink to this headline">¶</a></h3>
+<p>We will create a function that receives a model class and some filter parameters like <em>name,
+country jurisdiction and source_id</em>. Then this function will return a filtered nodeset containing
+only the model nodes that pass our filters.</p>
+<p>Let’s add this helper function to the <code class="docutils literal"><span class="pre">utils.py</span></code>, with the name <code class="docutils literal"><span class="pre">filter_nodes</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">filter_nodes</span><span class="p">(</span><span class="n">node_type</span><span class="p">,</span> <span class="n">search_text</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">jurisdiction</span><span class="p">,</span> <span class="n">source_id</span><span class="p">):</span>
+    <span class="n">node_set</span> <span class="o">=</span> <span class="n">node_type</span><span class="o">.</span><span class="n">nodes</span>
+
+    <span class="c1"># On Address nodes we want to check the search_text against the address property</span>
+    <span class="c1"># For any other we check against the name property</span>
+    <span class="k">if</span> <span class="n">node_type</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;Address&#39;</span><span class="p">:</span>
+        <span class="n">node_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">address__icontains</span><span class="o">=</span><span class="n">search_text</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">node_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name__icontains</span><span class="o">=</span><span class="n">search_text</span><span class="p">)</span>
+
+    <span class="c1"># Only entities store jurisdiction info</span>
+    <span class="k">if</span> <span class="n">node_type</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;Entity&#39;</span><span class="p">:</span>
+        <span class="n">node_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">jurisdiction__icontains</span><span class="o">=</span><span class="n">jurisdiction</span><span class="p">)</span>
+
+    <span class="n">node_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">countries__icontains</span><span class="o">=</span><span class="n">country</span><span class="p">)</span>
+    <span class="n">node_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">sourceID__icontains</span><span class="o">=</span><span class="n">source_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">node_set</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="count-nodes-helper">
+<h3>4.3.2. Count Nodes Helper<a class="headerlink" href="#count-nodes-helper" title="Permalink to this headline">¶</a></h3>
+<p>We will create a function that return the length of the nodeset returned by the <code class="docutils literal"><span class="pre">filter_nodes</span></code>
+helper we created before. It will receive a dictionary of filters.</p>
+<p>Here a representation of the required dictionary keys:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;node_type&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jurisdiction&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Let’s add this helper function to the <code class="docutils literal"><span class="pre">utils.py</span></code>, with the name <code class="docutils literal"><span class="pre">count_nodes</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">count_nodes</span><span class="p">(</span><span class="n">count_info</span><span class="p">):</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">node_type</span>               <span class="o">=</span> <span class="n">count_info</span><span class="p">[</span><span class="s1">&#39;node_type&#39;</span><span class="p">]</span>
+    <span class="n">search_word</span>             <span class="o">=</span> <span class="n">count_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="n">country</span>                 <span class="o">=</span> <span class="n">count_info</span><span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">]</span>
+    <span class="n">jurisdiction</span>            <span class="o">=</span> <span class="n">count_info</span><span class="p">[</span><span class="s1">&#39;jurisdiction&#39;</span><span class="p">]</span>
+    <span class="n">data_source</span>             <span class="o">=</span> <span class="n">count_info</span><span class="p">[</span><span class="s1">&#39;sourceID&#39;</span><span class="p">]</span>
+    <span class="n">node_set</span>                <span class="o">=</span> <span class="n">filter_nodes</span><span class="p">(</span><span class="n">MODEL_ENTITIES</span><span class="p">[</span><span class="n">node_type</span><span class="p">],</span> <span class="n">search_word</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">jurisdiction</span><span class="p">,</span> <span class="n">data_source</span><span class="p">)</span>
+    <span class="n">count</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_set</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">count</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fetch-nodes-helper">
+<h3>4.3.3. Fetch Nodes Helper<a class="headerlink" href="#fetch-nodes-helper" title="Permalink to this headline">¶</a></h3>
+<p>We will create a function that returns a subset of nodes filtered by the <code class="docutils literal"><span class="pre">filter_nodes</span></code> helper that we created previously. It will receive a dictionary of filters.</p>
+<p>Here a representation of the required dictionary keys:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;node_type&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jurisdiction&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+    <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;page&#39;</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">limit</span></code> and <code class="docutils literal"><span class="pre">page</span></code> filters are necessary to calculate the <code class="docutils literal"><span class="pre">start</span></code> and <code class="docutils literal"><span class="pre">end</span></code> values that
+we will use to get a subset of nodes from a nodeset.
+Just like we learned in the Fetching Nodes section, we will return the nodes in batches using
+slice python syntax on the nodeset.</p>
+<p>Let’s add this helper function to the <code class="docutils literal"><span class="pre">utils.py</span></code>, with the name <code class="docutils literal"><span class="pre">fetch_nodes</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fetch_nodes</span><span class="p">(</span><span class="n">fetch_info</span><span class="p">):</span>
+    <span class="n">node_type</span>       <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;node_type&#39;</span><span class="p">]</span>
+    <span class="n">search_word</span>     <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="n">country</span>         <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">]</span>
+    <span class="n">limit</span>           <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;limit&#39;</span><span class="p">]</span>
+    <span class="n">start</span>           <span class="o">=</span> <span class="p">((</span><span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;page&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">limit</span><span class="p">)</span>
+    <span class="n">end</span>             <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">limit</span>
+    <span class="n">jurisdiction</span>    <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;jurisdiction&#39;</span><span class="p">]</span>
+    <span class="n">data_source</span>     <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;sourceID&#39;</span><span class="p">]</span>
+    <span class="n">node_set</span>        <span class="o">=</span> <span class="n">filter_nodes</span><span class="p">(</span><span class="n">MODEL_ENTITIES</span><span class="p">[</span><span class="n">node_type</span><span class="p">],</span> <span class="n">search_word</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">jurisdiction</span><span class="p">,</span> <span class="n">data_source</span><span class="p">)</span>
+    <span class="n">fetched_nodes</span>   <span class="o">=</span> <span class="n">node_set</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">fetched_nodes</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fetch-node-details-helper">
+<h3>4.3.4. Fetch Node Details Helper<a class="headerlink" href="#fetch-node-details-helper" title="Permalink to this headline">¶</a></h3>
+<p>We will create a function that return a single node. It will receive a dictionary of filters with
+the <code class="docutils literal"><span class="pre">node_type</span></code> and the <code class="docutils literal"><span class="pre">node_id</span></code>.</p>
+<p>Here a representation of the required dictionary keys:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;node_type&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;node_id&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Let’s add this helper function to the <code class="docutils literal"><span class="pre">utils.py</span></code>, with the name <code class="docutils literal"><span class="pre">fetch_node_details</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fetch_node_details</span><span class="p">(</span><span class="n">node_info</span><span class="p">):</span>
+    <span class="n">node_type</span>       <span class="o">=</span> <span class="n">node_info</span><span class="p">[</span><span class="s1">&#39;node_type&#39;</span><span class="p">]</span>
+    <span class="n">node_id</span>         <span class="o">=</span> <span class="n">node_info</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span>
+    <span class="n">node</span>            <span class="o">=</span> <span class="n">MODEL_ENTITIES</span><span class="p">[</span><span class="n">node_type</span><span class="p">]</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="n">node_id</span><span class="p">)</span>
+    <span class="n">node_details</span>    <span class="o">=</span> <span class="n">node</span>
+
+    <span class="k">return</span> <span class="n">node_details</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fetch-countries-jurisdictions-and-data-source-helpers">
+<h3>4.3.5. Fetch countries, jurisdictions and data source helpers<a class="headerlink" href="#fetch-countries-jurisdictions-and-data-source-helpers" title="Permalink to this headline">¶</a></h3>
+<p>As we are filtering the nodes by countries, jurisdictions and data source, we will need a list of
+valid filtering values.</p>
+<p>First let’s create a new python module under our <code class="docutils literal"><span class="pre">paradise_papers_search/</span></code> directory.
+Name the file as <code class="docutils literal"><span class="pre">constants.py</span></code>.</p>
+<p>We will fetch this data from the database, however, we are not going to use the models. Sometimes
+it is convenient to make raw cypher queries to the database. Neomodel allows you to do that.</p>
+<p>In your <code class="docutils literal"><span class="pre">constant.py</span></code> module, import the database util ‘db’ from <code class="docutils literal"><span class="pre">neomodel</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">neomodel</span> <span class="k">import</span> <span class="n">db</span>
+</pre></div>
+</div>
+<p>Now you can use the <code class="docutils literal"><span class="pre">cypher_query</span></code> method, to execute raw cypher queries and get the results.</p>
+<p>For example, we will query the countries, jurisdictions and data sources in the <code class="docutils literal"><span class="pre">constants.py</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">countries</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cypher_query</span><span class="p">(</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    MATCH (n)</span>
+<span class="sd">    WHERE NOT n.countries CONTAINS &#39;;&#39;</span>
+<span class="sd">    RETURN DISTINCT n.countries AS countries</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">jurisdictions</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cypher_query</span><span class="p">(</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    MATCH (n)</span>
+<span class="sd">    RETURN DISTINCT n.jurisdiction AS jurisdiction</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">data_sources</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">cypher_query</span><span class="p">(</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    MATCH (n)</span>
+<span class="sd">    RETURN DISTINCT n.sourceID AS dataSource</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>With the results we will make sorted lists of COUNTRIES, JURISDICTIONS and DATASOURCE:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">COUNTRIES</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">country</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">countries</span><span class="p">])</span>
+<span class="n">JURISDICTIONS</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">jurisdiction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">jurisdiction</span> <span class="ow">in</span> <span class="n">jurisdictions</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">jurisdiction</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)])</span>
+<span class="n">DATASOURCE</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">data_source</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">data_source</span> <span class="ow">in</span> <span class="n">data_sources</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_source</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal"><span class="pre">utils.py</span></code>, import COUNTRIES, JURISDICTIONS, DATASOURCE:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paradise_papers_search.constants</span> <span class="k">import</span> <span class="n">COUNTRIES</span><span class="p">,</span> <span class="n">JURISDICTIONS</span><span class="p">,</span> <span class="n">DATASOURCE</span>
+</pre></div>
+</div>
+<p>Then create <code class="docutils literal"><span class="pre">fetch_countries</span></code>, <code class="docutils literal"><span class="pre">fetch_jurisdictions</span></code> and <code class="docutils literal"><span class="pre">fetch_data_source</span></code> helpers:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fetch_countries</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">COUNTRIES</span>
+
+
+<span class="k">def</span> <span class="nf">fetch_jurisdictions</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">JURISDICTIONS</span>
+
+
+<span class="k">def</span> <span class="nf">fetch_data_source</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">DATASOURCE</span>
+</pre></div>
+</div>
+<p>We created the <code class="docutils literal"><span class="pre">constants.py</span></code> module because we want to make the cypher queries once. Not each
+time we call <code class="docutils literal"><span class="pre">fetch_countries</span></code>, <code class="docutils literal"><span class="pre">fetch_jurisdictions</span></code> or <code class="docutils literal"><span class="pre">fetch_data_source</span></code> helpers.</p>
+<p>Since these queries might take some time to execute, we want them ready at the start of the
+application. We can do that by executing the <code class="docutils literal"><span class="pre">constants.py</span></code> code.</p>
+<p>Open the <code class="docutils literal"><span class="pre">fetch_api/app.py</span></code> module. Add a new method to the Django application class with the name <code class="docutils literal"><span class="pre">ready</span></code> and import the <code class="docutils literal"><span class="pre">constants.py</span></code> module. That will be enough to initialize
+COUNTRIES, JURISDICTIONS and DATASOURCE constants.</p>
+<p>Here how the <code class="docutils literal"><span class="pre">fetch_api/app.py</span></code> would look like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.apps</span> <span class="k">import</span> <span class="n">AppConfig</span>
+
+<span class="k">class</span> <span class="nc">FetchApiConfig</span><span class="p">(</span><span class="n">AppConfig</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;fetch_api&#39;</span>
+
+    <span class="k">def</span> <span class="nf">ready</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">paradise_papers_search</span> <span class="k">import</span> <span class="n">constants</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-the-search-utils">
+<h2>4.4. Using the search utils<a class="headerlink" href="#using-the-search-utils" title="Permalink to this headline">¶</a></h2>
+<p>To use the search utils, we just need to import them into the module they will be used. In this
+case, we will need to import them into the <code class="docutils literal"><span class="pre">fetch_api/views.py</span></code> module. Later they will be used
+to create our application views.</p>
+<p>Here the import statement, place this code in the <code class="docutils literal"><span class="pre">fetch_api/views.py</span></code> module:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">count_nodes</span><span class="p">,</span>
+    <span class="n">fetch_nodes</span><span class="p">,</span>
+    <span class="n">fetch_node_details</span><span class="p">,</span>
+    <span class="n">fetch_countries</span><span class="p">,</span>
+    <span class="n">fetch_jurisdictions</span><span class="p">,</span>
+    <span class="n">fetch_data_source</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>In the next section, you will build the rest of this code.</p>
+<div class="section" id="testing-utils-in-the-console">
+<h3>4.4.1. Testing utils in the console<a class="headerlink" href="#testing-utils-in-the-console" title="Permalink to this headline">¶</a></h3>
+<p>Just like we did with models, we can import the utils in the project python interpreter and play around.</p>
+<p>Make sure you are at the <code class="docutils literal"><span class="pre">paradise_papers_search</span></code> root directory
+where you created the Django project(where the <code class="docutils literal"><span class="pre">manage.py</span></code> module is).</p>
+<p>Run the command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">shell</span>
+</pre></div>
+</div>
+<p>With the python interpreter in hand, we can import our utils and start to use them as soon as we
+execute the following python import command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">count_nodes</span><span class="p">,</span>
+    <span class="n">fetch_nodes</span><span class="p">,</span>
+    <span class="n">fetch_node_details</span><span class="p">,</span>
+    <span class="n">fetch_countries</span><span class="p">,</span>
+    <span class="n">fetch_jurisdictions</span><span class="p">,</span>
+    <span class="n">fetch_data_source</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, for example, you can count all the nodes that pass some filters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">count_nodes</span><span class="p">({</span>
+    <span class="s1">&#39;node_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Entity&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;Junior&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;country&#39;</span><span class="p">:</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jurisdiction&#39;</span><span class="p">:</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span><span class="s1">&#39;&#39;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>Or you can fetch a subset of nodes that pass some filters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fetch_nodes</span><span class="p">({</span>
+    <span class="s1">&#39;node_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Entity&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;Junior&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;country&#39;</span><span class="p">:</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jurisdiction&#39;</span><span class="p">:</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span><span class="s1">&#39;&#39;</span>
+    <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;page&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Neo4j.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/tutorial/part04.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

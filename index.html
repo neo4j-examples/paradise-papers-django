@@ -1,0 +1,172 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to Paradise Paper Search App’s Django + Neomodel Tutorial! &#8212; Paradise Paper Search 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1. Set up the environment." href="tutorial/part01.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="tutorial/part01.html" title="next chapter">1. Set up the environment.</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search 1</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part01.html">1. Set up the environment.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part02.html">2. Set the NeoModel database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part03.html">3. How to create the base models.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part04.html">4. How to query the Neo4j database with Neomodel.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part05.html">5. How to create the API.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part06.html">6. How to serialize the data.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part07.html">7. The Search App, consuming the Fetch API.</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-paradise-paper-search-app-s-django-neomodel-tutorial">
+<h1>Welcome to Paradise Paper Search App’s Django + Neomodel Tutorial!<a class="headerlink" href="#welcome-to-paradise-paper-search-app-s-django-neomodel-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The aim of this tutorial is to demonstrate how to develop a web application using the Django
+framework backed by Neo4j, connecting them with the Neomodel driver. Neomodel is an Object Graph
+Mapper (OGM) for the Neo4j graph database.</p>
+<p>The tutorial covers several topics, some of them are: how to configure Neomodel within a Django
+program, create models, query to the database, create an API. It provides best-practice guidance
+on implementing Neomodel.</p>
+<p>The project is a web application to search for information on a Paradise Paper Graph Database.
+The data from the Database includes companies and people in more than 200 countries that are part
+of the Paradise Papers, Panama Papers, Bahama Leaks or the Offshore Leaks investigations.</p>
+<p>The search of the program can filter the mentioned data by country, jurisdiction and/or data source.
+The approach adopted to make the program was to create a single-page web application, in which
+the data that is displayed will be obtained from an API. The API will fetch the data from the Neo4j
+database and return it as a JSON. This allows you to retrieve fast segments of data in several
+smaller requests, instead of making a single large request.</p>
+<p>The types of data you can encounter when searching are: Entity, Officer, Intermediary, Address,
+Other. Each of these data records is displayed as a <cite>Node</cite> within the graph database. If you are
+not familiar with the definition of a node, it is a graphic data record. Here is an example:</p>
+<a class="reference internal image-reference" href="_images/overview-img1.png"><img alt="_images/overview-img1.png" src="_images/overview-img1.png" style="width: 100%;" /></a>
+<p>In a graph database, nodes are linked with each other with lines; they represent the relationship
+between them. This term is called a <cite>edges</cite> or <cite>relationships</cite>. On this application there are offshore entities that
+have a registered address; Therefore there is a relationship type called <cite>REGISTERED_ADDRESS</cite>.</p>
+<a class="reference internal image-reference" href="_images/overview-img2.png"><img alt="_images/overview-img2.png" src="_images/overview-img2.png" style="width: 100%;" /></a>
+<p>In this example we can see a offshore entity register to an address on the bahamas.</p>
+<p>What’s more, each node will have <cite>properties</cite>, which are essentially labels that are applied to
+a record. For example, an Entity node might have a label country with the value of “Bahamas”.
+Having these labels allows the system to find all the nodes that are in “Bahamas”, instead of the
+ones that are in “Canada” or “Mexico”. The properties can be compared as columns in SQl databases.</p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part01.html">1. Set up the environment.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part01.html#set-your-virtualenv">1.1. Set your virtualenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part01.html#add-project-dependencies">1.2. Add project dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part02.html">2. Set the NeoModel database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part03.html">3. How to create the base models.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part03.html#create-a-new-app-for-the-api">3.1. Create a new app for the API:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part03.html#create-the-models-directory">3.2. Create The Models Directory:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part03.html#start-creating-the-models-files">3.3. Start creating The Models Files:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part03.html#modify-the-init-py-file">3.4. Modify the __init__.py file:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part03.html#create-constraints-or-indexes">3.5. Create constraints or indexes:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part04.html">4. How to query the Neo4j database with Neomodel.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part04.html#using-your-models">4.1. Using your models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part04.html#neomodel-query-api">4.2. Neomodel Query API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part04.html#creating-some-utils-to-search-the-ppgdb">4.3. Creating some utils to search the PPGDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part04.html#using-the-search-utils">4.4. Using the search utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part05.html">5. How to create the API.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part05.html#why-the-api-structure">5.1. Why the API structure?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part05.html#implementing-django-rest-framework-for-api">5.2. Implementing Django REST framework for API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part05.html#create-the-views-endpoints">5.3. Create the views / endpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part06.html">6. How to serialize the data.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part06.html#why-we-need-to-serialize-the-data">6.1. Why we need to serialize the data?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part06.html#create-serialize-methods">6.2. Create serialize methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part06.html#call-the-serialize-methods-on-the-utils">6.3. Call the serialize methods on the utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part06.html#create-the-serialize-relationships-methods">6.4. Create the serialize relationships methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part06.html#call-the-serialize-relationships-methods-on-the-utils">6.5. Call the serialize relationships methods on the utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/part06.html#return-the-json-to-the-frontend">6.6. Return the json to the frontend</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/part07.html">7. The Search App, consuming the Fetch API.</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Neo4j.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

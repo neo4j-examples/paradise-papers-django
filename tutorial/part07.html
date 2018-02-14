@@ -1,0 +1,186 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>7. The Search App, consuming the Fetch API. &#8212; Paradise Paper Search 1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="6. How to serialize the data." href="part06.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="part06.html" title="previous chapter">6. How to serialize the data.</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search 1</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="part01.html">1. Set up the environment.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part02.html">2. Set the NeoModel database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part03.html">3. How to create the base models.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part04.html">4. How to query the Neo4j database with Neomodel.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part05.html">5. How to create the API.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part06.html">6. How to serialize the data.</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. The Search App, consuming the Fetch API.</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-search-app-consuming-the-fetch-api">
+<h1>7. The Search App, consuming the Fetch API.<a class="headerlink" href="#the-search-app-consuming-the-fetch-api" title="Permalink to this headline">¶</a></h1>
+<p>At this point, the API is ready. Congratulation!</p>
+<p>The purpose of this tutorial was to only show you how to use Django + Neomodel to query a Neo4j
+database. We have covered that while making the API backend. Now it is time to consume the API.</p>
+<p>We have provided a single web application that will search the Paradise Paper Graph Database. This
+application basically just makes requests to our API and display the response data in a
+convenient way.</p>
+<p>Here are some screenshots of the app.</p>
+<div class="figure" id="id1">
+<a class="reference internal image-reference" href="../_images/part07-img1.png"><img alt="Search Home" src="../_images/part07-img1.png" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-text">That is Search Home, where we can input the search text and filters.</span></p>
+</div>
+<div class="figure" id="id2">
+<a class="reference internal image-reference" href="../_images/part07-img2.png"><img alt="Search Results" src="../_images/part07-img2.png" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-text">That is Search Results. There, we can see nodes that matched our search filters.
+They are presented in tabular format.</span></p>
+</div>
+<div class="figure" id="id3">
+<a class="reference internal image-reference" href="../_images/part07-img3.png"><img alt="Node Details" src="../_images/part07-img3.png" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-text">That is modal with more details of a specific node. We will see, for example,
+the connections of Entity node with others Officer or Intermediary nodes.</span></p>
+</div>
+<p>The tools used to build the Paradise Paper Search App frontend are probably pretty familiar to
+you(JavaScript, KnockoutJS, JQuery, HTML, Bootstrap). We will not give many details about its
+workings, but you can take a look if you want to.</p>
+<p>The search app communicate with the API through GET HTTP requests. We are using the JQuery
+<code class="docutils literal"><span class="pre">$.getJSON</span></code> ajax shorthand method to construct these requests. That way we load JSON-encoded data
+from our Fetch API.</p>
+<p>Here are some examples we actually use in the app.</p>
+<p>Getting some nodes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$.getJSON(
+    &#39;fetch/nodes&#39;,
+    {
+      &#39;q&#39;: &#39;apple&#39;,     // search text
+      &#39;c&#39;: &#39;Monaco&#39;,    // country
+      &#39;j&#39;: &#39;PMA&#39;,       // jurisdiction
+      &#39;s&#39;: &#39;&#39;,          // source
+      &#39;p&#39;: 1            // page
+    }
+)
+.done(nodes =&gt; {
+    // Do something with each node
+    nodes.response.data.forEach(node =&gt; {
+            console.log(node.node_properties);
+    });
+})
+.fail(() =&gt; {
+    // Handle errors
+    console.log(&quot;Fetch error&quot;);
+})
+.always(() =&gt; {
+    // Always do something at end
+});
+</pre></div>
+</div>
+<p>Getting node details:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$.getJSON(
+    &#39;fetch/node&#39;,
+    {
+      &#39;id&#39;: 10033457,   // node id
+      &#39;t&#39;: &#39;Entity&#39;,    // node type
+    }
+)
+.done(node =&gt; {
+    // Do something with node
+    console.log(node);
+})
+.fail(() =&gt; {
+    // Handle errors
+    console.log(&quot;Fetch error&quot;);
+})
+.always(() =&gt; {
+    // Always do something at end
+});
+</pre></div>
+</div>
+<p>Currently the Search App is not making any requests. Instead, it is using some mockup data. But
+now that we have Fetch API working, we can use that.</p>
+<p>The code that made the requests is already in place, but It is not executed because we load or
+return mockup data first. In order to change that, go ahead and remove or comment lines of code
+that load or return the mockup data.</p>
+<p>The file that you need to change is the <code class="docutils literal"><span class="pre">paradise_papers_search/static/js/search.js</span></code>.</p>
+<p>Check this screenshots to know what lines you need to remove. They are highlighted in green.</p>
+<a class="reference internal image-reference" href="../_images/part07-img4.png"><img alt="../_images/part07-img4.png" src="../_images/part07-img4.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="../_images/part07-img5.png"><img alt="../_images/part07-img5.png" src="../_images/part07-img5.png" style="width: 100%;" /></a>
+<p>After that, the application should work.</p>
+<p>Go ahead and play around!</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Neo4j.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/tutorial/part07.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

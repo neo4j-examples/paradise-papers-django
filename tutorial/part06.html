@@ -1,0 +1,800 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>6. How to serialize the data. &#8212; Paradise Paper Search 1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="7. The Search App, consuming the Fetch API." href="part07.html" />
+    <link rel="prev" title="5. How to create the API." href="part05.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="part05.html" title="previous chapter">5. How to create the API.</a></li>
+      <li>Next: <a href="part07.html" title="next chapter">7. The Search App, consuming the Fetch API.</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search 1</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="part01.html">1. Set up the environment.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part02.html">2. Set the NeoModel database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part03.html">3. How to create the base models.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part04.html">4. How to query the Neo4j database with Neomodel.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part05.html">5. How to create the API.</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. How to serialize the data.</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#why-we-need-to-serialize-the-data">6.1. Why we need to serialize the data?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-serialize-methods">6.2. Create serialize methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#call-the-serialize-methods-on-the-utils">6.3. Call the serialize methods on the utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-serialize-relationships-methods">6.4. Create the serialize relationships methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#call-the-serialize-relationships-methods-on-the-utils">6.5. Call the serialize relationships methods on the utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#return-the-json-to-the-frontend">6.6. Return the json to the frontend</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="part07.html">7. The Search App, consuming the Fetch API.</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-serialize-the-data">
+<h1>6. How to serialize the data.<a class="headerlink" href="#how-to-serialize-the-data" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="why-we-need-to-serialize-the-data">
+<h2>6.1. Why we need to serialize the data?<a class="headerlink" href="#why-we-need-to-serialize-the-data" title="Permalink to this headline">¶</a></h2>
+<p>The nodes that we are fetching so far are just instances of the model classes we
+defined such as Entity, Officer, etc. We want to return JSON files to the fetch calls that are going
+to be made in the frontend. Python objects structure is not JSON serializable and the nodes don’t
+support the already build in serializers on the library, so we have to create our own serialize
+methods and manage the logic of those since sometimes we would need to serialize only the directly
+related nodes to a specific node, to serialize the data is nothing more than getting it from the
+object format to a parseable format.</p>
+</div>
+<div class="section" id="create-serialize-methods">
+<h2>6.2. Create serialize methods<a class="headerlink" href="#create-serialize-methods" title="Permalink to this headline">¶</a></h2>
+<p>The way we are going to serialize the data is using property methods on each model, to then call
+them on the helper functions. Adding a serialize method to the model classes is a convenient way to
+serialize the nodes objects because each node will know how to translate itself. We are going to be
+using the <code class="docutils literal"><span class="pre">Entity</span></code> model for these examples since this one presents all the cases contemplated in
+this tutorial.</p>
+<p>In our <code class="docutils literal"><span class="pre">fetch_api/models/entity.py</span></code> we should add the following as a method of the <code class="docutils literal"><span class="pre">Entity</span></code>
+class:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;node_properties&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceID</span><span class="p">,</span>
+            <span class="s1">&#39;address&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+            <span class="s1">&#39;jurisdiction&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jurisdiction</span><span class="p">,</span>
+            <span class="s1">&#39;service_provider&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_provider</span><span class="p">,</span>
+            <span class="s1">&#39;countries&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">,</span>
+            <span class="s1">&#39;jurisdiction_description&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jurisdiction_description</span><span class="p">,</span>
+            <span class="s1">&#39;valid_until&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_until</span><span class="p">,</span>
+            <span class="s1">&#39;ibcRUC&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ibcRUC</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s1">&#39;country_codes&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_codes</span><span class="p">,</span>
+            <span class="s1">&#39;incorporation_date&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">incorporation_date</span><span class="p">,</span>
+            <span class="s1">&#39;node_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_id</span><span class="p">,</span>
+            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>If we look at this closely we’ll notice this is just all the properties on the <code class="docutils literal"><span class="pre">Entity</span></code> class
+mapped to a dictionary but the relationships. We’ll explain later why we don’t serialize the
+relationships here and how to do it, we will need to do the same for the other model classes:</p>
+<p>Address:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;node_properties&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceID</span><span class="p">,</span>
+            <span class="s1">&#39;country_codes&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_codes</span><span class="p">,</span>
+            <span class="s1">&#39;valid_until&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_until</span><span class="p">,</span>
+            <span class="s1">&#39;address&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+            <span class="s1">&#39;countries&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">,</span>
+            <span class="s1">&#39;node_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_id</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Intermediary:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;node_properties&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceID</span><span class="p">,</span>
+            <span class="s1">&#39;valid_until&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_until</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s1">&#39;country_codes&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_codes</span><span class="p">,</span>
+            <span class="s1">&#39;countries&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">,</span>
+            <span class="s1">&#39;node_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_id</span><span class="p">,</span>
+            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Officer:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;node_properties&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceID</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s1">&#39;country_codes&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_codes</span><span class="p">,</span>
+            <span class="s1">&#39;valid_until&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_until</span><span class="p">,</span>
+            <span class="s1">&#39;countries&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">,</span>
+            <span class="s1">&#39;node_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_id</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Other:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span><span class="p">{</span>
+        <span class="s1">&#39;node_properties&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sourceID</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s1">&#39;countries&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">countries</span><span class="p">,</span>
+            <span class="s1">&#39;valid_until&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_until</span><span class="p">,</span>
+            <span class="s1">&#39;node_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_id</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="call-the-serialize-methods-on-the-utils">
+<h2>6.3. Call the serialize methods on the utils<a class="headerlink" href="#call-the-serialize-methods-on-the-utils" title="Permalink to this headline">¶</a></h2>
+<p>Now instead of our <code class="docutils literal"><span class="pre">fetch_nodes</span></code> function on our <code class="docutils literal"><span class="pre">fetch_api/utils.py</span></code> looking like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fetch_nodes</span><span class="p">(</span><span class="n">fetch_info</span><span class="p">):</span>
+    <span class="n">node_type</span>       <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;node_type&#39;</span><span class="p">]</span>
+    <span class="n">search_word</span>     <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="n">country</span>         <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">]</span>
+    <span class="n">limit</span>           <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;limit&#39;</span><span class="p">]</span>
+    <span class="n">start</span>           <span class="o">=</span> <span class="p">((</span><span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;page&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">limit</span><span class="p">)</span>
+    <span class="n">end</span>             <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">limit</span>
+    <span class="n">jurisdiction</span>    <span class="o">=</span> <span class="n">fetch_info</span><span class="p">[</span><span class="s1">&#39;jurisdiction&#39;</span><span class="p">]</span>
+    <span class="n">node_set</span>        <span class="o">=</span> <span class="n">filter_nodes</span><span class="p">(</span><span class="n">MODEL_ENTITIES</span><span class="p">[</span><span class="n">node_type</span><span class="p">],</span> <span class="n">search_word</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">jurisdiction</span><span class="p">)</span>
+    <span class="n">fetched_nodes</span>   <span class="o">=</span> <span class="n">node_set</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">fetched_nodes</span>
+</pre></div>
+</div>
+<p>We will need to change the return statement to:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">serialize</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">fetched_nodes</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>That’s just going to create a new array of dictionaries with the values of the serialized nodes.</p>
+<p>And our <code class="docutils literal"><span class="pre">fetch_node_details</span></code> function instead looking like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fetch_node_details</span><span class="p">(</span><span class="n">node_info</span><span class="p">):</span>
+    <span class="n">node_type</span>       <span class="o">=</span> <span class="n">node_info</span><span class="p">[</span><span class="s1">&#39;node_type&#39;</span><span class="p">]</span>
+    <span class="n">node_id</span>         <span class="o">=</span> <span class="n">node_info</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span>
+    <span class="n">node</span>            <span class="o">=</span> <span class="n">MODEL_ENTITIES</span><span class="p">[</span><span class="n">node_type</span><span class="p">]</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="n">node_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">node</span>
+</pre></div>
+</div>
+<p>Should look like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fetch_node_details</span><span class="p">(</span><span class="n">node_info</span><span class="p">):</span>
+    <span class="n">node_type</span>       <span class="o">=</span> <span class="n">node_info</span><span class="p">[</span><span class="s1">&#39;node_type&#39;</span><span class="p">]</span>
+    <span class="n">node_id</span>         <span class="o">=</span> <span class="n">node_info</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span>
+    <span class="n">node</span>            <span class="o">=</span> <span class="n">MODEL_ENTITIES</span><span class="p">[</span><span class="n">node_type</span><span class="p">]</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="n">node_id</span><span class="p">)</span>
+    <span class="n">node_details</span>    <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">serialize</span>
+
+    <span class="k">return</span> <span class="n">node_details</span>
+</pre></div>
+</div>
+<p>Basically doing the same as before but for a single node instead of a set.</p>
+</div>
+<div class="section" id="create-the-serialize-relationships-methods">
+<h2>6.4. Create the serialize relationships methods<a class="headerlink" href="#create-the-serialize-relationships-methods" title="Permalink to this headline">¶</a></h2>
+<p>We are not serializing the relationships along with the properties because:</p>
+<ul class="simple">
+<li>That would create a loophole between nodes</li>
+<li>We don’t always need the relationships</li>
+</ul>
+<p>So, with this said, this is how we are gonna serialize the relationships, we will need to create a
+<code class="docutils literal"><span class="pre">NodeUtils</span></code> class in our <code class="docutils literal"><span class="pre">fetch_api/models/nodeutils.py</span></code> that looks like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">neomodel</span> <span class="k">import</span> <span class="n">db</span>
+
+
+<span class="k">class</span> <span class="nc">NodeUtils</span><span class="p">:</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+    <span class="k">def</span> <span class="nf">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">):</span>
+        <span class="n">serialized_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="c1"># serialize node</span>
+            <span class="n">serialized_node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">serialize</span>
+
+            <span class="c1"># UNCOMMENT to get relationship type</span>
+            <span class="c1"># results, colums = self.cypher(&#39;&#39;&#39;</span>
+            <span class="c1">#     START start_node=node({self}), end_node=node({end_node})</span>
+            <span class="c1">#     MATCH (start_node)-[rel]-(end_node)</span>
+            <span class="c1">#     RETURN type(rel) as node_relationship</span>
+            <span class="c1">#     &#39;&#39;&#39;,</span>
+            <span class="c1">#     {&#39;end_node&#39;: node.id}</span>
+            <span class="c1"># )</span>
+            <span class="c1"># serialized_node[&#39;node_relationship&#39;] = results[0][0]</span>
+
+            <span class="n">serialized_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">serialized_node</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">serialized_nodes</span>
+</pre></div>
+</div>
+<p>This will serve as a helper to serialize all the relationships in all of our nodes, taking advantage
+of the Python muli-inheritance. Now add the following to the file <code class="docutils literal"><span class="pre">fetch_api/models/entity.py</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.nodeutils</span> <span class="k">import</span> <span class="n">NodeUtils</span>
+</pre></div>
+</div>
+<p>And to our <code class="docutils literal"><span class="pre">Entity</span></code> class:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Entity</span><span class="p">(</span><span class="n">StructuredNode</span><span class="p">,</span> <span class="n">NodeUtils</span><span class="p">):</span>
+
+<span class="o">...</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">serialize_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Officer&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">officers</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Intermediary&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediaries</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Address&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Other&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">others</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Entity&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+<p>We will need to do the same for the other model classes:</p>
+<p>Address:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Address</span><span class="p">(</span><span class="n">StructuredNode</span><span class="p">,</span> <span class="n">NodeUtils</span><span class="p">):</span>
+
+<span class="o">...</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">serialize_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Officer&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">officers</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Intermediary&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediaries</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+<p>Intermediary:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Intermediary</span><span class="p">(</span><span class="n">StructuredNode</span><span class="p">,</span> <span class="n">NodeUtils</span><span class="p">):</span>
+
+<span class="o">...</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">serialize_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Entity&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Address&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Officer&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">officers</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+<p>Officer:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="k">class</span> <span class="nc">Officer</span><span class="p">(</span><span class="n">StructuredNode</span><span class="p">,</span> <span class="n">NodeUtils</span><span class="p">):</span>
+
+<span class="o">...</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">serialize_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Address&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Entity&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Officer&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">officers</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+<p>Other:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Other</span><span class="p">(</span><span class="n">StructuredNode</span><span class="p">,</span> <span class="n">NodeUtils</span><span class="p">):</span>
+
+<span class="o">...</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span> <span class="nf">serialize_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Officer&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">officers</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Entity&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;nodes_type&#39;</span><span class="p">:</span> <span class="s1">&#39;Address&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nodes_related&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_relationships</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">addresses</span><span class="o">.</span><span class="n">all</span><span class="p">()),</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="call-the-serialize-relationships-methods-on-the-utils">
+<h2>6.5. Call the serialize relationships methods on the utils<a class="headerlink" href="#call-the-serialize-relationships-methods-on-the-utils" title="Permalink to this headline">¶</a></h2>
+<p>On our <code class="docutils literal"><span class="pre">fetch_api/utils.py</span></code> the <code class="docutils literal"><span class="pre">fetch_node_details</span></code> function we should put this above the
+return statement:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Make sure to return an empty array if not connections</span>
+<span class="n">node_details</span><span class="p">[</span><span class="s1">&#39;node_connections&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s1">&#39;serialize_connections&#39;</span><span class="p">)):</span>
+    <span class="n">node_details</span><span class="p">[</span><span class="s1">&#39;node_connections&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">serialize_connections</span>
+</pre></div>
+</div>
+<p>So the function should be looking something like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fetch_node_details</span><span class="p">(</span><span class="n">node_info</span><span class="p">):</span>
+    <span class="n">node_type</span>       <span class="o">=</span> <span class="n">node_info</span><span class="p">[</span><span class="s1">&#39;node_type&#39;</span><span class="p">]</span>
+    <span class="n">node_id</span>         <span class="o">=</span> <span class="n">node_info</span><span class="p">[</span><span class="s1">&#39;node_id&#39;</span><span class="p">]</span>
+    <span class="n">node</span>            <span class="o">=</span> <span class="n">MODEL_ENTITIES</span><span class="p">[</span><span class="n">node_type</span><span class="p">]</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node_id</span><span class="o">=</span><span class="n">node_id</span><span class="p">)</span>
+    <span class="n">node_details</span>    <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">serialize</span>
+
+    <span class="c1"># Make sure to return an empty array if not connections</span>
+    <span class="n">node_details</span><span class="p">[</span><span class="s1">&#39;node_connections&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s1">&#39;serialize_connections&#39;</span><span class="p">)):</span>
+        <span class="n">node_details</span><span class="p">[</span><span class="s1">&#39;node_connections&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">serialize_connections</span>
+
+    <span class="k">return</span> <span class="n">node_details</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="return-the-json-to-the-frontend">
+<h2>6.6. Return the json to the frontend<a class="headerlink" href="#return-the-json-to-the-frontend" title="Permalink to this headline">¶</a></h2>
+<p>Now if we call our functions <code class="docutils literal"><span class="pre">fetch_node_details</span></code> and <code class="docutils literal"><span class="pre">fetch_nodes</span></code> should be returning the
+same data but in a way that is JSON parsable, so let’s change a couple things in order of returning
+this data that we need.</p>
+<p>In our settings file
+<code class="docutils literal"><span class="pre">/project-directory/paradise_papers_search/paradise_papers_search/settings.py</span></code> we will find this.
+If you are using the copy that we provided for these examples if not, you can add it yourself:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Rest-Framework settings</span>
+<span class="n">REST_FRAMEWORK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;DEFAULT_RENDERER_CLASSES&#39;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s1">&#39;rest_framework.renderers.JSONRenderer&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is going to cause that when we invoke the render method on our APIs views the method will call
+the JSON renderer rather than just the HTTP one.</p>
+<p>So once again we will clean our <code class="docutils literal"><span class="pre">fetch_api/views.py</span></code> file and leave it like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="k">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="k">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">fetch_nodes</span>
+
+<span class="k">class</span> <span class="nc">GetNodesData</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">fetch_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;node_type&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;Entity&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;jurisdiction&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;j&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s1">&#39;page&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+        <span class="p">}</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">fetch_nodes</span><span class="p">(</span><span class="n">fetch_info</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;rows&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">),</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">nodes</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here we are just taking the query parameters off the request and parsing them to pass them to the
+respective fetch function.</p>
+<p>This lines here:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+<span class="s1">&#39;page&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+</pre></div>
+</div>
+<p>The ‘limit’ property is in charge of determinating how much nodes are going to be fetched from the
+database, we set that value to 10 since we decided it was a good balance between performance and
+enough information. The ‘page’ property is how many sets nodes(10 nodes) are going to be skip to
+start fetching, this is basically working as a pagination here.</p>
+<p>Now if we try this:</p>
+<p><code class="docutils literal"><span class="pre">curl</span> <span class="pre">http://127.0.0.1:8000/fetch/nodes?q=maria&amp;t=Entity</span></code></p>
+<p>We should see something like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;node_properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;MARIANTHI LIMITED&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Seychelles&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;14-JUL-2009&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;United Arab Emirates&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;ARE&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;063736&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;OMNI MANAGEMENT CONSULTANCY FZE OFFICE NUMBER 425; RAS AL KHAIMAH FREE TRADE ZONE AUTHORITY  GOVERNMENT OF RAS AL KHAIMAH; P.O. BOX 10055 RAS AL KHAIMAH; UNITED ARAB EMIRATES&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Defaulted&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10026610&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;SEY&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;node_properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;LUZMARIA S.A.&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Seychelles&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;24-JAN-2013&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;Luxembourg&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;LUX&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;118634&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;EFG BANK (LUXEMBOURG9 S.A. ATTN: PIERRE AVIRON-VIOLET; 14, ALLÉE MARCONI; L - 2013 LUXEMBOURG  LUXEMBOURG&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Active&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10027827&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;SEY&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;node_properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;NUMMARIA LIMITED&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Niue&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;23-OCT-1997&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;United Kingdom&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;GBR&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;002351&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;HOLLINGWORTH CONSULTANTS LTD. PARKVIEW HOUSE BUCCLEUCH ROAD HAWICK; ROXBURGHSHIRE SCOTLAND; TD9 0EL&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Defaulted&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10036241&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;NIUE&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;node_properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;GRUPO NUMMARIA S.L.&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Niue&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;12-FEB-1996&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;United Kingdom&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;GBR&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;000737&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;HOLLINGWORTH CONSULTANTS LTD. PARKVIEW HOUSE BUCCLEUCH ROAD HAWICK; ROXBURGHSHIRE SCOTLAND; TD9 0EL&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Defaulted&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10036779&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;NIUE&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;node_properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;MARIACHI CORP.&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Niue&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;09-AUG-1999&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;Belize&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;BLZ&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;004700&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;BOND &amp; COMPANY 35 BARRACK ROAD BELIZE CITY BELIZE*S.I.*&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Defaulted&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10040810&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;NIUE&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;node_properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;M.P. MARIANNE S.A.&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;02-AUG-2007&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;Switzerland&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;CHE&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;51&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;UNION BANCAIRE PRIVÉE UBP (SWITZERLAND) ATTN: MR. FABIEN DE FRAIPONT RUE DU RHÔNE 96-98  CP 1320 CH-1211 GENEVA 1 SWITZERLAND GENEVE SWITZERLAND&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Changed agent&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10053581&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;PMA&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;node_properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;MARIADA HOLDINGS LIMITED&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;British Virgin Islands&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;21-JUL-1995&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;Switzerland&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;CHE&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;156189&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;PRIMEWAY S.A. 7, RUE DU RHÔNE 1204 GENEVE SWITZERLAND&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Changed agent&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10064371&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;BVI&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;node_properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;MARIANNE PROPERTIES LIMITED&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;British Virgin Islands&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;02-JUL-1992&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;Guernsey&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;GGY&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;65048&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;KLEINWORT BENSON (GUERNSEY) TRUSTEES LIMITED P.O. BOX 44   WESTBOURNE; THE GRANGE ST. PETER PORT; GUERNSEY GY1 3BG CHANNEL ISLANDS ATTN: MS. TINA BROWNING&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Defaulted&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10057577&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;BVI&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;node_properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;GRUPPO NUMMARIA LTD.&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;British Virgin Islands&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;25-NOV-1993&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;United Kingdom&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;GBR&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;101294&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;AUSKERRY INVESTMENTS LIMITED 1, PARK ROAD LONDON NW1 6XN ENGLAND&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Defaulted&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10060886&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;BVI&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;node_properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;valid_until&quot;</span><span class="p">:</span> <span class="s2">&quot;The Panama Papers data is current through 2015&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;F.S.C. LTD.-MARIAH OVERSEAS LIMITED&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction_description&quot;</span><span class="p">:</span> <span class="s2">&quot;British Virgin Islands&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;service_provider&quot;</span><span class="p">:</span> <span class="s2">&quot;Mossack Fonseca&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;incorporation_date&quot;</span><span class="p">:</span> <span class="s2">&quot;04-JAN-1994&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;countries&quot;</span><span class="p">:</span> <span class="s2">&quot;Switzerland&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;country_codes&quot;</span><span class="p">:</span> <span class="s2">&quot;CHE&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;ibcRUC&quot;</span><span class="p">:</span> <span class="s2">&quot;103935&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;GOTTHARDSTRASSE 57 6045 MEGGEN SWITZERLAND&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;Active&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;node_id&quot;</span><span class="p">:</span> <span class="s2">&quot;10064221&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;jurisdiction&quot;</span><span class="p">:</span> <span class="s2">&quot;BVI&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sourceID&quot;</span><span class="p">:</span> <span class="s2">&quot;Panama Papers&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;rows&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;200&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[*]</td><td>Note: This is beautified, but you’ll probably get a minified version in your console.</td></tr>
+</tbody>
+</table>
+<p>We will need to do the same for each of the other endpoints with its corresponding fetch function.</p>
+<p>Our file should look like this at the end:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="k">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="k">import</span> <span class="n">Response</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">count_nodes</span><span class="p">,</span>
+    <span class="n">fetch_nodes</span><span class="p">,</span>
+    <span class="n">fetch_node_details</span><span class="p">,</span>
+    <span class="n">fetch_countries</span><span class="p">,</span>
+    <span class="n">fetch_jurisdictions</span><span class="p">,</span>
+    <span class="n">fetch_data_source</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">GetNodesCount</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">count_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;node_type&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;Entity&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;jurisdiction&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;j&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">count_nodes</span><span class="p">(</span><span class="n">count_info</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">GetNodesData</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">fetch_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;node_type&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;Entity&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;jurisdiction&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;j&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;sourceID&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s1">&#39;page&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+        <span class="p">}</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">fetch_nodes</span><span class="p">(</span><span class="n">fetch_info</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;rows&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">),</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">nodes</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">GetNodeData</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">node_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;node_type&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;Entity&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;node_id&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)),</span>
+        <span class="p">}</span>
+        <span class="n">node_details</span> <span class="o">=</span> <span class="n">fetch_node_details</span><span class="p">(</span><span class="n">node_info</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">node_details</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">GetCountries</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">countries</span> <span class="o">=</span> <span class="n">fetch_countries</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">countries</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">GetJurisdictions</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">jurisdictions</span> <span class="o">=</span> <span class="n">fetch_jurisdictions</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">jurisdictions</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">GetDataSource</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">data_source</span> <span class="o">=</span> <span class="n">fetch_data_source</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data_source</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Neo4j.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/tutorial/part06.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
