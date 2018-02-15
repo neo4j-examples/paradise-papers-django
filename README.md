@@ -3,7 +3,7 @@ A simple Django web app for searching the Paradise Papers dataset backed by Neo4
 
 # Requirements
 
-Python 2.7, 3.4+
+Python 3.4+
 
 Django 1.11
 
@@ -23,7 +23,7 @@ git clone https://github.com/neo4j-examples/paradise-papers-django
 # Go into the repository
 
 cd paradise-papers-django
-cd paradise_papers_django
+cd paradise_papers_search
 
 # Run the app
 python manage.py runserver --settings=paradise_papers_search.settings.dev
