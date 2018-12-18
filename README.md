@@ -26,3 +26,11 @@ cd paradise_papers_search
 # Run the app(after installing requirements)
 python manage.py runserver --settings=paradise_papers_search.settings.dev
 ```
+
+
+![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/part07-img1.png "Search Home")
+_________
+
+![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/part07-img2.png "Search Results")
+_________
+![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/part07-img3.png "Search details")
