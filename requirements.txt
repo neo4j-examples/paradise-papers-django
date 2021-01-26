@@ -1,0 +1,8 @@
+Django==2.2
+gunicorn==20.0.4
+django-neomodel==0.0.6
+djangorestframework==3.7.7
+neo4j-driver==4.1.1
+neomodel==4.0.2
+pytz==2020.5
+whitenoise==3.3.1
