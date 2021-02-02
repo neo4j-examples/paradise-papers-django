@@ -1,7 +1,0 @@
-Django==1.11.2
-django-neomodel==0.0.4
-djangorestframework==3.7.7
-neo4j-driver==1.2.1
-neomodel==3.2.5
-pytz==2017.3
-whitenoise==3.3.1
