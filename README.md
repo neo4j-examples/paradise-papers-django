@@ -30,6 +30,27 @@ python manage.py runserver --settings=paradise_papers_search.settings.dev
 ```
 
 
+# Quick Heroku Deployment with Neo4j Sandbox 
+
+Create an sandbox database, make sure to select `Paradise Papers by ICIJ` under Pre-Built Data.
+copy the database's username, password, and bolt URL.
+
+Create a Heroku app, (for example, `paradise-papers`)
+Go to the app's settings and add the following config vars:
+`ALLOWED_HOST` : `paradise-papers.herokuapp.com`
+`DATABASE_URL`: the credentials from your sandbox database in the following format `bolt://user:password@ip:port`
+
+Clone the repository and navigate into the directory, add Heroku as a remote, and push to Heroku:
+```
+git clone git@github.com:neo4j-examples/paradise-papers-django.git
+cd paradise-papers-django
+git remote add heroku https://git.heroku.com/paradise-papers.git
+git push heroku master
+```
+
+View your app at the URL you specified earlier: http://paradise-papers.herokuapp.com
+
+
 ![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/part07-img1.png "Search Home")
 _________
 
