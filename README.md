@@ -48,7 +48,7 @@ git remote add heroku https://git.heroku.com/paradise-papers.git
 git push heroku master
 ```
 
-View your app at the URL you specified earlier: http://paradise-papers.herokuapp.com
+View your app at the URL you specified earlier.
 
 
 ![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/part07-img1.png "Search Home")
