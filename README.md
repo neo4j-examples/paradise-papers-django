@@ -23,15 +23,42 @@ git clone https://github.com/neo4j-examples/paradise-papers-django
 # Go into the repository
 cd paradise-papers-django 
 
-# active your virtual environment and install your dependencies
+# active your [virtual environment](https://docs.python.org/3/tutorial/venv.html) and install your dependencies
 cd paradise_papers_search
 pip install -r ../requirements.txt
 
 # Run the app
-export DATABASE_URL=bolt://neo4j:sashes-computer-projectile@3.92.188.217:7687 # update with the credentials from your sandbox database.
+export DATABASE_URL=bolt://<username>:<password>@<address>:7687 # update with the credentials from your sandbox database.
 python manage.py runserver --settings=paradise_papers_search.settings.dev
 ```
+# Registering Models in the Admin
 
+In `paradise_papers_search/fetch_api/admin`, add the models you would like to explore using the admin:
+
+```python
+from django.contrib import admin as dj_admin
+from django_neomodel import admin as neo_admin
+
+from .models import Entity
+
+class EntityAdmin(dj_admin.ModelAdmin):
+    list_display = ("name",)
+neo_admin.register(Entity, EntityAdmin)
+```
+
+Create the admin superuser:
+
+```
+./manage.py migrate
+./manage.py createsuperuser
+```
+
+![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/admin-list.png "Admin List")
+_________
+
+![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/admin-detail.png "Admin Detail")
+
+While testing locally you may want to do `export ALLOWED_HOST=*`
 
 # Quick Heroku Deployment with Neo4j Sandbox 
 
