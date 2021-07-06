@@ -53,10 +53,15 @@ Create the admin superuser:
 ./manage.py createsuperuser
 ```
 
-![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/admin-list.png "Admin List")
-_________
+Run the app!
 
-![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/admin-detail.png "Admin Detail")
+```
+python manage.py runserver --settings=paradise_papers_search.settings.dev
+```
+
+Start searching at http://127.0.0.1:8000/
+
+View the admin at http://127.0.0.1:8000/admin
 
 While testing locally you may want to do `export ALLOWED_HOST=*`
 
@@ -80,6 +85,11 @@ git push heroku master
 
 View your app at the URL you specified earlier.
 
+![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/admin-list.png "Admin List")
+_________
+
+![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/admin-detail.png "Admin Detail")
+_________
 
 ![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/part07-img1.png "Search Home")
 _________
