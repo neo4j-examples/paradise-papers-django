@@ -7,10 +7,10 @@ A simple Django web app for searching the Paradise Papers dataset backed by Neo4
 # Requirements
 
 - Python 3.4+
-- Django 2.2
-- neo4j 3.0, 3.1, 3.2, 3.3, 4.0
-- neo4j-driver 1.2.1
-- neomodel 4.0.2
+- Django 2.2+
+- neo4j 3.5+, 4.0
+- neo4j-driver 4.1.1
+- neomodel 4.0.4
 
 # Quickstart
 
@@ -21,11 +21,14 @@ First create an [sandbox database](https://sandbox.neo4j.com/), make sure to sel
 git clone https://github.com/neo4j-examples/paradise-papers-django
 
 # Go into the repository
-cd paradise-papers-django/paradise_papers_search
+cd paradise-papers-django 
+
+# active your virtual environment and install your dependencies
+cd paradise_papers_search
 pip install -r ../requirements.txt
 
 # Run the app
-export DATABASE_URL=bolt://user:password@hostnameOrIP:port # update with the credentials from your sandbox database.
+export DATABASE_URL=bolt://neo4j:sashes-computer-projectile@3.92.188.217:7687 # update with the credentials from your sandbox database.
 python manage.py runserver --settings=paradise_papers_search.settings.dev
 ```
 

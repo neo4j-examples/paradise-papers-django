@@ -3,7 +3,7 @@ from neomodel import db
 
 
 class NodeUtils:
-    __metaclass__ = ABCMeta
+    #  __metaclass__ = ABCMeta
 
 
     def serialize_relationships(self, nodes):

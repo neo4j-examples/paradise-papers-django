@@ -3,13 +3,15 @@ from neomodel import (
     StructuredNode,
     RelationshipTo,
     RelationshipFrom,
-    Relationship
+    Relationship,
+    UniqueIdProperty
 )
+from django_neomodel import DjangoNode
 
 from .nodeutils import NodeUtils
 
 
-class Entity(StructuredNode, NodeUtils):
+class Entity(DjangoNode):
     sourceID                 = StringProperty()
     address                  = StringProperty()
     jurisdiction             = StringProperty()
@@ -21,7 +23,7 @@ class Entity(StructuredNode, NodeUtils):
     name                     = StringProperty()
     country_codes            = StringProperty()
     incorporation_date       = StringProperty()
-    node_id                  = StringProperty(index = True)
+    node_id                  = UniqueIdProperty(primary_key=True)
     status                   = StringProperty()
     officers                 = RelationshipFrom('.officer.Officer', 'OFFICER_OF')
     intermediaries           = RelationshipFrom('.intermediary.Intermediary', 'INTERMEDIARY_OF')
@@ -29,6 +31,8 @@ class Entity(StructuredNode, NodeUtils):
     others                   = RelationshipFrom('.other.Other', 'CONNECTED_TO')
     entities                 = Relationship('.entity.Entity', None)
 
+    class Meta:
+        app_label = "fetch_api"
 
     @property
     def serialize(self):
