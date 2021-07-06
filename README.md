@@ -7,10 +7,10 @@ A simple Django web app for searching the Paradise Papers dataset backed by Neo4
 # Requirements
 
 - Python 3.4+
-- Django 2.2
-- neo4j 3.0, 3.1, 3.2, 3.3, 4.0
-- neo4j-driver 1.2.1
-- neomodel 4.0.2
+- Django 2.2+
+- neo4j 3.5+, 4.0
+- neo4j-driver 4.1.1
+- neomodel 4.0.4
 
 # Quickstart
 
@@ -21,14 +21,44 @@ First create an [sandbox database](https://sandbox.neo4j.com/), make sure to sel
 git clone https://github.com/neo4j-examples/paradise-papers-django
 
 # Go into the repository
-cd paradise-papers-django/paradise_papers_search
+cd paradise-papers-django 
+
+# active your [virtual environment](https://docs.python.org/3/tutorial/venv.html) and install your dependencies
+cd paradise_papers_search
 pip install -r ../requirements.txt
 
 # Run the app
-export DATABASE_URL=bolt://user:password@hostnameOrIP:port # update with the credentials from your sandbox database.
+export DATABASE_URL=bolt://<username>:<password>@<address>:7687 # update with the credentials from your sandbox database.
 python manage.py runserver --settings=paradise_papers_search.settings.dev
 ```
+# Registering Models in the Admin
 
+In `paradise_papers_search/fetch_api/admin`, add the models you would like to explore using the admin:
+
+```python
+from django.contrib import admin as dj_admin
+from django_neomodel import admin as neo_admin
+
+from .models import Entity
+
+class EntityAdmin(dj_admin.ModelAdmin):
+    list_display = ("name",)
+neo_admin.register(Entity, EntityAdmin)
+```
+
+Create the admin superuser:
+
+```
+./manage.py migrate
+./manage.py createsuperuser
+```
+
+![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/admin-list.png "Admin List")
+_________
+
+![alt text](https://github.com/neo4j-examples/paradise-papers-django/blob/master/docs/tutorial/_images/admin-detail.png "Admin Detail")
+
+While testing locally you may want to do `export ALLOWED_HOST=*`
 
 # Quick Heroku Deployment with Neo4j Sandbox 
 

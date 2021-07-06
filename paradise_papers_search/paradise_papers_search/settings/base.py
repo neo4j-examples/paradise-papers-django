@@ -17,6 +17,17 @@ from .env import env
 #Connect to Neo4j Database
 config.DATABASE_URL = env('DATABASE_URL')  # default
 
+DATABASES = {
+    'default': {
+        'NAME': 'papers.db',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'USER': '',
+        'PASSWORD': '',
+        'PORT': '',
+    },
+}
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -29,6 +40,7 @@ SECRET_KEY = '7jvc876=)%+t5^k4p0qd^ysi@4317lo*r+ki^r3)e(*g-efh&^'
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.admin',
     'django_neomodel',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +57,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'paradise_papers_search.urls'
