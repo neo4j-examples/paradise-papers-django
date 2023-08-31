@@ -6,11 +6,10 @@ A simple Django web app for searching the Paradise Papers dataset backed by Neo4
 
 # Requirements
 
-- Python 3.4+
+- Python 3.7+
 - Django 2.2+
-- neo4j 3.5+, 4.0
-- neo4j-driver 4.1.1
-- neomodel 4.0.4
+- neo4j 5.x, 4.4
+- django-neomodel 0.1.1
 
 # Quickstart
 
@@ -25,6 +24,8 @@ cd paradise-papers-django
 
 # active your [virtual environment](https://docs.python.org/3/tutorial/venv.html) and install your dependencies
 cd paradise_papers_search
+python -m venv venv
+source venv/bin/activate
 pip install -r ../requirements.txt
 
 # Run the app
