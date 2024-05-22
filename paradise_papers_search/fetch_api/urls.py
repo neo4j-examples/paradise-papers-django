@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path
 
 from .views import (
     GetNodesCount,
@@ -11,10 +11,10 @@ from .views import (
 
 
 urlpatterns = [
-    url(r'^count[/]?$', GetNodesCount.as_view(), name='get_nodes_count'),
-    url(r'^nodes[/]?$', GetNodesData.as_view(), name='get_nodes_data'),
-    url(r'^node[/]?$', GetNodeData.as_view(), name='get_node_data'),
-    url(r'^countries[/]?$', GetCountries.as_view(), name='get_countries'),
-    url(r'^jurisdictions[/]?$', GetJurisdictions.as_view(), name='get_jurisdictions'),
-    url(r'^datasource[/]?$', GetDataSource.as_view(), name='get_data_source'),
+    path("count/", GetNodesCount.as_view(), name="get_nodes_count"),
+    path("nodes/", GetNodesData.as_view(), name="get_nodes_data"),
+    path("node/", GetNodeData.as_view(), name="get_node_data"),
+    path("countries/", GetCountries.as_view(), name="get_countries"),
+    path("jurisdictions/", GetJurisdictions.as_view(), name="get_jurisdictions"),
+    path("datasource/", GetDataSource.as_view(), name="get_data_source"),
 ]

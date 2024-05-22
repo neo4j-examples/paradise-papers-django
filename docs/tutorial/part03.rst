@@ -25,7 +25,7 @@ of it is: ::
 Now we need to create a file called `urls.py` inside the application we just created. Right now we
 are only going to add the following code::
 
-    from django.conf.urls import url
+    from django.urls import path
 
     urlpatterns = []
 
@@ -33,15 +33,16 @@ As we go on in this tutorial, we will start adding the endpoint urls, but for no
 have the empty urlpattern list.
 
 The next step is to register the fetch_api URLconf into the root project URLconf.  We need to open
-the file paradise_papers_search/urls.py. Afterwards, we have to add ``url(r'^fetch/',
+the file paradise_papers_search/urls.py. Afterwards, we have to add ``path('fetch/',
 include('fetch_api.urls', namespace='fetch_api')),``   inside the urlpatterns list. After completing
 these steps the file should look like this::
 
-    from django.conf.urls import url, include from django.contrib import admin from
-    django.views.generic import TemplateView
+    from django.urls import include, path
+    from django.contrib import admin
+    from django.views.generic import TemplateView
 
-    urlpatterns = [ url(r'^admin/', admin.site.urls), url(r'^$',
-    TemplateView.as_view(template_name='index.html'), name='index'), url(r'^fetch/',
+    urlpatterns = [ path('admin/', admin.site.urls), path('',
+    TemplateView.as_view(template_name='index.html'), name='index'), path('fetch/',
     include('fetch_api.urls', namespace='fetch_api')), ]
 
 

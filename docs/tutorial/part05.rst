@@ -47,11 +47,11 @@ Let's clean our ``fetch_api/views.py`` file and add the following code::
 
 Now we create this file ``fetch_api/urls.py`` and fill it with this::
 
-    from django.conf.urls import url
+    from django.urls import path
     from .views import GetNodesData
 
     urlpatterns = [
-        url(r'^nodes[/]?$', GetNodesData.as_view(), name='get_nodes_data'),
+        path('nodes/', GetNodesData.as_view(), name='get_nodes_data'),
     ]
 
 Now we can hit the endpoint with a method of our preference, for this example, we are going to use
@@ -107,7 +107,7 @@ When we finish our ``fetch_api/views.py`` file should look like this::
 
 And the ``fetch_api/urls.py`` should look like this::
 
-    from django.conf.urls import url
+    from django.urls import path
     from .views import (
         GetNodesCount,
         GetNodesData,
@@ -118,10 +118,10 @@ And the ``fetch_api/urls.py`` should look like this::
     )
 
     urlpatterns = [
-        url(r'^count[/]?$', GetNodesCount.as_view(), name='get_nodes_count'),
-        url(r'^nodes[/]?$', GetNodesData.as_view(), name='get_nodes_data'),
-        url(r'^node[/]?$', GetNodeData.as_view(), name='get_node_data'),
-        url(r'^countries[/]?$', GetCountries.as_view(), name='get_countries'),
-        url(r'^jurisdictions[/]?$', GetJurisdictions.as_view(), name='get_jurisdictions'),
-        url(r'^datasource[/]?$', GetDataSource.as_view(), name='get_data_source'),
+        path('count/', GetNodesCount.as_view(), name='get_nodes_count'),
+        path('nodes/', GetNodesData.as_view(), name='get_nodes_data'),
+        path('node/', GetNodeData.as_view(), name='get_node_data'),
+        path('countries/', GetCountries.as_view(), name='get_countries'),
+        path('jurisdictions/', GetJurisdictions.as_view(), name='get_jurisdictions'),
+        path('datasource/', GetDataSource.as_view(), name='get_data_source'),
     ]
